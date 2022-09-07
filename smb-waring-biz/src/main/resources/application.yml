@@ -1,0 +1,27 @@
+ppx:
+  DS: ${mysql.smb_warning}
+
+spring:
+  #  main:
+  #    allow-bean-definition-overriding: true
+  redis:
+    host: ${redis.host} # 读取redis公共组配置
+    port: ${redis.port}
+    password: ${redis.password} # 读取redis公共组配置
+
+# dubbo配置
+dubbo:
+  application:
+    name: smb-warning
+    owner: tzx
+  config-center:
+    address: zookeeper://${middleware.zk.address}
+    group: coordination
+  protocol:
+    port: 20881
+  consumer:
+    check: false
+  provider:
+    #    去除默认异常,使用B2B生成的异常过滤器
+    filter: -exception
+  logByCode: true

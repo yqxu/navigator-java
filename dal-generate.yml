@@ -1,0 +1,16 @@
+projectPath: /Users/jiangkun/IdeaProjects/pingpong/smb-warning/smb-warning-dal/
+tableNames:
+
+  - business_alerts_app
+  - business_alerts_app_classify
+  - business_alerts_to_receiver
+  - business_alerts_to_user
+  - business_alerts_user
+  -
+dalPackage: com.pingpongx.smb.warning.dal
+datasource:
+  url: jdbc:mysql://rm-bp1uz9up4c112v312.mysql.rds.aliyuncs.com/smb_warning
+  username: smb_developer
+  password: DzPC1YrzaXtvrKbW
+
+#curl -s  http://git.pingpongx.org/snippets/2/raw | bash

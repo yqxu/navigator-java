@@ -1,0 +1,10 @@
+ppx:
+  name: smb-warning
+  environment: @ppx.environment@
+  config:
+    publicGroups: mysql, redis, job, flowmore-base, middleware
+    overrideLocal: false
+auth:
+  appId: dev@smb-warning
+  appSecret: dev@smb-warning
+  group: smb
