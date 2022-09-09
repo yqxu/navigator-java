@@ -5,6 +5,6 @@ ppx:
     publicGroups: mysql, redis, job, flowmore-base, middleware
     overrideLocal: false
 auth:
-  appId: dev@smb-warning
-  appSecret: dev@smb-warning
+  appId: smb-warning
+  appSecret: smb-warning
   group: smb
