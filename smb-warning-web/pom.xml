@@ -10,7 +10,6 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>smb-warning-web</artifactId>
-  <name>smb-warning-web</name>
   <packaging>jar</packaging>
 
   <properties>
