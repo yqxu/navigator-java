@@ -6,7 +6,7 @@ package com.pingpongx.smb.warning.biz.config.constants;
  * @Description:
  * @Version:
  */
-public class ServiceConstants {
+public final class ServiceConstants {
 
     /**
      * 应用名

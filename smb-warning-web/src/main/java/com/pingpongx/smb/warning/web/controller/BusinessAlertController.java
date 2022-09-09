@@ -62,10 +62,10 @@ public class BusinessAlertController {
         if (StringUtils.isNotBlank(appName)) {
             businessAlertService.clearCache(Lists.newArrayList(appName));
             businessAlertHelper.APP_DINGDING_RECEIVER.refresh(appName);
-            return;
+        } else if ("all".equals(appName)){
+            businessAlertService.clearCache();
+            businessAlertHelper.APP_DINGDING_RECEIVER.cleanUp();
         }
-        businessAlertService.clearCache();
-        businessAlertHelper.APP_DINGDING_RECEIVER.cleanUp();
     }
 
     /**
