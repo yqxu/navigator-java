@@ -1,4 +1,4 @@
-package com.pingpongx.smb.warning.biz.config.constants;
+package com.pingpongx.smb.warning.biz.constants;
 
 /**
  * @Auther: jiangkun

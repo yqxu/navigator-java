@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.pingpongx.flowmore.cloud.base.server.app.BaseApplicationDocable;
 import com.pingpongx.flowmore.cloud.base.server.app.BaseApplicationInfo;
 import com.pingpongx.flowmore.cloud.base.server.app.BaseApplicationRun;
-import com.pingpongx.smb.warning.biz.config.constants.ServiceConstants;
+import com.pingpongx.smb.warning.biz.constants.ServiceConstants;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import springfox.documentation.service.ApiInfo;
