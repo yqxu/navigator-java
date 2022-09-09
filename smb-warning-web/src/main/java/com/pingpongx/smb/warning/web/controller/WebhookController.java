@@ -10,6 +10,7 @@ import com.jayway.jsonpath.Option;
 import com.jayway.jsonpath.TypeRef;
 import com.jayway.jsonpath.spi.json.JacksonJsonProvider;
 import com.jayway.jsonpath.spi.mapper.JacksonMappingProvider;
+import com.pingpongx.flowmore.cloud.base.server.annotation.NoAuth;
 import com.pingpongx.smb.warning.api.dto.JiraDTO;
 import com.pingpongx.smb.warning.api.dto.JiraItemDTO;
 import com.pingpongx.smb.warning.web.helper.BusinessAlertHelper;
@@ -45,6 +46,7 @@ public class WebhookController {
         .setOptions(Option.SUPPRESS_EXCEPTIONS, Option.DEFAULT_PATH_LEAF_TO_NULL);
 
     @PostMapping("/jirahook")
+    @NoAuth(isPack = false)
     public void jiraHook(@RequestBody String message) {
         log.info("jiraHook message:[{}]", message);
         try {

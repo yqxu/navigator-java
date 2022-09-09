@@ -2,6 +2,7 @@ package com.pingpongx.smb.warning.web.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.pingpongx.flowmore.cloud.base.server.annotation.NoAuth;
 import com.pingpongx.smb.warning.api.dto.DingDReceiverDTO;
 import com.pingpongx.smb.warning.api.dto.DingDingReceiverDTO;
 import com.pingpongx.smb.warning.api.service.BusinessAlertService;
@@ -40,8 +41,8 @@ public class BusinessAlertController {
     private final BusinessAlertHelper businessAlertHelper;
 
     private final BusinessAlertService businessAlertService;
-
     @PostMapping("/businessAlerts")
+    @NoAuth(isPack = false)
     public DingDingReceiverDTO findDingDingReceivers(HttpServletRequest request, @RequestBody AlertsRequest alertsRequest){
         try {
             // 调试日志测试无误可删除
@@ -58,6 +59,7 @@ public class BusinessAlertController {
     }
 
     @GetMapping("/clearCache/{appName}")
+    @NoAuth(isPack = false)
     public void clearCache(@PathVariable("appName") String appName){
         if (StringUtils.isNotBlank(appName)) {
             businessAlertService.clearCache(Lists.newArrayList(appName));
@@ -73,6 +75,7 @@ public class BusinessAlertController {
      * @param resultInfo 请求体
      */
     @PostMapping("/createAlertWorkOrder")
+    @NoAuth(isPack = false)
     public DingDingReceiverDTO createAlertWorkOrder(@RequestBody FireResultInfo resultInfo) {
         try {
             String appName = parsingAppName(resultInfo.getAppName());
@@ -97,6 +100,7 @@ public class BusinessAlertController {
      * @param resultInfo 告警信息
      */
     @PostMapping("/timeOutAlert")
+    @NoAuth(isPack = false)
     public void timeOutAlert(@RequestBody FireResultInfo resultInfo) {
         try {
             resultInfo.setAppName(parsingAppName(resultInfo.getAppName()));

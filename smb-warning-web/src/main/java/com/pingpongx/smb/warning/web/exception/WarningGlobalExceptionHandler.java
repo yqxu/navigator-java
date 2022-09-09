@@ -1,5 +1,6 @@
 package com.pingpongx.smb.warning.web.exception;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
 /**
@@ -9,6 +10,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
  * @Version:
  */
 @ControllerAdvice
-public class GlobalExceptionHandler {
+public class WarningGlobalExceptionHandler {
 
 }

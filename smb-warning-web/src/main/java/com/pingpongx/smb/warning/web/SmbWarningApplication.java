@@ -1,4 +1,4 @@
-package com.pingpongx.smb.warning.biz;
+package com.pingpongx.smb.warning.web;
 
 import com.google.common.collect.Lists;
 import com.pingpongx.flowmore.cloud.base.server.app.BaseApplicationDocable;

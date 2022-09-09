@@ -14,7 +14,7 @@
     <parent>
         <groupId>com.pingpongx.flowmore.cloud</groupId>
         <artifactId>flowmore-base</artifactId>
-        <version>10.0.16-SNAPSHOT</version>
+        <version>0.0.18-SNAPSHOT</version>
     </parent>
 
     <groupId>com.pingpongx.smb</groupId>

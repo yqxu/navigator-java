@@ -1,8 +1,8 @@
 package com.pingpongx.smb.warning.biz.cache;
 
 import com.alibaba.fastjson.JSONObject;
-import com.pingpongx.business.common.utils.ConvertUtil;
 import com.pingpongx.smb.warning.api.dto.DingDReceiverDTO;
+import com.pingpongx.smb.warning.biz.util.ConvertUtil;
 import com.pingpongx.smb.warning.dal.dataobject.BusinessAlertsUser;
 import com.pingpongx.smb.warning.dal.dataobject.BusinessAlertsUserMap;
 import com.pingpongx.smb.warning.dal.repository.BusinessAlertsUserRepository;
