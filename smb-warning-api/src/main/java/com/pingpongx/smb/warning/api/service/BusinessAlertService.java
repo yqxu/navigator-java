@@ -38,6 +38,12 @@ public interface BusinessAlertService {
     List<AlertUserDTO> getAllPrincipal();
 
     /**
+     * 查询应用负责人
+     * @return 应用负责人数据
+     */
+    AlertUserDTO getPrincipalByEmail(String email);
+
+    /**
      * 清除告警应用缓存数据
      */
     void clearCache();

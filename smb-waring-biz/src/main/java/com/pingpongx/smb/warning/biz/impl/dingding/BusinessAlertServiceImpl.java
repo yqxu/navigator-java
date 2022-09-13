@@ -21,6 +21,7 @@ import com.pingpongx.smb.warning.biz.util.ConvertUtil;
 import com.pingpongx.smb.warning.biz.util.HttpAPI;
 import com.pingpongx.smb.warning.biz.util.HttpResult;
 import com.pingpongx.smb.warning.dal.dataobject.BusinessAlertsApp;
+import com.pingpongx.smb.warning.dal.dataobject.BusinessAlertsUser;
 import com.pingpongx.smb.warning.dal.dataobject.BusinessAlertsUserMap;
 import com.pingpongx.smb.warning.dal.repository.BusinessAlertsAppRepository;
 import com.pingpongx.smb.warning.dal.repository.BusinessAlertsUserRepository;
@@ -202,5 +203,11 @@ public class BusinessAlertServiceImpl implements BusinessAlertService {
     @Override
     public List<AlertUserDTO> getAllPrincipal() {
         return ConvertUtil.convert(businessAlertsUserRepository.lambdaQuery().list(), AlertUserDTO.class);
+    }
+
+    @Override
+    public AlertUserDTO getPrincipalByEmail(String email) {
+        return ConvertUtil
+            .convert(businessAlertsUserRepository.lambdaQuery().eq(BusinessAlertsUser::getEmail, email).last("limit 1").one(), AlertUserDTO.class);
     }
 }

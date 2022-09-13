@@ -3,6 +3,7 @@ package com.pingpongx.smb.warning.web.helper;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.pingpongx.smb.warning.api.dto.AlertUserDTO;
 import com.pingpongx.smb.warning.api.dto.DingDingReceiverDTO;
 import com.pingpongx.smb.warning.api.dto.JiraDTO;
 import com.pingpongx.smb.warning.api.request.JiraGenerateRequest;
@@ -10,10 +11,10 @@ import com.pingpongx.smb.warning.api.service.BusinessAlertService;
 import com.pingpongx.smb.warning.biz.constants.BusinessAlertProperty;
 import com.pingpongx.smb.warning.biz.redis.BusinessAlertsRedisHelper;
 import com.pingpongx.smb.warning.biz.service.DingTalkService;
-import com.pingpongx.smb.warning.web.module.AlertUser;
 import com.pingpongx.smb.warning.web.module.FireResultInfo;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -82,11 +83,7 @@ public class BusinessAlertHelper {
      */
     public void sendDingTalkMarkDown(JiraDTO jiraDTO) {
         String title = "温馨提示：新的JIRA工单消息";
-        AlertUser dealt = new AlertUser();
-        dealt.setCallingPrefix("+86");
-        dealt.setPhone("15757115779");
-//        String phone = ALERT_USER_CACHE.getOrDefault(jiraDTO.getAssignee(), dealt).getPhone();
-        String phone = "ALERT_USER_CACHE.getOrDefault(jiraDTO.getAssignee(), dealt).getPhone()";
+        String phone = Optional.ofNullable(businessAlertService.getPrincipalByEmail(jiraDTO.getAssignee())).map(AlertUserDTO::getPhone).orElse("15757115779");
         jiraDTO.setAssignee(phone);
         new DingTalkService(property.getNotify_jira_change_dingTalk_url()).sendDingTalkMarkDown(title, buildDingTalkContent(jiraDTO), Arrays.asList(phone));
     }
