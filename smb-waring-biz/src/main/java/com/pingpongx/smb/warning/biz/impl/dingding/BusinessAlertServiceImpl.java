@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 import lombok.Data;
@@ -110,7 +111,7 @@ public class BusinessAlertServiceImpl implements BusinessAlertService {
         String domainAccount = findDingDingReceivers(appName).getReceivers().get(0).getDomainAccount();
         String summary = CharSequenceUtil.removeAllLineBreaks(StringEscapeUtils.unescapeJava(HtmlUtil.filter(request.getSummary())));
         summary = StringUtils.substring(summary, 0, 200);
-        String businessLine = getAppDTO(appName).getClassify();
+        String businessLine = Optional.ofNullable(getAppDTO(appName)).map(BusinessAlertsAppDTO::getClassify).orElse("SMB-B2B");
         String testName = (String) JSON.parseObject(jiraAppTestDict).getOrDefault(businessLine, "fuww");
         JSONObject req = new JSONObject();
         JSONObject fields = new JSONObject();
