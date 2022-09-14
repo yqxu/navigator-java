@@ -4,7 +4,3 @@ ppx:
   config:
     publicGroups: mysql, redis, job, flowmore-base, middleware
     overrideLocal: false
-auth:
-  appId: smb-warning
-  appSecret: smb-warning
-  group: smb
