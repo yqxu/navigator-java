@@ -6,6 +6,10 @@ import com.pingpongx.flowmore.cloud.base.server.annotation.NoAuth;
 import com.pingpongx.smb.warning.api.dto.DingDReceiverDTO;
 import com.pingpongx.smb.warning.api.dto.DingDingReceiverDTO;
 import com.pingpongx.smb.warning.api.service.BusinessAlertService;
+import com.pingpongx.smb.warning.biz.alert.InhibitionFactory;
+import com.pingpongx.smb.warning.biz.alert.ThresholdAlertConf;
+import com.pingpongx.smb.warning.biz.alert.threshold.Inhibition;
+import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
 import com.pingpongx.smb.warning.biz.moudle.dingding.AlertsRequest;
 import com.pingpongx.smb.warning.biz.moudle.dingding.FireResults;
 import com.pingpongx.smb.warning.web.helper.BusinessAlertHelper;
@@ -39,8 +43,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class BusinessAlertController {
 
     private final BusinessAlertHelper businessAlertHelper;
-
     private final BusinessAlertService businessAlertService;
+
+    private static Inhibition<FireResults> inhibition = InhibitionFactory.getInhibition(new ThresholdAlertConf<>(5,TimeUnit.Minutes,10,5,FireResults.class));
+
     @PostMapping("/businessAlerts")
     @NoAuth(isPack = false)
     public DingDingReceiverDTO findDingDingReceivers(HttpServletRequest request, @RequestBody AlertsRequest alertsRequest){
@@ -49,9 +55,12 @@ public class BusinessAlertController {
             log.info("AlertController.findDingDingReceivers 请求入参信息:[{}],alertsRequest:[{}]", JSONObject.toJSONString(request.getHeaderNames()),JSONObject.toJSONString(alertsRequest));
             // 调试日志测试无误可删除
             FireResults fireResults = alertsRequest.getAlerts().get(0).getFire_results().get(0);
-            // 兼容容器告警
-            String appName = Optional.ofNullable(fireResults.getAppName()).orElse(fireResults.get_container_name_());
-            return businessAlertHelper.APP_DINGDING_RECEIVER.get(appName);
+
+            if (!inhibition.needInhibition(fireResults)){
+                String appName = Optional.ofNullable(fireResults.getAppName()).orElse(fireResults.get_container_name_());
+                return businessAlertHelper.APP_DINGDING_RECEIVER.get(appName);
+            }
+            return  null;
         } catch (Exception ex) {
             log.warn("钉钉告警签名发生改变请及时配合更新!", ex);
             return DingDingReceiverDTO.builder().receivers(Lists.newArrayList(DingDReceiverDTO.getDefaultUser())).build();
