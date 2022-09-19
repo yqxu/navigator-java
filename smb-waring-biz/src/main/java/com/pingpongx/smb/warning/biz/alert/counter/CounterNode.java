@@ -10,7 +10,7 @@ public class CounterNode {
     public long getTerm() {
         return term;
     }
-
+    int index;
     LongAdder count = new LongAdder();
     long term = 0L;
 
@@ -23,7 +23,13 @@ public class CounterNode {
         return this;
     }
 
-    public static CounterNode getInstance(){
-        return new CounterNode();
+    public int getIndex() {
+        return index;
+    }
+
+    public static CounterNode getInstance(int index){
+        CounterNode ret = new CounterNode();
+        ret.index = index;
+        return ret;
     }
 }

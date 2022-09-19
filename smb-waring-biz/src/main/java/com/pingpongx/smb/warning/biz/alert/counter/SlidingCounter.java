@@ -32,7 +32,7 @@ public class SlidingCounter {
         Preconditions.checkArgument(unit!=null);
         Preconditions.checkArgument(duration>0);
         Stream.iterate(0,i->i+1).limit(partNum)
-                .map(n->CounterNode.getInstance())
+                .map(n->CounterNode.getInstance(n))
                 .forEach(counter -> buckets.add(counter));
     }
 
@@ -66,8 +66,10 @@ public class SlidingCounter {
 
     public long sum(){
         long term = term();
+        int currentIndex = route();
         return buckets.stream()
-                .filter(counterNode -> counterNode.getTerm()==term)
+                .filter(counterNode -> counterNode.getTerm()==term||counterNode.getTerm()==term-1)
+                .filter(counterNode -> !(counterNode.getTerm()==term-1&&counterNode.getIndex()<=currentIndex))
                 .map(CounterNode::getCount)
                 .mapToLong(LongAdder::sum).sum();
     }
