@@ -47,8 +47,9 @@ public class BusinessAlertController {
     private final BusinessAlertService businessAlertService;
 
     public static void main(String[] args){
-
-        inhibition.needInhibition(new FireResults());
+        FireResults test = new FireResults();
+        test.setContent("dfsafdaa No provider available fromfdpsaojfoipans");
+        inhibition.needInhibition(test);
     }
     private static Inhibition<FireResults> inhibition = InhibitionFactory.getInhibition(new ThresholdAlertConf<>(5,TimeUnit.Minutes,10,5,FireResults.class));
 
