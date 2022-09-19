@@ -1,8 +1,8 @@
 package com.pingpongx.smb.warning.biz.rules;
 
-import com.pingpongx.smb.warning.biz.moudle.dingding.FireResultInfo;
+import com.pingpongx.smb.warning.biz.moudle.dingding.FireResults;
 
-public class DubbleTimeOut implements Rule<FireResultInfo>{
+public class DubbleTimeOut implements Rule<FireResults>{
 
     /**
      *[Message]:告警内容: [DUBBO] Fail to connect to HeaderExchangeClient [channel=org.apache.dubbo.remoting.transport.netty4.NettyClient
@@ -15,11 +15,11 @@ public class DubbleTimeOut implements Rule<FireResultInfo>{
     private static String except="[DUBBO] Fail to connect to HeaderExchangeClient [channel=org.apache.dubbo.remoting.transport.netty4.NettyClient";
     private static String dubboTimeOut = "No provider available from";
     @Override
-    public boolean contentMatch(FireResultInfo content) {
-        if (content==null||content.getMessage() == null){
+    public boolean contentMatch(FireResults content) {
+        if (content==null||content.getContent() == null){
             return false;
         }
-        if (content.getMessage().contains(except)||content.getMessage().contains(dubboTimeOut)){
+        if (content.getContent().contains(except)||content.getContent().contains(dubboTimeOut)){
             return true;
         }
         return false;

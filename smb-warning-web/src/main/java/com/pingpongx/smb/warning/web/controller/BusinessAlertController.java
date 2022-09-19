@@ -48,7 +48,7 @@ public class BusinessAlertController {
 
     public static void main(String[] args){
 
-        inhibition.needInhibition(null);
+        inhibition.needInhibition(new FireResults());
     }
     private static Inhibition<FireResults> inhibition = InhibitionFactory.getInhibition(new ThresholdAlertConf<>(5,TimeUnit.Minutes,10,5,FireResults.class));
 
