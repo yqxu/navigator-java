@@ -4,7 +4,7 @@ import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
 
 
 
-public class ThresholdAlertConf<T> implements AlertConf<T>{
+public class ThresholdAlertConf<T> implements AlertConf<T>,CountNeededAlertConf<T>{
     public ThresholdAlertConf(long duration, TimeUnit unit, int partNum, long alertThreshold, Class<T> sourceType) {
         this.duration = duration;
         this.unit = unit;

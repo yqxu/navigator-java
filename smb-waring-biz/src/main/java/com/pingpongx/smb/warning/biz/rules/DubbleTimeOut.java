@@ -16,7 +16,7 @@ public class DubbleTimeOut implements Rule<FireResultInfo>{
     private static String dubboTimeOut = "No provider available from";
     @Override
     public boolean contentMatch(FireResultInfo content) {
-        if (content.getMessage() == null){
+        if (content==null||content.getMessage() == null){
             return false;
         }
         if (content.getMessage().contains(except)||content.getMessage().contains(dubboTimeOut)){

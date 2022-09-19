@@ -6,6 +6,7 @@ import com.pingpongx.flowmore.cloud.base.server.annotation.NoAuth;
 import com.pingpongx.smb.warning.api.dto.DingDReceiverDTO;
 import com.pingpongx.smb.warning.api.dto.DingDingReceiverDTO;
 import com.pingpongx.smb.warning.api.service.BusinessAlertService;
+import com.pingpongx.smb.warning.biz.alert.CountNeededAlertConf;
 import com.pingpongx.smb.warning.biz.alert.InhibitionFactory;
 import com.pingpongx.smb.warning.biz.alert.ThresholdAlertConf;
 import com.pingpongx.smb.warning.biz.alert.threshold.Inhibition;
@@ -45,6 +46,10 @@ public class BusinessAlertController {
     private final BusinessAlertHelper businessAlertHelper;
     private final BusinessAlertService businessAlertService;
 
+    public static void main(String[] args){
+
+        inhibition.needInhibition(null);
+    }
     private static Inhibition<FireResults> inhibition = InhibitionFactory.getInhibition(new ThresholdAlertConf<>(5,TimeUnit.Minutes,10,5,FireResults.class));
 
     @PostMapping("/businessAlerts")
