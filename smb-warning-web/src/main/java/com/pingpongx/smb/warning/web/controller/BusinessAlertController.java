@@ -55,10 +55,11 @@ public class BusinessAlertController {
             log.info("AlertController.findDingDingReceivers 请求入参信息:[{}],alertsRequest:[{}]", JSONObject.toJSONString(request.getHeaderNames()),JSONObject.toJSONString(alertsRequest));
             // 调试日志测试无误可删除
             FireResults fireResults = alertsRequest.getAlerts().get(0).getFire_results().get(0);
-
             if (!inhibition.needInhibition(fireResults)){
                 String appName = Optional.ofNullable(fireResults.getAppName()).orElse(fireResults.get_container_name_());
                 return businessAlertHelper.APP_DINGDING_RECEIVER.get(appName);
+            }else{
+                log.info("告警被抑制：\n"+fireResults);
             }
             return  null;
         } catch (Exception ex) {
