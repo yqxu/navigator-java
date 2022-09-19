@@ -55,6 +55,7 @@ public class BusinessAlertController {
             log.info("AlertController.findDingDingReceivers 请求入参信息:[{}],alertsRequest:[{}]", JSONObject.toJSONString(request.getHeaderNames()),JSONObject.toJSONString(alertsRequest));
             // 调试日志测试无误可删除
             FireResults fireResults = alertsRequest.getAlerts().get(0).getFire_results().get(0);
+            //TODO 抑制策略较多较复杂时需要在rete下编排规则，暂时写死，rete第一版简单用trie实现
             if (!inhibition.needInhibition(fireResults)){
                 String appName = Optional.ofNullable(fireResults.getAppName()).orElse(fireResults.get_container_name_());
                 return businessAlertHelper.APP_DINGDING_RECEIVER.get(appName);
