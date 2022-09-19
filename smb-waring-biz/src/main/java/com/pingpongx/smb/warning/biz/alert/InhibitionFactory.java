@@ -15,6 +15,7 @@ public class InhibitionFactory {
         ThresholdAlertConf c = (ThresholdAlertConf)conf;
         in.setCounter(SlidingCounter.of(conf));
         //根据alertType 获取 rule
+        //TODO 抑制策略从DB 或者配置中心加载
         DubbleTimeOut rule = new DubbleTimeOut();
         in.setMatcher(rule);
         in.setThreshold(c.getAlertThreshold());
