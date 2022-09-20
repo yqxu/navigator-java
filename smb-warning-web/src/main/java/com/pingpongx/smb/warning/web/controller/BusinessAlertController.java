@@ -51,7 +51,7 @@ public class BusinessAlertController {
         test.setContent("dfsafdaa No provider available fromfdpsaojfoipans");
         inhibition.needInhibition(test);
     }
-    private static Inhibition<FireResults> inhibition = InhibitionFactory.getInhibition(new ThresholdAlertConf<>(5,TimeUnit.Minutes,10,5,FireResults.class));
+    private static Inhibition<FireResults> inhibition = InhibitionFactory.getInhibition(new ThresholdAlertConf<>(5,TimeUnit.Minutes,10,10,FireResults.class));
 
     @PostMapping("/businessAlerts")
     @NoAuth(isPack = false)
