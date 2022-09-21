@@ -9,6 +9,7 @@ import com.pingpongx.smb.warning.api.service.BusinessAlertService;
 import com.pingpongx.smb.warning.biz.alert.InhibitionFactory;
 import com.pingpongx.smb.warning.biz.alert.ThresholdAlertConf;
 import com.pingpongx.smb.warning.biz.alert.threshold.Inhibition;
+import com.pingpongx.smb.warning.biz.alert.threshold.InhibitionResultEnum;
 import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
 import com.pingpongx.smb.warning.biz.moudle.dingding.AlertsRequest;
 import com.pingpongx.smb.warning.biz.moudle.dingding.FireResults;
@@ -67,6 +68,12 @@ public class BusinessAlertController {
         inhibitions.add(inhibitionBizExp);
     }
 
+    private InhibitionResultEnum needInhibition(FireResults fireResults){
+        return inhibitions.parallelStream().map(inhibition->inhibition.needInhibition(fireResults))
+                .reduce((enum1,enum2)->enum1.getLevel()>enum2.getLevel()?enum1:enum2)
+                .orElse(InhibitionResultEnum.UnMatched);
+    }
+
     @PostMapping("/businessAlerts")
     @NoAuth(isPack = false)
     public DingDingReceiverDTO findDingDingReceivers(HttpServletRequest request, @RequestBody AlertsRequest alertsRequest){
@@ -76,13 +83,16 @@ public class BusinessAlertController {
             // 调试日志测试无误可删除
             FireResults fireResults = alertsRequest.getAlerts().get(0).getFire_results().get(0);
             //TODO 抑制策略较多较复杂时需要在rete下编排规则，暂时写死，rete第一版简单用trie实现
-            if (!inhibition.needInhibition(fireResults)){
-                String appName = Optional.ofNullable(fireResults.getAppName()).orElse(fireResults.get_container_name_());
-                return businessAlertHelper.APP_DINGDING_RECEIVER.get(appName);
-            }else{
+            InhibitionResultEnum inhibitResult = needInhibition(fireResults);
+            if (inhibitResult.isNeedInhibition()){
                 log.info("告警被抑制：\n"+fireResults);
+                return null;
             }
-            return  null;
+            if (inhibitResult.equals(InhibitionResultEnum.MatchedAndNeedInhibition)){
+                log.error("告警被抑制后,超出阈值依然抛出：\n"+fireResults.getContent());
+            }
+            String appName = Optional.ofNullable(fireResults.getAppName()).orElse(fireResults.get_container_name_());
+            return businessAlertHelper.APP_DINGDING_RECEIVER.get(appName);
         } catch (Exception ex) {
             log.warn("钉钉告警签名发生改变请及时配合更新!", ex);
             return DingDingReceiverDTO.builder().receivers(Lists.newArrayList(DingDReceiverDTO.getDefaultUser())).build();

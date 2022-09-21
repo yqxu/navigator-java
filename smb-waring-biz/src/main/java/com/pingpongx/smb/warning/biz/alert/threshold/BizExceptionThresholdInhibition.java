@@ -9,15 +9,15 @@ public class BizExceptionThresholdInhibition<T> implements Inhibition<T>{
     SlidingCounter counter;
     long threshold;
 
-    public boolean needInhibition(T date){
+    public InhibitionResultEnum needInhibition(T date){
         if (!matcher.contentMatch(date)){
-            return false;
+            return InhibitionResultEnum.UnMatched;
         }
         counter.increment();
         if (counter.sum()>=threshold){
-            return false;
+            return InhibitionResultEnum.MatchedAndNeedThrow;
         }
-        return true;
+        return InhibitionResultEnum.MatchedAndNeedInhibition;
     }
 
     public Rule<T> getMatcher() {
