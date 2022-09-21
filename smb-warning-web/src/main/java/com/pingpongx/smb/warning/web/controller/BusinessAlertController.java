@@ -6,19 +6,24 @@ import com.pingpongx.flowmore.cloud.base.server.annotation.NoAuth;
 import com.pingpongx.smb.warning.api.dto.DingDReceiverDTO;
 import com.pingpongx.smb.warning.api.dto.DingDingReceiverDTO;
 import com.pingpongx.smb.warning.api.service.BusinessAlertService;
-import com.pingpongx.smb.warning.biz.alert.CountNeededAlertConf;
 import com.pingpongx.smb.warning.biz.alert.InhibitionFactory;
 import com.pingpongx.smb.warning.biz.alert.ThresholdAlertConf;
 import com.pingpongx.smb.warning.biz.alert.threshold.Inhibition;
 import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
 import com.pingpongx.smb.warning.biz.moudle.dingding.AlertsRequest;
 import com.pingpongx.smb.warning.biz.moudle.dingding.FireResults;
+import com.pingpongx.smb.warning.biz.rules.BizExceptionRule;
+import com.pingpongx.smb.warning.biz.rules.DubbleTimeOut;
 import com.pingpongx.smb.warning.web.helper.BusinessAlertHelper;
 import com.pingpongx.smb.warning.web.module.FireResultInfo;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +56,16 @@ public class BusinessAlertController {
         test.setContent("dfsafdaa No provider available fromfdpsaojfoipans");
         inhibition.needInhibition(test);
     }
-    private static Inhibition<FireResults> inhibition = InhibitionFactory.getInhibition(new ThresholdAlertConf<>(5,TimeUnit.Minutes,10,10,FireResults.class));
+    private static Inhibition<FireResults> inhibition = InhibitionFactory.getInhibition(new ThresholdAlertConf<>(5,TimeUnit.Minutes,10,10,FireResults.class),new DubbleTimeOut());
+    private static Inhibition<FireResults> inhibitionBizExp = InhibitionFactory.getInhibition(new ThresholdAlertConf<>(5,TimeUnit.Minutes,10,10,FireResults.class),new BizExceptionRule());
+
+    List<Inhibition<FireResults>> inhibitions = new ArrayList<>();
+
+    @PostConstruct
+    void init(){
+        inhibitions.add(inhibition);
+        inhibitions.add(inhibitionBizExp);
+    }
 
     @PostMapping("/businessAlerts")
     @NoAuth(isPack = false)

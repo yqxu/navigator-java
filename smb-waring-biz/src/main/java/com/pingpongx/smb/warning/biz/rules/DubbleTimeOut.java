@@ -15,12 +15,14 @@ public class DubbleTimeOut implements Rule<FireResults>{
     private static String except="[DUBBO] Fail to connect to HeaderExchangeClient [channel=org.apache.dubbo.remoting.transport.netty4.NettyClient";
     private static String except1 = "No provider available from";
     private static String except2 = "Invoke remote method timeout. method: ";
+
+    private static String except3 = "Tried 1 times of the providers [";
     @Override
     public boolean contentMatch(FireResults content) {
         if (content==null||content.getContent() == null){
             return false;
         }
-        if (content.getContent().contains(except)||content.getContent().contains(except1)||content.getContent().contains(except2)){
+        if (content.getContent().contains(except)||content.getContent().contains(except1)||content.getContent().contains(except2)||content.getContent().contains(except3)){
             return true;
         }
         return false;

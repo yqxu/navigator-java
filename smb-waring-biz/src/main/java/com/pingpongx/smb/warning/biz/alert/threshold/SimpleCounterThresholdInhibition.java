@@ -3,7 +3,7 @@ package com.pingpongx.smb.warning.biz.alert.threshold;
 import com.pingpongx.smb.warning.biz.alert.counter.SlidingCounter;
 import com.pingpongx.smb.warning.biz.rules.Rule;
 
-public class ThresholdInhibition<T> implements Inhibition<T>{
+public class SimpleCounterThresholdInhibition<T> implements Inhibition<T>{
     //chain needed?
     Rule<T> matcher;
     SlidingCounter counter;
