@@ -17,9 +17,9 @@ public enum ConversationTypeEnum {
      * 会话消息类型
      */
 
-    SING_TALK("SING_TALK", "1"),
+    SINGLE_CHAT("SINGLE_CHAT", "1"),
 
-    GROUP_TALK("GROUP_TALK", "2");
+    GROUP_CHAT("GROUP_CHAT", "2");
 
     private String code;
     private String value;

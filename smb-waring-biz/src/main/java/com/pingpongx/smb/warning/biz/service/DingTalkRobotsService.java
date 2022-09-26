@@ -28,7 +28,6 @@ public class DingTalkRobotsService {
         //回复类型，1-单聊,2-群聊
         String conversationType = json.getString("conversationType");
         ConversationTypeEnum typeEnum = ConversationTypeEnum.getByValue(conversationType);
-        String conversationId = json.getString("conversationId");
         String content = json.getJSONObject("text").getString("content").trim();
         log.info("请求问题:{}", content);
         SmbQaLibrary qaLibrary = qaLibraryRepository.getOneQa(content);
@@ -42,13 +41,16 @@ public class DingTalkRobotsService {
             msgType = qaLibrary.getMsgType();
         }
         String msgParam = StringUtils.EMPTY;
-        // 先做群聊模式
         switch (typeEnum) {
-            case SING_TALK:
-                break;
-            case GROUP_TALK:
+            case SINGLE_CHAT:
+                String senderStaffId = json.getString("senderStaffId");
                 msgParam = "{\"content\":\"" + answer + "\"}";
-                robotsClient.groupTalk(conversationId, msgParam, msgType);
+                robotsClient.singleChat(senderStaffId, msgParam, msgType);
+                break;
+            case GROUP_CHAT:
+                String conversationId = json.getString("conversationId");
+                msgParam = "{\"content\":\"" + answer + "\"}";
+                robotsClient.groupChat(conversationId, msgParam, msgType);
                 break;
             default:
         }

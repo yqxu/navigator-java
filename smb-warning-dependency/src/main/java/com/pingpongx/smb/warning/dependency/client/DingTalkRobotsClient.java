@@ -27,8 +27,10 @@ public class DingTalkRobotsClient {
     private String dingTalkAppSecret;
     @Value("${smb.dingtalk.robots.access.token.url:https://api.dingtalk.com/v1.0/oauth2/accessToken}")
     private String accessTokenUrl;
-    @Value("${smb.dingtalk.robots.group.talk.url:https://api.dingtalk.com/v1.0/robot/groupMessages/send}")
-    private String groupTokenUrl;
+    @Value("${smb.dingtalk.robots.group.chat.url:https://api.dingtalk.com/v1.0/robot/groupMessages/send}")
+    private String groupChatUrl;
+    @Value("${smb.dingtalk.robots.group.chat.url:https://api.dingtalk.com/v1.0/robot/oToMessages/batchSend}")
+    private String singleChatUrl;
 
     private static final String HEADER_ACCESS_TOKEN = "x-acs-dingtalk-access-token";
 
@@ -44,7 +46,7 @@ public class DingTalkRobotsClient {
     }
 
     @SneakyThrows
-    public void groupTalk(String openConversationId, String msgParam, String msgKey) {
+    public void groupChat(String openConversationId, String msgParam, String msgKey) {
         JSONObject params = new JSONObject();
         params.put("robotCode", dingTalkAppKey);
         params.put("openConversationId", openConversationId);
@@ -52,9 +54,26 @@ public class DingTalkRobotsClient {
         params.put("msgKey", msgKey);
 
         List<Header> headers = HttpFluent.addHeader(new BasicHeader(HEADER_ACCESS_TOKEN, getToken()));
-        String content = HttpFluent.post(groupTokenUrl, params.toJSONString(), headers);
+        String content = HttpFluent.post(groupChatUrl, params.toJSONString(), headers);
         JSONObject respJson = JSON.parseObject(content);
         log.info("respJson is:{}", respJson.toJSONString());
     }
+
+
+    @SneakyThrows
+    public void singleChat(String userIds, String msgParam, String msgKey) {
+        JSONObject params = new JSONObject();
+        params.put("robotCode", dingTalkAppKey);
+        params.put("userIds", Lists.newArrayList(userIds));
+        params.put("msgParam", msgParam);
+        params.put("msgKey", msgKey);
+
+        List<Header> headers = HttpFluent.addHeader(new BasicHeader(HEADER_ACCESS_TOKEN, getToken()));
+        String content = HttpFluent.post(singleChatUrl, params.toJSONString(), headers);
+        JSONObject respJson = JSON.parseObject(content);
+        log.info("respJson is:{}", respJson.toJSONString());
+    }
+
+
 
 }
