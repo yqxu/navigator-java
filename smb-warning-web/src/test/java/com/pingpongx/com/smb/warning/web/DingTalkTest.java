@@ -24,7 +24,8 @@ public class DingTalkTest extends BaseServerTest {
     public void test_send_group_talk() {
         String conversationId = "cidCrgIRWMxDT5HL20aXDw1Kw==";
         String msgKey = "sampleText";
-        String msgParam = "{\"content\":\"今天你发版了没\"}";
+        String answer = "cc：" + System.currentTimeMillis();
+        String msgParam = "{\"content\":\"" + answer + "\"}";
         dingTalkRobotsClient.groupTalk(conversationId, msgParam, msgKey);
     }
 

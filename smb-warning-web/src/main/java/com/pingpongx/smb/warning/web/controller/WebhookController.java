@@ -4,8 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.pingpongx.flowmore.cloud.base.server.annotation.NoAuth;
 import com.pingpongx.smb.warning.api.dto.JiraDTO;
-import com.pingpongx.smb.warning.biz.service.AnsweringService;
-import com.pingpongx.smb.warning.biz.service.DingTalkService;
+import com.pingpongx.smb.warning.biz.service.DingTalkRobotsService;
 import com.pingpongx.smb.warning.biz.util.JiraUtils;
 import com.pingpongx.smb.warning.web.helper.BusinessAlertHelper;
 import io.swagger.annotations.ApiOperation;
@@ -30,7 +29,7 @@ public class WebhookController {
 
     private final BusinessAlertHelper businessAlertHelper;
 
-    private final AnsweringService answeringService;
+    private final DingTalkRobotsService  dingTalkRobotsService;
 
     @ApiOperation("jira-消息回调通知")
     @PostMapping("/jirahook")
@@ -50,7 +49,7 @@ public class WebhookController {
     @PostMapping(value = "/robots/dingtalk")
     public void robotsCallBack(@RequestBody(required = false) JSONObject json) {
         log.info("{}", JSON.toJSONString(json));
-        answeringService.responseDingTalk(json);
+        dingTalkRobotsService.responseDingTalk(json);
     }
 
 
