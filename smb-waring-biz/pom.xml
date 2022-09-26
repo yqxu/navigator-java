@@ -1,78 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>smb-warning</artifactId>
-    <groupId>com.pingpongx.smb</groupId>
-    <version>1.0.0-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>smb-warning</artifactId>
+        <groupId>com.pingpongx.smb</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>smb-waring-biz</artifactId>
+    <artifactId>smb-waring-biz</artifactId>
 
 
-  <properties>
-    <maven.deploy.skip>true</maven.deploy.skip>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
-  </properties>
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
 
-  <dependencies>
+    <dependencies>
 
-    <dependency>
-      <groupId>com.pingpongx.smb</groupId>
-      <artifactId>smb-warning-dependency</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
+        <dependency>
+            <groupId>com.pingpongx.smb</groupId>
+            <artifactId>smb-warning-dependency</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
 
-    <dependency>
-      <groupId>com.pingpongx.smb</groupId>
-      <artifactId>smb-warning-api</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
+        <dependency>
+            <groupId>com.pingpongx.smb</groupId>
+            <artifactId>smb-warning-api</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
 
-    <dependency>
-      <groupId>com.pingpongx.smb</groupId>
-      <artifactId>smb-warning-dal</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-    </dependency>
+        <dependency>
+            <groupId>com.pingpongx.smb</groupId>
+            <artifactId>smb-warning-dal</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
 
-    <!--flowmore-base-server-->
-    <dependency>
-      <groupId>com.pingpongx.flowmore.cloud</groupId>
-      <artifactId>flowmore-base-server</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>hutool-core</artifactId>
-          <groupId>cn.hutool</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+        <!--flowmore-base-server-->
+        <dependency>
+            <groupId>com.pingpongx.flowmore.cloud</groupId>
+            <artifactId>flowmore-base-server</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>hutool-core</artifactId>
+                    <groupId>cn.hutool</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-    <dependency>
-      <groupId>com.aliyun</groupId>
-      <artifactId>alibaba-dingtalk-service-sdk</artifactId>
-      <version>2.0.0</version>
-    </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>alibaba-dingtalk-service-sdk</artifactId>
+            <version>2.0.0</version>
+        </dependency>
 
-    <dependency>
-      <groupId>com.pingpongx.passwordcallback</groupId>
-      <artifactId>passwordcallback</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.pingpongx.business</groupId>
-      <artifactId>mq-spring-boot-starter</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.pingpongx.business</groupId>
-      <artifactId>dubbo-spring-boot-starter</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-redis</artifactId>
-    </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>com.pingpongx.passwordcallback</groupId>
+            <artifactId>passwordcallback</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.pingpongx.business</groupId>
+            <artifactId>mq-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.pingpongx.business</groupId>
+            <artifactId>dubbo-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- fm侧http包装类 -->
+        <dependency>
+            <groupId>com.pingpongx.business</groupId>
+            <artifactId>fm-common-httpclient</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+      <!-- 钉钉开发者包 -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>dingtalk</artifactId>
+            <version>1.4.39</version>
+        </dependency>
+    </dependencies>
 
 </project>
 
