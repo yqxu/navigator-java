@@ -6,7 +6,6 @@ import com.pingpongx.smb.warning.dal.dataobject.SmbQaLibrary;
 import com.pingpongx.smb.warning.dal.repository.SmbQaLibraryRepository;
 import com.pingpongx.smb.warning.dependency.client.DingTalkRobotsClient;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,25 +30,22 @@ public class DingTalkRobotsService {
         String content = json.getJSONObject("text").getString("content").trim();
         log.info("请求问题:{}", content);
         SmbQaLibrary qaLibrary = qaLibraryRepository.getOneQa(content);
-        String answer;
+        String msgParam;
         String msgType;
         if (qaLibrary == null) {
-            answer = "您问题的答案暂时不存在,可以联系管理员维护相关信息!";
+            msgParam = "{\"content\":\"您问题的答案暂时不存在,可以联系管理员维护相关信息!\"}";
             msgType = "sampleText";
         } else {
-            answer = qaLibrary.getAnswer();
+            msgParam = qaLibrary.getAnswer();
             msgType = qaLibrary.getMsgType();
         }
-        String msgParam = StringUtils.EMPTY;
         switch (typeEnum) {
             case SINGLE_CHAT:
                 String senderStaffId = json.getString("senderStaffId");
-                msgParam = "{\"content\":\"" + answer + "\"}";
                 robotsClient.singleChat(senderStaffId, msgParam, msgType);
                 break;
             case GROUP_CHAT:
                 String conversationId = json.getString("conversationId");
-                msgParam = "{\"content\":\"" + answer + "\"}";
                 robotsClient.groupChat(conversationId, msgParam, msgType);
                 break;
             default:
