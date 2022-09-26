@@ -29,7 +29,8 @@ public class DingTalkRobotsService {
         String conversationType = json.getString("conversationType");
         ConversationTypeEnum typeEnum = ConversationTypeEnum.getByValue(conversationType);
         String conversationId = json.getString("conversationId");
-        String content = json.getJSONObject("text").getString("content");
+        String content = json.getJSONObject("text").getString("content").trim();
+        log.info("请求问题:{}", content);
         SmbQaLibrary qaLibrary = qaLibraryRepository.getOneQa(content);
         String answer;
         String msgType;
@@ -53,6 +54,5 @@ public class DingTalkRobotsService {
         }
         log.info("发送钉钉:{} 成功:{}", typeEnum, msgParam);
     }
-
 
 }

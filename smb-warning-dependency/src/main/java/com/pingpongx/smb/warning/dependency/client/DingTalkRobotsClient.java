@@ -40,9 +40,7 @@ public class DingTalkRobotsClient {
         String content = HttpFluent.post(accessTokenUrl, params.toJSONString(), Lists.newArrayList());
         JSONObject respJson = JSON.parseObject(content);
         log.info("respJson is:{}", respJson.toJSONString());
-        String accessToken = respJson.getString("accessToken");
-        log.info("access_token :{}", accessToken);
-        return accessToken;
+        return respJson.getString("accessToken");
     }
 
     @SneakyThrows
