@@ -45,11 +45,11 @@ public class WebhookController {
     @NoAuth(isPack = false)
     @PostMapping(value = "/robots/dingtalk")
     public void robotsCallBack(@RequestBody(required = false) JSONObject json) {
-        log.info(JSON.toJSONString(json));
+        log.info("{}", JSON.toJSONString(json));
         String content = json.getJSONObject("text").getString("content");
         String userId = json.get("senderStaffId").toString();
-        log.info(content);
-        log.info(userId);
+        log.info("{}", content);
+        log.info("{}", userId);
     }
 
 
