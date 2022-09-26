@@ -47,7 +47,7 @@ public class DingTalkRobotsService {
                 break;
             case GROUP_TALK:
                 msgParam = "{\"content\":\"" + answer + "\"}";
-                robotsClient.groupTalk(conversationId, msgType, msgParam);
+                robotsClient.groupTalk(conversationId, msgParam, msgType);
                 break;
             default:
         }
