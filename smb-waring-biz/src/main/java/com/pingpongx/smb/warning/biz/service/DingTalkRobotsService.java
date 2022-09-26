@@ -31,21 +31,27 @@ public class DingTalkRobotsService {
         String conversationId = json.getString("conversationId");
         String content = json.getJSONObject("text").getString("content");
         SmbQaLibrary qaLibrary = qaLibraryRepository.getOneQa(content);
-        String msgType = StringUtils.EMPTY;
+        String answer;
+        String msgType;
+        if (qaLibrary == null) {
+            answer = "您问题的答案暂时不存在,可以联系管理员维护相关信息!";
+            msgType = "sampleText";
+        } else {
+            answer = qaLibrary.getAnswer();
+            msgType = qaLibrary.getMsgType();
+        }
         String msgParam = StringUtils.EMPTY;
         // 先做群聊模式
         switch (typeEnum) {
             case SING_TALK:
                 break;
             case GROUP_TALK:
-                msgType = qaLibrary.getMsgType();
-                msgParam = "{\"content\":\"" + qaLibrary.getAnswer() + "\"}";
+                msgParam = "{\"content\":\"" + answer + "\"}";
                 robotsClient.groupTalk(conversationId, msgType, msgParam);
                 break;
             default:
         }
         log.info("发送钉钉:{} 成功:{}", typeEnum, msgParam);
-
     }
 
 
