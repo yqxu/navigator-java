@@ -72,20 +72,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
-
-        <!-- fm侧http包装类 -->
-        <dependency>
-            <groupId>com.pingpongx.business</groupId>
-            <artifactId>fm-common-httpclient</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-
-      <!-- 钉钉开发者包 -->
-        <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>dingtalk</artifactId>
-            <version>1.4.39</version>
-        </dependency>
     </dependencies>
 
 </project>
