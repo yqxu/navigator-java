@@ -38,4 +38,13 @@ public enum ConversationTypeEnum {
         }
         throw new BizException(ErrorCode.BIZ_BREAK, "钉钉会话消息类型异常");
     }
+
+    public static ConversationTypeEnum getByCode(String code) {
+        for (ConversationTypeEnum statusEnum : values()) {
+            if (statusEnum.getCode().equals(code)) {
+                return statusEnum;
+            }
+        }
+        throw new BizException(ErrorCode.BIZ_BREAK, "钉钉会话消息类型异常");
+    }
 }
