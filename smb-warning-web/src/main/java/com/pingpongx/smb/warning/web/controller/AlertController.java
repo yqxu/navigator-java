@@ -1,5 +1,6 @@
 package com.pingpongx.smb.warning.web.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.pingpongx.flowmore.cloud.base.server.annotation.NoAuth;
@@ -9,6 +10,7 @@ import com.pingpongx.smb.warning.api.dto.JiraDTO;
 import com.pingpongx.smb.warning.api.service.BusinessAlertService;
 import com.pingpongx.smb.warning.biz.alert.InhibitionFactory;
 import com.pingpongx.smb.warning.biz.alert.ThresholdAlertConf;
+import com.pingpongx.smb.warning.biz.alert.model.SlsAlert;
 import com.pingpongx.smb.warning.biz.alert.threshold.Inhibition;
 import com.pingpongx.smb.warning.biz.alert.threshold.InhibitionResultEnum;
 import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
@@ -71,6 +73,8 @@ public class AlertController {
     @NoAuth(isPack = false)
     public DingDingReceiverDTO createAlertWorkOrder(@PathVariable("depart") String depart, @RequestBody String message) {
         try {
+            SlsAlert slsAlert = JSON.parseObject(message, SlsAlert.class);
+
             log.info("request:\n"+message);
         } catch (Exception ex) {
             log.warn("业务告警解析异常!", ex);
