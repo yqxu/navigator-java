@@ -10,7 +10,7 @@ import com.pingpongx.smb.warning.api.request.JiraGenerateRequest;
 import com.pingpongx.smb.warning.api.service.BusinessAlertService;
 import com.pingpongx.smb.warning.biz.constants.BusinessAlertProperty;
 import com.pingpongx.smb.warning.biz.redis.BusinessAlertsRedisHelper;
-import com.pingpongx.smb.warning.biz.service.DingTalkService;
+import com.pingpongx.smb.warning.biz.depends.DingTalkService;
 import com.pingpongx.smb.warning.web.module.FireResultInfo;
 import java.util.Arrays;
 import java.util.List;

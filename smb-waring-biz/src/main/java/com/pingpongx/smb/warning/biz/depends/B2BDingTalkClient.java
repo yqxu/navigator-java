@@ -1,4 +1,4 @@
-package com.pingpongx.smb.warning.biz.service;
+package com.pingpongx.smb.warning.biz.depends;
 
 import com.pingpongx.smb.warning.biz.constant.Constant;
 import lombok.extern.slf4j.Slf4j;
@@ -12,8 +12,13 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component
-public class MerchantDingTalkClient extends AbstractPPDingTalkClient implements PPDingTalkClient {
+public class B2BDingTalkClient extends AbstractPPDingTalkClient implements PPDingTalkClient {
     public String getNotifyUrl(){
-        return Constant.Merchant.url;
+        return Constant.B2B.name;
+    }
+
+    @Override
+    public String getDepartName() {
+        return Constant.B2B.name;
     }
 }
