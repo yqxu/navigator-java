@@ -1,7 +1,6 @@
 package com.pingpongx.smb.warning.web.parser;
 
 import io.vavr.Tuple;
-import javafx.scene.control.Alert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
