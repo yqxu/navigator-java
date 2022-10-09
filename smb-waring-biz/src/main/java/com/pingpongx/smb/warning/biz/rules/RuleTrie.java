@@ -107,7 +107,7 @@ public class RuleTrie {
     }
 
     private RuleTrie putOr(RuleOr or, RuleHandler handler){
-        or.orRuleSet.stream().forEach(r->putOnly(or,handler));
+        or.orRuleSet.stream().forEach(r->putOnly(r,handler));
         return this;
     }
 
