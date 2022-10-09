@@ -28,6 +28,7 @@ public class BatchStrContains implements BatchMatcher<String>{
             ruleSet.add(ruleIdentify);
             FSMNode<Character,Set<String>> fsmNode = new FSMNode<>();
             fsmNode.setData(ruleSet);
+            fsmNode.setNodeRef(node);
             node.setData(fsmNode);
         }else{
             node.getData().getData().add(ruleIdentify);
@@ -54,14 +55,9 @@ public class BatchStrContains implements BatchMatcher<String>{
 
     @Override
     public void putRule(RuleLeaf<?, String> rule) {
-            String exp = rule.excepted();
-            Node<Character, FSMNode<Character, Set<String>>> node = trie.getOrCreate(IdentityPath.of(exp.toCharArray()));
-            Set<String> ruleSet = node.getData().getData();
-            if (ruleSet == null){
-                ruleSet = new HashSet<>();
-                node.getData().setData(ruleSet);
-            }
-            ruleSet.add(rule.getIdentify());
+        String exp = rule.excepted();
+        //TODO:Init 完成节点做一次reindex
+        putAndReIndex(exp,rule.getIdentify());
     }
 
 }
