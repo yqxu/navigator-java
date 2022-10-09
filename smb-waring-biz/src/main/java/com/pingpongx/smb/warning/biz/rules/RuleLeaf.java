@@ -23,4 +23,18 @@ public abstract class RuleLeaf<D,T> implements Rule<D,T>, Identified<String> {
     public String getIdentify(){
         return dependsObject().getSimpleName()+"."+dependsAttr()+"->"+operatorType().getIdentify()+":"+excepted();
     }
+
+    @Override
+    public int compareTo(Rule<D, T> o) {
+        int one,other ;
+        one = this.operatorType().sortBy();
+        if (o instanceof  RuleAnd){
+            other = -1;
+        }else if (o instanceof  RuleOr){
+            other = -2;
+        }else {
+            other = ((RuleLeaf<D, T>) this).operatorType().sortBy();
+        }
+        return one - other;
+    }
 }

@@ -37,24 +37,5 @@ public interface Rule<D,T> extends Comparable<Rule<D,T>> {
         return RuleOr.newOr(this);
     }
 
-    @Override
-    default int compareTo(Rule<D, T> o) {
-        int one,other ;
-        if (this instanceof  RuleAnd){
-            one = -1;
-        }else if (this instanceof  RuleOr){
-            one = -2;
-        }else {
-            one = ((RuleLeaf<D, T>) this).operatorType().sortBy();
-        }
 
-        if (o instanceof  RuleAnd){
-            other = -1;
-        }else if (o instanceof  RuleOr){
-            other = -2;
-        }else {
-            other = ((RuleLeaf<D, T>) this).operatorType().sortBy();
-        }
-        return one - other;
-    }
 }

@@ -36,4 +36,18 @@ public class RuleAnd implements Rule{
         }
     }
 
+    @Override
+    public int compareTo(Object o) {
+        int one,other ;
+        one = -1;
+        if (o instanceof  RuleAnd){
+            other = -1;
+        }else if (o instanceof  RuleOr){
+            other = -2;
+        }else {
+            other = ((RuleLeaf)o).operatorType().sortBy();
+        }
+        return one - other;
+    }
+
 }
