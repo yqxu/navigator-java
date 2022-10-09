@@ -127,6 +127,7 @@ public class RuleTrie {
                     //TODO NOT logic
                     BatchMatcher matcher = batchMatcherFactory.getBatchMatcher((String) ((RuleLeaf)r).operatorType().getIdentify());
                     matcherMapper.put(((RuleLeaf<?, ?>) r).dependsObject().getSimpleName(),((RuleLeaf<?, ?>) r).dependsAttr(),matcher);
+                    matcher.putRule((RuleLeaf<?, ?>) r);
                 });
 
         return this;

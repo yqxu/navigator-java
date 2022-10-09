@@ -1,10 +1,9 @@
 package com.pingpongx.smb.warning.biz.alert.routers.operatiors.batch;
 
-import com.alibaba.druid.sql.visitor.functions.Char;
-import com.pingpongx.smb.warning.biz.alert.SortedIdentify;
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.MatchOperation;
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.StringContains;
 import com.pingpongx.smb.warning.biz.moudle.*;
+import com.pingpongx.smb.warning.biz.rules.RuleLeaf;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -51,6 +50,18 @@ public class BatchStrContains implements BatchMatcher<String>{
     @Override
     public MatchOperation supportedOperation() {
         return StringContains.getInstance();
+    }
+
+    @Override
+    public void putRule(RuleLeaf<?, String> rule) {
+            String exp = rule.excepted();
+            Node<Character, FSMNode<Character, Set<String>>> node = trie.getOrCreate(IdentityPath.of(exp.toCharArray()));
+            Set<String> ruleSet = node.getData().getData();
+            if (ruleSet == null){
+                ruleSet = new HashSet<>();
+                node.getData().setData(ruleSet);
+            }
+            ruleSet.add(rule.getIdentify());
     }
 
 }

@@ -7,6 +7,7 @@ import com.pingpongx.smb.warning.biz.moudle.ACTrie;
 import com.pingpongx.smb.warning.biz.moudle.FSMNode;
 import com.pingpongx.smb.warning.biz.moudle.IdentityPath;
 import com.pingpongx.smb.warning.biz.moudle.Node;
+import com.pingpongx.smb.warning.biz.rules.RuleLeaf;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -42,6 +43,17 @@ public class BatchStrEquals implements BatchMatcher<String>{
     @Override
     public MatchOperation supportedOperation() {
         return StrEquals.getInstance();
+    }
+
+    @Override
+    public void putRule(RuleLeaf<?,String> rule) {
+        String exp = rule.excepted();
+        Set<String> ruleSet = ruleMap.get(exp);
+        if (ruleSet == null){
+            ruleSet = new HashSet<>();
+            ruleMap.put(exp,ruleSet);
+        }
+        ruleSet.add(rule.getIdentify());
     }
 
 }
