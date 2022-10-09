@@ -4,6 +4,7 @@ import com.pingpongx.smb.warning.biz.alert.routers.operatiors.batch.BatchMatcher
 import com.pingpongx.smb.warning.biz.moudle.IdentityPath;
 import com.pingpongx.smb.warning.biz.moudle.Node;
 import com.pingpongx.smb.warning.biz.moudle.Trie;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
+@Slf4j
 public class BatchMatcherMapper {
     Trie<String, TreeSet<BatchMatcher>> ruleTries = new Trie<>();
 
@@ -22,6 +24,7 @@ public class BatchMatcherMapper {
     TreeSet<BatchMatcher> matchers(String type, String attr){
         IdentityPath<String> path = IdentityPath.of(Stream.of(type,attr).collect(Collectors.toList()));
         Node<String,TreeSet<BatchMatcher>> node = ruleTries.getOrCreate(path);
+        log.info("type:"+type+" attr:"+attr+" node:\n"+node);
         if (node.isNew()){
             node.setData(new TreeSet<>());
         }

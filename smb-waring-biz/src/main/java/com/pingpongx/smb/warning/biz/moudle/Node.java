@@ -1,11 +1,13 @@
 package com.pingpongx.smb.warning.biz.moudle;
 
 import com.pingpongx.smb.warning.biz.alert.Identified;
+import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.K;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class Node<Key,Val> implements Identified {
      Key identify;
 
@@ -45,10 +47,12 @@ public class Node<Key,Val> implements Identified {
     }
 
     public Node<Key,Val> getOrCreate(IdentityPath<Key> path){
+        log.info("path:"+path.size());
         if (path.size() == 0){
             return this;
         }
         Key current =  path.pop();
+        log.info("path:"+current.toString());
         Node nextLevel = children.get(current);
         if (nextLevel == null){
             children.put(current,buildNode(current));
