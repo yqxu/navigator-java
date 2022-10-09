@@ -13,14 +13,20 @@ public class DingTalkClientFactory {
     @Autowired
     Map<String,PPDingTalkClient> dingTalkClientMapOrigin;
 
-    Map<String,PPDingTalkClient> dingTalkClientMap;
+    Map<String,PPDingTalkClient> departMap;
+    Map<String,PPDingTalkClient> appNameMap;
 
     @PostConstruct
     private void init(){
-        dingTalkClientMap = dingTalkClientMapOrigin.values().stream().collect(Collectors.toMap(client->client.getDepartName(),client->client));
+        departMap = dingTalkClientMapOrigin.values().stream().collect(Collectors.toMap(client->client.getDepartName(),client->client));
+        departMap = dingTalkClientMapOrigin.values().stream().collect(Collectors.toMap(client->client.getDepartName(),client->client));
     }
 
-    public PPDingTalkClient instance(String departName){
-        return dingTalkClientMap.get(departName);
+    public PPDingTalkClient getByDepart(String departName){
+        return departMap.get(departName);
+    }
+
+    public PPDingTalkClient getByAppName(String appName){
+        return appNameMap.get(appName);
     }
 }

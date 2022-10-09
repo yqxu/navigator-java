@@ -29,4 +29,14 @@ public class MerchantAlert implements ThirdPartAlert{
     String ip;
     String level;
     String traceId;
+
+    @Override
+    public String throwAppName() {
+        return appName;
+    }
+
+    @Override
+    public String throwContent() {
+        return content;
+    }
 }

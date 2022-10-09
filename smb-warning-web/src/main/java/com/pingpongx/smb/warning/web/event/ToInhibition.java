@@ -15,4 +15,12 @@ public class ToInhibition  extends ApplicationEvent {
     public ToInhibition(Object source) {
         super(source);
     }
+
+    public ThirdPartAlert getAlert() {
+        return alert;
+    }
+
+    public void setAlert(ThirdPartAlert alert) {
+        this.alert = alert;
+    }
 }

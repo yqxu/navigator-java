@@ -7,5 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public interface ThirdPartAlert extends Serializable,RouteAble,CountAble{
+    String throwAppName();
 
+    String throwContent();
 }

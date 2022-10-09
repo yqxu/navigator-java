@@ -32,9 +32,15 @@ public class SlsAlert implements ThirdPartAlert{
         return IdentityPath.of(Stream.of(appName,className).collect(Collectors.toList()));
     }
 
-//    @Override
-//    public Set<String> countTags() {
-//        boolean isDubboTimeOut;
-//        return Stream.of("sls",appName,isDubboTimeOut);
-//    }
+    @Override
+    public String throwAppName() {
+        return appName;
+    }
+
+    @Override
+    public String throwContent() {
+        return content;
+    }
+
+
 }

@@ -8,6 +8,7 @@ import com.pingpongx.smb.warning.api.dto.DingDReceiverDTO;
 import com.pingpongx.smb.warning.api.dto.DingDingReceiverDTO;
 import com.pingpongx.smb.warning.api.dto.JiraDTO;
 import com.pingpongx.smb.warning.api.service.BusinessAlertService;
+import com.pingpongx.smb.warning.biz.alert.model.MerchantAlert;
 import com.pingpongx.smb.warning.biz.alert.model.SlsAlert;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
 import com.pingpongx.smb.warning.web.convert.Convert;
@@ -68,10 +69,18 @@ public class AlertController {
         log.info("msg received:\n"+message);
         AlertParser parser = parserFactory.departOf(depart);
         ThirdPartAlert alert = parser.toAlert(message);
-        AlertReceived received = new AlertReceived(context);
-        received.setAlert(alert);
-        context.publishEvent(received);
-        return alert;
+        if (canPass(alert)){
+            AlertReceived received = new AlertReceived(context,depart);
+            received.setAlert(alert);
+            context.publishEvent(received);
+            return alert;
+        }
+        return null;
+    }
+
+    private boolean canPass(ThirdPartAlert alert) {
+        return null != alert && !StringUtils.isBlank(alert.throwAppName())
+                && !StringUtils.isBlank(alert.throwContent());
     }
 
 }

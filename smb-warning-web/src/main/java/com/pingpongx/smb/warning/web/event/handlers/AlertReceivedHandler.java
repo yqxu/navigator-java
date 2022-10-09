@@ -8,6 +8,7 @@ import com.pingpongx.smb.warning.biz.rules.MatchResult;
 import com.pingpongx.smb.warning.biz.rules.RuleTrie;
 import com.pingpongx.smb.warning.web.event.AlertReceived;
 import com.pingpongx.smb.warning.web.event.CountDone;
+import com.pingpongx.smb.warning.web.event.ToExecute;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -34,6 +35,11 @@ public class AlertReceivedHandler implements ApplicationListener<AlertReceived> 
     public void onApplicationEvent(AlertReceived event) {
         ThirdPartAlert alert = event.getAlert();
         MatchResult result = ruleTrie.match(alert);
+        if (result.getMatchedData().size()==0){
+            ToExecute toExecute = new ToExecute(applicationContext,event.getDepart(),alert);
+            applicationContext.publishEvent(toExecute);
+            return;
+        }
         result.getMatchedData().values().stream().map(Map::values)
                 .flatMap(c->c.stream()).filter(handler -> handler instanceof CountContext)
                 .forEach(handler -> handler.handleMatchedData(alert,result));

@@ -57,11 +57,12 @@ public class SimpleCounterThresholdInhibition<T extends ThirdPartAlert> extends 
         InhibitionResultEnum inhibitionResult = needInhibition(data,matchContext);
 
         if (InhibitionResultEnum.MatchedAndNeedInhibition.equals(inhibitionResult)){
-            ToInhibition toExecute = new ToInhibition(applicationContext,data);
-            applicationContext.publishEvent(toExecute);
+            ToInhibition toInhibition = new ToInhibition(applicationContext,data);
+            applicationContext.publishEvent(toInhibition);
             return;
         }
         if (InhibitionResultEnum.MatchedAndNeedThrow.equals(inhibitionResult)){
+            log.error("告警被抑制后依然抛出.超出阈值\n"+ data.throwContent());
             ToExecute toExecute = new ToExecute(applicationContext,data);
             applicationContext.publishEvent(toExecute);
             return;
