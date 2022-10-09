@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 @Data
 public class MerchantAlert implements ThirdPartAlert{
     @Override
-    public IdentityPath<String> getCountPath() {
+    public IdentityPath<String> countPath() {
         return IdentityPath.of(Stream.of(appName,className).collect(Collectors.toList()));
     }
     private static final long serialVersionUID = -5136469378192983192L;

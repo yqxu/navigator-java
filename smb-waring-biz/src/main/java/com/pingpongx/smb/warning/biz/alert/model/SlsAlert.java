@@ -28,7 +28,7 @@ public class SlsAlert implements ThirdPartAlert{
     String traceId;
 
     @Override
-    public IdentityPath<String> getCountPath() {
+    public IdentityPath<String> countPath() {
         return IdentityPath.of(Stream.of(appName,className).collect(Collectors.toList()));
     }
 
