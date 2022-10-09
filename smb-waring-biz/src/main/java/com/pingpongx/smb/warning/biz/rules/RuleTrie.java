@@ -65,8 +65,7 @@ public class RuleTrie {
             try{
                 while(it.hasNext()){
                     Field field = data.getClass().getDeclaredField(attr);
-                    field.setAccessible(true);
-                    Object attrVal = data.getClass().getDeclaredField(attr).get(data);
+                    Object attrVal = ReflectionUtils.getField(field,data);
                     BatchMatcher matcher = it.next();
                     boolean logicOfNot = matcher.supportedOperation().logicOfNot();
                     Set<String> matchedRule = matcher.batchMatch(attrVal);
