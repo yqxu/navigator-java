@@ -22,7 +22,11 @@ public class FSMNode<Key,Val> {
         if(backOffRef.getChildOnCurrentLevel(key)!=null){
             return backOffRef.getChildOnCurrentLevel(key).getData();
         }
-        return backOffRef.getData().searchBackOffRef(key);
+        if (backOffRef.getData().getBackOffRef()==null){
+            //root
+            return backOffRef.getData();
+        }
+        return backOffRef.getData().getBackOffRef().getData().searchBackOffRef(key);
     }
 
     public Node<Key,FSMNode<Key,Val>> step(IdentityPath<Key> path){
