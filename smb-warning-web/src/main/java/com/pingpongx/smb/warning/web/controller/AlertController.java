@@ -70,8 +70,7 @@ public class AlertController {
         AlertParser parser = parserFactory.departOf(depart);
         ThirdPartAlert alert = parser.toAlert(message);
         if (canPass(alert)){
-            AlertReceived received = new AlertReceived(context,depart);
-            received.setAlert(alert);
+            AlertReceived received = new AlertReceived(context,depart,alert);
             context.publishEvent(received);
             return alert;
         }
