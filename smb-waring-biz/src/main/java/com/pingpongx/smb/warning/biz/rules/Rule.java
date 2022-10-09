@@ -37,6 +37,7 @@ public interface Rule<D,T> extends Comparable<Rule<D,T>> {
         return RuleOr.newOr(this);
     }
 
+    @Override
     default int compareTo(Rule<D, T> o) {
         int one,other ;
         if (this instanceof  RuleAnd){
