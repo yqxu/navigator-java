@@ -10,7 +10,7 @@ public class StrEquals implements MatchOperation<String> {
 
     @Override
     public String getIdentify() {
-        return Constant.Operations.StringContains;
+        return Constant.Operations.Equals;
     }
 
     @Override
