@@ -7,6 +7,9 @@ public class ACTrie<Key,Val> extends Trie<Key,FSMNode<Key,Val>>{
     public void failBackRebuild(){
         Queue<Node<Key,FSMNode<Key,Val>>> bfsQueue = new LinkedList<>();
         Node<Key,FSMNode<Key,Val>> preNode = this.getRoot();
+        if (preNode.getData()==null){
+            preNode.setData(new FSMNode<>());
+        }
         bfsQueue.add(preNode);
         while(!bfsQueue.isEmpty()){
             preNode = bfsQueue.poll();
