@@ -67,7 +67,7 @@ public class AlertController {
     @NoAuth(isPack = false)
     public ThirdPartAlert createAlertWorkOrder(@PathVariable("depart") String depart, @RequestBody String message) {
         log.info("msg received:\n"+message);
-        AlertParser parser = parserFactory.departOf(depart);
+        AlertParser parser = parserFactory.departOf(depart.toUpperCase());
         ThirdPartAlert alert = parser.toAlert(message);
         if (canPass(alert)){
             AlertReceived received = new AlertReceived(context,depart,alert);

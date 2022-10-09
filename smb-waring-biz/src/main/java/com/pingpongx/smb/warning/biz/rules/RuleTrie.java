@@ -63,7 +63,7 @@ public class RuleTrie {
             Iterator<BatchMatcher> it = sortedMatcher.iterator();
             try{
                 while(it.hasNext()){
-                    Object attrVal = data.getClass().getField(attr).get(data);
+                    Object attrVal = data.getClass().getDeclaredField(attr).get(data);
                     BatchMatcher matcher = it.next();
                     boolean logicOfNot = matcher.supportedOperation().logicOfNot();
                     Set<String> matchedRule = matcher.batchMatch(attrVal);

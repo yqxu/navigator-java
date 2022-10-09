@@ -3,12 +3,13 @@ package com.pingpongx.smb.warning.biz.moudle;
 import com.pingpongx.smb.warning.biz.alert.SortedIdentifies;
 import com.pingpongx.smb.warning.biz.alert.SortedIdentify;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class IdentityPath<T> {
+public class IdentityPath<T> implements Serializable {
     public  static <I> IdentityPath<I> of(){
         IdentityPath<I> path = new IdentityPath();
         return path;
