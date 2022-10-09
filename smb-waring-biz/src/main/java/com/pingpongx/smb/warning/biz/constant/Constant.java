@@ -1,7 +1,6 @@
 package com.pingpongx.smb.warning.biz.constant;
 
 public class Constant {
-
     public static class B2B{
         public static String name = "B2B";
         public static String url = "B2B";
@@ -19,4 +18,8 @@ public class Constant {
         public static String url = "MERCHANT";
     }
 
+    public static class Operations{
+        public static String StringContains = "StringContains";
+        public static String Equals = "Equals";
+    }
 }

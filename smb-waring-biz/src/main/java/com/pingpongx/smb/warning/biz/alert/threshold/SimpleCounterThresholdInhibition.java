@@ -1,40 +1,43 @@
 package com.pingpongx.smb.warning.biz.alert.threshold;
 
+import com.pingpongx.smb.warning.biz.alert.counter.CountContext;
+import com.pingpongx.smb.warning.biz.alert.counter.Counter;
 import com.pingpongx.smb.warning.biz.alert.counter.SlidingCounter;
-import com.pingpongx.smb.warning.biz.rules.Rule;
+import com.pingpongx.smb.warning.biz.alert.event.ToExecute;
+import com.pingpongx.smb.warning.biz.alert.event.ToInhibition;
+import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
+import com.pingpongx.smb.warning.biz.moudle.IdentityPath;
+import com.pingpongx.smb.warning.biz.rules.AbstractRuleHandler;
+import com.pingpongx.smb.warning.biz.rules.MatchResult;
+import com.pingpongx.smb.warning.biz.rules.RuleHandler;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 
-public class SimpleCounterThresholdInhibition<T> implements Inhibition<T>{
-    //chain needed?
-    Rule<T> matcher;
-    SlidingCounter counter;
+import java.util.Map;
+@Slf4j
+public class SimpleCounterThresholdInhibition<T extends ThirdPartAlert> extends AbstractRuleHandler<T> implements Inhibition<T>{
     long threshold;
+    ApplicationContext applicationContext;
 
-    public InhibitionResultEnum needInhibition(T date){
-        if (!matcher.contentMatch(date)){
-            return InhibitionResultEnum.UnMatched;
+    public static String IDENTIFY(){
+        return "Inhibition";
+    }
+    public InhibitionResultEnum needInhibition(T date,MatchResult matchContext){
+        Map<String, RuleHandler> context = matchContext.getMatchedData().get(getPath().toString());
+        if (context == null){
+            log.error("matched but no context found.Method:needInhibition,Class:"+this.getClass().getName());
         }
-        counter.increment();
+        CountContext handler = (CountContext) context.get(CountContext.IDENTIFY());
+        if (context == null){
+            log.error("matched but no counter found.Method:needInhibition,Class:"+this.getClass().getName());
+        }
+        Counter counter = handler.getCounter(date);
         if (counter.sum()>=threshold){
             return InhibitionResultEnum.MatchedAndNeedThrow;
         }
         return InhibitionResultEnum.MatchedAndNeedInhibition;
     }
 
-    public Rule<T> getMatcher() {
-        return matcher;
-    }
-
-    public void setMatcher(Rule<T> matcher) {
-        this.matcher = matcher;
-    }
-
-    public SlidingCounter getCounter() {
-        return counter;
-    }
-
-    public void setCounter(SlidingCounter counter) {
-        this.counter = counter;
-    }
 
     public long getThreshold() {
         return threshold;
@@ -42,5 +45,35 @@ public class SimpleCounterThresholdInhibition<T> implements Inhibition<T>{
 
     public void setThreshold(long threshold) {
         this.threshold = threshold;
+    }
+
+    @Override
+    public String getIdentify() {
+        return IDENTIFY();
+    }
+
+    @Override
+    public void handleMatchedData(T data, MatchResult matchContext) {
+        InhibitionResultEnum inhibitionResult = needInhibition(data,matchContext);
+
+        if (InhibitionResultEnum.MatchedAndNeedInhibition.equals(inhibitionResult)){
+            ToInhibition toExecute = new ToInhibition(applicationContext,data);
+            applicationContext.publishEvent(toExecute);
+            return;
+        }
+        if (InhibitionResultEnum.MatchedAndNeedThrow.equals(inhibitionResult)){
+            ToExecute toExecute = new ToExecute(applicationContext,data);
+            applicationContext.publishEvent(toExecute);
+            return;
+        }
+        log.error("matched inhibition rule . but no Inhibition strategy found."+this.getClass().getName());
+    }
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 }

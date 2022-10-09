@@ -6,15 +6,9 @@ import com.pingpongx.flowmore.cloud.base.server.annotation.NoAuth;
 import com.pingpongx.smb.warning.api.dto.DingDReceiverDTO;
 import com.pingpongx.smb.warning.api.dto.DingDingReceiverDTO;
 import com.pingpongx.smb.warning.api.service.BusinessAlertService;
-import com.pingpongx.smb.warning.biz.alert.InhibitionFactory;
-import com.pingpongx.smb.warning.biz.alert.ThresholdAlertConf;
 import com.pingpongx.smb.warning.biz.alert.threshold.Inhibition;
-import com.pingpongx.smb.warning.biz.alert.threshold.InhibitionResultEnum;
-import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
 import com.pingpongx.smb.warning.biz.moudle.dingding.AlertsRequest;
 import com.pingpongx.smb.warning.biz.moudle.dingding.FireResults;
-import com.pingpongx.smb.warning.biz.rules.BizExceptionRule;
-import com.pingpongx.smb.warning.biz.rules.DubbleTimeOut;
 import com.pingpongx.smb.warning.web.helper.BusinessAlertHelper;
 import com.pingpongx.smb.warning.web.module.FireResultInfo;
 
@@ -52,27 +46,27 @@ public class BusinessAlertController {
     private final BusinessAlertHelper businessAlertHelper;
     private final BusinessAlertService businessAlertService;
 
-    public static void main(String[] args){
-        FireResults test = new FireResults();
-        test.setContent("dfsafdaa No provider available fromfdpsaojfoipans");
-        inhibition.needInhibition(test);
-    }
-    private static Inhibition<FireResults> inhibition = InhibitionFactory.getInhibition(new ThresholdAlertConf<>(5,TimeUnit.Minutes,10,10,FireResults.class),new DubbleTimeOut());
-    private static Inhibition<FireResults> inhibitionBizExp = InhibitionFactory.getInhibition(new ThresholdAlertConf<>(5,TimeUnit.Minutes,10,10,FireResults.class),new BizExceptionRule());
+//    public static void main(String[] args){
+//        SlsAlert test = new SlsAlert();
+//        test.setContent("dfsafdaa No provider available fromfdpsaojfoipans");
+//        inhibition.needInhibition(test);
+//    }
+//    private static Inhibition<SlsAlert> inhibition = InhibitionFactory.getInhibition(new ThresholdAlertConf<>(5,TimeUnit.Minutes,10,10, SlsAlert.class),new DubbleTimeOut());
+//    private static Inhibition<SlsAlert> inhibitionBizExp = InhibitionFactory.getInhibition(new ThresholdAlertConf<>(5,TimeUnit.Minutes,10,10,SlsAlert.class),new BizExceptionRule());
 
     List<Inhibition<FireResults>> inhibitions = new ArrayList<>();
 
     @PostConstruct
     void init(){
-        inhibitions.add(inhibition);
-        inhibitions.add(inhibitionBizExp);
+//        inhibitions.add(inhibition);
+//        inhibitions.add(inhibitionBizExp);
     }
 
-    private InhibitionResultEnum needInhibition(FireResults fireResults){
-        return inhibitions.parallelStream().map(inhibition->inhibition.needInhibition(fireResults))
-                .reduce((enum1,enum2)->enum1.getLevel()>enum2.getLevel()?enum1:enum2)
-                .orElse(InhibitionResultEnum.UnMatched);
-    }
+//    private InhibitionResultEnum needInhibition(FireResults fireResults){
+//        return inhibitions.parallelStream().map(inhibition->inhibition.needInhibition(fireResults))
+//                .reduce((enum1,enum2)->enum1.getLevel()>enum2.getLevel()?enum1:enum2)
+//                .orElse(InhibitionResultEnum.UnMatched);
+//    }
 
     @PostMapping("/businessAlerts")
     @NoAuth(isPack = false)
@@ -83,14 +77,14 @@ public class BusinessAlertController {
             // 调试日志测试无误可删除
             FireResults fireResults = alertsRequest.getAlerts().get(0).getFire_results().get(0);
             //TODO 抑制策略较多较复杂时需要在rete下编排规则，暂时写死，rete第一版简单用trie实现
-            InhibitionResultEnum inhibitResult = needInhibition(fireResults);
-            if (inhibitResult.isNeedInhibition()){
-                log.info("告警被抑制：\n"+fireResults);
-                return null;
-            }
-            if (inhibitResult.equals(InhibitionResultEnum.MatchedAndNeedInhibition)){
-                log.error("告警被抑制后,超出阈值依然抛出：\n"+fireResults.getContent());
-            }
+//            InhibitionResultEnum inhibitResult = needInhibition(fireResults);
+//            if (inhibitResult.isNeedInhibition()){
+//                log.info("告警被抑制：\n"+fireResults);
+//                return null;
+//            }
+//            if (inhibitResult.equals(InhibitionResultEnum.MatchedAndNeedInhibition)){
+//                log.error("告警被抑制后,超出阈值依然抛出：\n"+fireResults.getContent());
+//            }
             String appName = Optional.ofNullable(fireResults.getAppName()).orElse(fireResults.get_container_name_());
             return businessAlertHelper.APP_DINGDING_RECEIVER.get(appName);
         } catch (Exception ex) {

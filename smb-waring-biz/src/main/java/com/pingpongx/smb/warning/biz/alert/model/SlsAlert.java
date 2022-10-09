@@ -1,9 +1,15 @@
 package com.pingpongx.smb.warning.biz.alert.model;
 
+import com.pingpongx.smb.warning.biz.moudle.IdentityPath;
 import lombok.Data;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @Data
-public class SlsAlert {
+public class SlsAlert implements ThirdPartAlert{
+    private static final long serialVersionUID = -5136469378192983192L;
 //    {
 //        "appName": "business-user-biz",
 //            "className": "c.p.b.u.b.u.impl.UnifyUserServiceImpl    :",
@@ -20,4 +26,15 @@ public class SlsAlert {
     String ip;
     String level;
     String traceId;
+
+    @Override
+    public IdentityPath<String> getCountPath() {
+        return IdentityPath.of(Stream.of(appName,className).collect(Collectors.toList()));
+    }
+
+//    @Override
+//    public Set<String> countTags() {
+//        boolean isDubboTimeOut;
+//        return Stream.of("sls",appName,isDubboTimeOut);
+//    }
 }
