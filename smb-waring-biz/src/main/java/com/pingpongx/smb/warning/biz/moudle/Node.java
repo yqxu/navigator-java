@@ -22,6 +22,13 @@ public class Node<Key,Val> implements Identified {
          return node;
      }
 
+    public static <Key,Val> Node<Key,Val> buildNode(Key identify,Val data){
+        Node<Key,Val> node = new Node();
+        node.identify = identify;
+        node.data = data;
+        return node;
+    }
+
     @Override
     public Key getIdentify() {
         return identify;
@@ -60,6 +67,22 @@ public class Node<Key,Val> implements Identified {
             nextLevel.setParent(this);
         }
         return nextLevel.getOrCreate(path);
+    }
+
+    public Node<Key,Val> getOrCreate(IdentityPath<Key> path,Val defaultVal){
+        log.info("path:"+path.size());
+        if (path.size() == 0){
+            return this;
+        }
+        Key current =  path.pop();
+        log.info("path:"+current.toString());
+        Node nextLevel = children.get(current);
+        if (nextLevel == null){
+            children.put(current,buildNode(current,defaultVal));
+            nextLevel = children.get(current);
+            nextLevel.setParent(this);
+        }
+        return nextLevel.getOrCreate(path,defaultVal);
     }
 
 

@@ -42,6 +42,11 @@ public class Trie<Key,Val> {
         return root.getOrCreate(copy);
     }
 
+    public Node<Key,Val> getOrCreate(IdentityPath<Key> path,Val defaultVal){
+        IdentityPath<Key> copy = path.deepCopy();
+        return root.getOrCreate(copy,defaultVal);
+    }
+
     public Trie<Key,Val> put(IdentityPath<Key> path,Val value){
         Node node = getOrCreate(path);
         node.setData(value);

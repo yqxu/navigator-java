@@ -12,6 +12,9 @@ public class ACTrie<Key,Val> extends Trie<Key,FSMNode<Key,Val>>{
             preNode = bfsQueue.poll();
             preNode.getData().setNodeRef(preNode);
             Map<Key , Node<Key,FSMNode<Key,Val>>> map =  preNode.getChildren();
+            if (map == null||map.size() == 0){
+                continue;
+            }
             for (Map.Entry<Key , Node<Key,FSMNode<Key,Val>>> entry:map.entrySet()) {
                 Key key = entry.getKey();
                 entry.getValue().getData().setNodeRef(entry.getValue());

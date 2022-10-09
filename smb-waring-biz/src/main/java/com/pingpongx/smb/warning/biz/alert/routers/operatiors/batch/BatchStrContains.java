@@ -20,16 +20,13 @@ public class BatchStrContains implements BatchMatcher<String>{
     public void putOnly(String str,String ruleIdentify){
         //规则入树
         IdentityPath<Character> path = IdentityPath.of(str.toCharArray());
-        Node<Character,FSMNode<Character,Set<String>>> node = trie.getOrCreate(path);
+        Node<Character,FSMNode<Character,Set<String>>> node = trie.getOrCreate(path,new FSMNode<>());
 
-        if (node.isNew()){
-            //TODO concurrent needed?
+        if (node.getData().getData()==null){
             Set<String> ruleSet = new HashSet<>();
             ruleSet.add(ruleIdentify);
-            FSMNode<Character,Set<String>> fsmNode = new FSMNode<>();
+            FSMNode<Character,Set<String>> fsmNode = node.getData();
             fsmNode.setData(ruleSet);
-            fsmNode.setNodeRef(node);
-            node.setData(fsmNode);
         }else{
             node.getData().getData().add(ruleIdentify);
         }
