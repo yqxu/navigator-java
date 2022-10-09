@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -63,6 +64,8 @@ public class RuleTrie {
             Iterator<BatchMatcher> it = sortedMatcher.iterator();
             try{
                 while(it.hasNext()){
+                    Field field = data.getClass().getDeclaredField(attr);
+                    field.setAccessible(true);
                     Object attrVal = data.getClass().getDeclaredField(attr).get(data);
                     BatchMatcher matcher = it.next();
                     boolean logicOfNot = matcher.supportedOperation().logicOfNot();
