@@ -59,7 +59,7 @@ public class Node<Key,Val> implements Identified {
             nextLevel = children.get(current);
             nextLevel.setParent(this);
         }
-        return nextLevel.getChild(path);
+        return nextLevel.getOrCreate(path);
     }
 
 
