@@ -56,7 +56,7 @@ public class AlertController {
     @PostMapping("/{depart}")
     @NoAuth(isPack = false)
     public ThirdPartAlert createAlertWorkOrder(@PathVariable("depart") String depart, @RequestBody String message) {
-        log.info("msg received:\n"+message);
+        log.info("msg received:\n\n"+message+"\n\n");
         AlertParser parser = parserFactory.departOf(depart.toUpperCase());
         ThirdPartAlert alert = parser.toAlert(message);
         alert.departSet(depart);
