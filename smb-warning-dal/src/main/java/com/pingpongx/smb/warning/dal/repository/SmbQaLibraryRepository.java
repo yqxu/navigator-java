@@ -6,6 +6,8 @@ import com.pingpongx.smb.warning.dal.dataobject.SmbQaLibrary;
 import com.pingpongx.smb.warning.dal.mapper.SmbQaLibraryMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author tangsh
  * @date 2022/09/26
@@ -19,5 +21,13 @@ public class SmbQaLibraryRepository extends BaseRepository<SmbQaLibraryMapper, S
         queryWrapper.last("LIMIT 1");
         return getOne(queryWrapper);
     }
+
+
+    public List<SmbQaLibrary> queryByCategory(String category) {
+        LambdaQueryWrapper<SmbQaLibrary> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(SmbQaLibrary::getCategory, category);
+        return list(queryWrapper);
+    }
+
 
 }
