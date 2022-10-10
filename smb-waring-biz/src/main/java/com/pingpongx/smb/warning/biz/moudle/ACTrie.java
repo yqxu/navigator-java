@@ -28,12 +28,15 @@ public class ACTrie<Key,Val> extends Trie<Key,FSMNode<Key,Val>>{
         }
     }
 
-    public List<Node<Key,FSMNode<Key,Val>>> walk(IdentityPath<Key> path){
-        List<Node<Key,FSMNode<Key,Val>>> walkThrough = new ArrayList<>();
+    public Set<Node<Key,FSMNode<Key,Val>>> walk(IdentityPath<Key> path){
+        Set<Node<Key,FSMNode<Key,Val>>> walkThrough = new HashSet<>();
         Node<Key,FSMNode<Key,Val>> step = root;
         while(path.size()>0){
             Node<Key,FSMNode<Key,Val>> next = step.getData().step(path);
-            walkThrough.add(next);
+            if (next.getParent()!=null){
+                //非root
+                walkThrough.add(next);
+            }
             step = next;
         }
         return walkThrough;

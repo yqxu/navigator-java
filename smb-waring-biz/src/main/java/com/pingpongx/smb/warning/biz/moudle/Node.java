@@ -113,7 +113,10 @@ public class Node<Key,Val> implements Identified {
          path.push(current.getIdentify());
          while(current.getParent()!=null){
              current = current.getParent();
-             path.push(current.getIdentify());
+             if (current.getIdentify()!=null){
+                 //root 节点identify 为空需要排除
+                 path.push(current.getIdentify());
+             }
          }
          return path;
     }

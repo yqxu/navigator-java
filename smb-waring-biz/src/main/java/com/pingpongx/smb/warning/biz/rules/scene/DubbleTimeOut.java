@@ -34,8 +34,6 @@ public class DubbleTimeOut {
     StrExcept4 exp4;
     @Autowired
     RuleTrie ruleTrie;
-    @Autowired
-    GlobalCountContext globalCountContext;
 
     @Autowired
     InhibitionFactory inhibitionFactory;
@@ -46,7 +44,7 @@ public class DubbleTimeOut {
     @PostConstruct
     void init(){
         or = exp1.or(exp2).or(exp3).or(exp4);
-        CountContext countContext = new CountContext(globalCountContext, conf);
+        CountContext countContext = new CountContext( conf);
         ruleTrie.put(or, countContext);
         Inhibition<ThirdPartAlert> inhibition = inhibitionFactory.getInhibition(conf);
         ruleTrie.put(or,inhibition);

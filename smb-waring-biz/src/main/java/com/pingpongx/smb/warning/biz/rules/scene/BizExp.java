@@ -25,8 +25,6 @@ public class BizExp {
     BizExpRule exp1;
     @Autowired
     RuleTrie ruleTrie;
-    @Autowired
-    GlobalCountContext globalCountContext;
 
     @Autowired
     InhibitionFactory inhibitionFactory;
@@ -37,7 +35,7 @@ public class BizExp {
     @PostConstruct
     void init(){
         or = exp1;
-        CountContext countContext = new CountContext(globalCountContext, conf);
+        CountContext countContext = new CountContext( conf);
         ruleTrie.put(or, countContext);
         Inhibition<ThirdPartAlert> inhibition = inhibitionFactory.getInhibition(conf);
         ruleTrie.put(or,inhibition);

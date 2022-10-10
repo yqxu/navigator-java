@@ -39,7 +39,7 @@ public class BatchStrContains implements BatchMatcher<String>{
      */
     public Set<String> batchMatch(String input){
         IdentityPath<Character> path = IdentityPath.of(input.toCharArray());
-        return trie.walk(path).stream().map(Node::getData).map(FSMNode::getData).reduce((set1,set2)->{
+        return trie.walk(path).stream().map(Node::getData).map(FSMNode::getData).filter(Objects::nonNull).reduce((set1,set2)->{
             set1.addAll(set2);
             return set1;
         }).orElse(new HashSet<>());

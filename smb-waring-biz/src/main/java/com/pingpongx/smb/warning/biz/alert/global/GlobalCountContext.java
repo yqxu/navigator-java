@@ -7,17 +7,16 @@ import com.pingpongx.smb.warning.biz.moudle.Node;
 import com.pingpongx.smb.warning.biz.moudle.Trie;
 import org.springframework.stereotype.Component;
 
-@Component
 public class GlobalCountContext {
-    Trie<String,Counter> globalCountContext;
+    private static Trie<String,Counter> globalCountContext = new Trie<>();
 
-    public Counter getCounter(IdentityPath<String> path){
+    public static Counter getCounter(IdentityPath<String> path){
         Node<String,Counter> node = globalCountContext.getOrCreate(path);
         Counter ret = node.getData();
         return ret;
     }
 
-    public void putCounter(IdentityPath<String> path, Counter counter){
+    public static void putCounter(IdentityPath<String> path, Counter counter){
         Node<String,Counter> node = globalCountContext.getOrCreate(path);
         node.setData(counter);
     }

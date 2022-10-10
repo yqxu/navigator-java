@@ -9,8 +9,6 @@ import com.pingpongx.smb.warning.biz.rules.AbstractRuleHandler;
 import com.pingpongx.smb.warning.biz.rules.MatchResult;
 
 public class CountContext extends AbstractRuleHandler<ThirdPartAlert> {
-    private GlobalCountContext globalCountContext;
-
     private CountConf conf;
 
     public static String IDENTIFY(){
@@ -22,8 +20,7 @@ public class CountContext extends AbstractRuleHandler<ThirdPartAlert> {
         fullPath.appendAll(getPath()).appendAll(countPath);
         return fullPath;
     }
-    public CountContext(GlobalCountContext globalCountContext,CountConf conf){
-        this.globalCountContext = globalCountContext;
+    public CountContext(CountConf conf){
         this.conf = conf;
     }
 
@@ -35,16 +32,16 @@ public class CountContext extends AbstractRuleHandler<ThirdPartAlert> {
     @Override
     public void handleMatchedData(ThirdPartAlert data, MatchResult matchContext) {
         IdentityPath<String> fullPath = buildCountPath(data);
-        Counter slidingCounter = globalCountContext.getCounter(fullPath);
+        Counter slidingCounter = GlobalCountContext.getCounter(fullPath);
         if (slidingCounter == null){
             slidingCounter = CounterFactory.getCounter(conf);
-            globalCountContext.putCounter(fullPath,slidingCounter);
+            GlobalCountContext.putCounter(fullPath,slidingCounter);
         }
         slidingCounter.increment();
     }
 
     public Counter getCounter(ThirdPartAlert data){
         IdentityPath<String> fullPath = buildCountPath(data);
-        return globalCountContext.getCounter(fullPath);
+        return GlobalCountContext.getCounter(fullPath);
     }
 }
