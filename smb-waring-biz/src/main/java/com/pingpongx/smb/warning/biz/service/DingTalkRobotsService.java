@@ -57,7 +57,12 @@ public class DingTalkRobotsService {
         if (contentWords.size() >= 2) {
             keywords = contentWords.get(contentWords.size() - 1);
         }
-        SmbQaLibrary qaLibrary = null;
+        SmbQaLibrary qaLibrary = queryByCategory(category, keywords);
+        responseDingTalk(json, conversationType, qaLibrary);
+    }
+
+    private SmbQaLibrary queryByCategory(String category, String keywords) {
+        SmbQaLibrary qaLibrary;
         List<SmbQaLibrary> qaLibraryList = qaLibraryRepository.queryByCategory(category);
         //1.如果类目命中，且全关键词也命中。
         if (CollectionUtils.isNotEmpty(qaLibraryList)) {
@@ -72,11 +77,9 @@ public class DingTalkRobotsService {
             }
         } else {
             //3.如果类目没命中，但命中了关键词，则返回
-            if (StringUtils.isNotEmpty(keywords)) {
-                qaLibrary = qaLibraryRepository.getOneQa(keywords);
-            }
+            qaLibrary = qaLibraryRepository.getOneQa(category);
         }
-        responseDingTalk(json, conversationType, qaLibrary);
+        return qaLibrary;
     }
 
     private void responseDingTalk(JSONObject json, String conversationType, SmbQaLibrary qaLibrary) {
