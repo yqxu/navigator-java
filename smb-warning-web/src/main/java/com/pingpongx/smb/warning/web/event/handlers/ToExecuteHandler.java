@@ -41,8 +41,8 @@ public class ToExecuteHandler implements ApplicationListener<ToExecute> {
     public void onApplicationEvent(ToExecute event) {
         //DingDing 通知
         ThirdPartAlert alert = event.getAlert();
-        PPDingTalkClient client = dingTalkClientFactory.getByDepart(event.getDepart());
-        AlertParser parser = parserFactory.departOf(event.getDepart());
+        PPDingTalkClient client = dingTalkClientFactory.getByDepart(alert.depart());
+        AlertParser parser = parserFactory.departOf(alert.depart());
         String msg = parser.toDingTalkMsg(alert);
         DingDingReceiverDTO receiverDTO = businessAlertService.findDingDingReceivers(alert.throwAppName());
         List<String> phones = receiverDTO.getReceivers().stream().map(DingDReceiverDTO::getPhone).collect(Collectors.toList());

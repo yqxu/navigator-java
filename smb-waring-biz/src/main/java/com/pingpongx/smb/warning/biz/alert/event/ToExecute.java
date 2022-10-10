@@ -7,7 +7,6 @@ import org.springframework.context.ApplicationEvent;
 public class ToExecute  extends ApplicationEvent {
     ThirdPartAlert alert;
 
-    String depart;
 
     /**
      * Create a new {@code ApplicationEvent}.
@@ -24,9 +23,6 @@ public class ToExecute  extends ApplicationEvent {
         return alert;
     }
 
-    public String getDepart(){
-        return depart;
-    }
 
 
 }
