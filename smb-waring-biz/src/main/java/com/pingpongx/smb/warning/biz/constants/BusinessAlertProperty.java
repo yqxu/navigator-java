@@ -16,7 +16,7 @@ public class BusinessAlertProperty {
 
     @Value("${timeOutAlertTimes:2,5}")
     private String[] timeOutAlertTimeInterval;
-
+//    https://oapi.dingtalk.com/robot/send?access_token=45ffef5343bd5c4e47b23b01ca1f2fafa13840032e9e69bb994e656c5d5c38fa
     @Value("${notify_jira_change_dingTalk_url:https://oapi.dingtalk.com/robot/send?access_token=12481948130fb566f30222d87c5489ae1ade4fb3552336714574d33ee00905a9}")
     private String notify_jira_change_dingTalk_url;
 
