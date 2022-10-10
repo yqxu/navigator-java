@@ -12,8 +12,9 @@ public class AlertReceived extends ApplicationEvent {
      * @param source the object on which the event initially occurred or with
      *               which the event is associated (never {@code null})
      */
-    public AlertReceived(Object source) {
+    public AlertReceived(Object source,ThirdPartAlert alert) {
         super(source);
+        this.alert = alert;
     }
 
     public ThirdPartAlert getAlert() {
@@ -23,4 +24,5 @@ public class AlertReceived extends ApplicationEvent {
     public void setAlert(ThirdPartAlert alert) {
         this.alert = alert;
     }
+
 }

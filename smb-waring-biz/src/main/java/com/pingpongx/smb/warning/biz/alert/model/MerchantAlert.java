@@ -30,6 +30,8 @@ public class MerchantAlert implements ThirdPartAlert{
     String level;
     String traceId;
 
+    String depart;
+
     @Override
     public String throwAppName() {
         return appName;
@@ -38,5 +40,15 @@ public class MerchantAlert implements ThirdPartAlert{
     @Override
     public String throwContent() {
         return content;
+    }
+
+    @Override
+    public String depart() {
+        return depart;
+    }
+
+    @Override
+    public void departSet(String depart) {
+        this.depart = depart;
     }
 }

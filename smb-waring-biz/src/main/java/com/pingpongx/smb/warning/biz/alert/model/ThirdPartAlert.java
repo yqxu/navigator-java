@@ -10,4 +10,7 @@ public interface ThirdPartAlert extends Serializable,RouteAble,CountAble{
     String throwAppName();
 
     String throwContent();
+
+    String depart();
+    void departSet(String depart);
 }

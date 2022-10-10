@@ -10,5 +10,4 @@ import java.util.Map;
 @Data
 public class MatchResult {
     Map<String,Map<String,RuleHandler>>  matchedData;
-
 }

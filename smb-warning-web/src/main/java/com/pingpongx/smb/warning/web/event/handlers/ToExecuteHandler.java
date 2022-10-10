@@ -3,17 +3,13 @@ package com.pingpongx.smb.warning.web.event.handlers;
 
 import com.pingpongx.smb.warning.api.dto.DingDReceiverDTO;
 import com.pingpongx.smb.warning.api.dto.DingDingReceiverDTO;
-import com.pingpongx.smb.warning.api.dto.JiraDTO;
 import com.pingpongx.smb.warning.api.request.JiraGenerateRequest;
 import com.pingpongx.smb.warning.api.service.BusinessAlertService;
+import com.pingpongx.smb.warning.biz.alert.event.ToExecute;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
-import com.pingpongx.smb.warning.biz.alert.threshold.Inhibition;
 import com.pingpongx.smb.warning.biz.depends.DingTalkClientFactory;
 import com.pingpongx.smb.warning.biz.depends.PPDingTalkClient;
-import com.pingpongx.smb.warning.biz.rules.MatchResult;
 import com.pingpongx.smb.warning.biz.rules.RuleTrie;
-import com.pingpongx.smb.warning.web.event.CountDone;
-import com.pingpongx.smb.warning.web.event.ToExecute;
 import com.pingpongx.smb.warning.web.parser.AlertParser;
 import com.pingpongx.smb.warning.web.parser.ParserFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +19,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component

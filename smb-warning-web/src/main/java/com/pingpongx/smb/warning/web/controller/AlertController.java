@@ -1,25 +1,15 @@
 package com.pingpongx.smb.warning.web.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Lists;
 import com.pingpongx.flowmore.cloud.base.server.annotation.NoAuth;
-import com.pingpongx.smb.warning.api.dto.DingDReceiverDTO;
-import com.pingpongx.smb.warning.api.dto.DingDingReceiverDTO;
-import com.pingpongx.smb.warning.api.dto.JiraDTO;
 import com.pingpongx.smb.warning.api.service.BusinessAlertService;
-import com.pingpongx.smb.warning.biz.alert.model.MerchantAlert;
-import com.pingpongx.smb.warning.biz.alert.model.SlsAlert;
+import com.pingpongx.smb.warning.biz.alert.event.AlertReceived;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
-import com.pingpongx.smb.warning.web.convert.Convert;
-import com.pingpongx.smb.warning.web.event.AlertReceived;
 import com.pingpongx.smb.warning.web.helper.BusinessAlertHelper;
 import com.pingpongx.smb.warning.web.parser.AlertParser;
 import com.pingpongx.smb.warning.web.parser.ParserFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,8 +59,9 @@ public class AlertController {
         log.info("msg received:\n"+message);
         AlertParser parser = parserFactory.departOf(depart.toUpperCase());
         ThirdPartAlert alert = parser.toAlert(message);
+        alert.departSet(depart);
         if (canPass(alert)){
-            AlertReceived received = new AlertReceived(context,depart,alert);
+            AlertReceived received = new AlertReceived(context,alert);
             context.publishEvent(received);
             return alert;
         }

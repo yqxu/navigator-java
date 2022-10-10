@@ -27,6 +27,8 @@ public class SlsAlert implements ThirdPartAlert{
     String level;
     String traceId;
 
+    String depart;
+
     @Override
     public IdentityPath<String> countPath() {
         return IdentityPath.of(Stream.of(appName,className).collect(Collectors.toList()));
@@ -40,6 +42,16 @@ public class SlsAlert implements ThirdPartAlert{
     @Override
     public String throwContent() {
         return content;
+    }
+
+    @Override
+    public String depart() {
+        return depart;
+    }
+
+    @Override
+    public void departSet(String depart) {
+        this.depart = depart;
     }
 
 
