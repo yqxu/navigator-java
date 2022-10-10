@@ -16,7 +16,7 @@ import java.util.List;
 @Component
 public class B2BDingTalkClient extends AbstractPPDingTalkClient implements PPDingTalkClient {
     public String getNotifyUrl(){
-        return Constant.B2B.name;
+        return Constant.B2B.url;
     }
 
     @Override
