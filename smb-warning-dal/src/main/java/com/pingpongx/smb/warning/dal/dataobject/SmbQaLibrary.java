@@ -14,6 +14,7 @@ import lombok.Data;
 public class SmbQaLibrary extends BaseDO {
 
     private String bu;
+    private String category;
     private String question;
     private String keyWord;
     private String answer;
