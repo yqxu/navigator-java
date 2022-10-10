@@ -23,7 +23,7 @@ public class DingTalkRobotsClient {
 
     @Value("${smb.dingtalk.robots.app.key:dingsawyscra8ocffp6d}")
     private String dingTalkAppKey;
-    @Value("${smb.dingtalk.robots.app.key:xN6wdj73ZO5GfA7YHzY-x2YYikQpYk4Qev-rXrYdIbBa3ky-AffAznIF6hMXfP3B}")
+    @Value("${smb.dingtalk.robots.app.secret:xN6wdj73ZO5GfA7YHzY-x2YYikQpYk4Qev-rXrYdIbBa3ky-AffAznIF6hMXfP3B}")
     private String dingTalkAppSecret;
     @Value("${smb.dingtalk.robots.access.token.url:https://api.dingtalk.com/v1.0/oauth2/accessToken}")
     private String accessTokenUrl;
