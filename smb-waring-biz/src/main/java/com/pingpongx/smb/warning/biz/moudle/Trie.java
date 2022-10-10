@@ -1,6 +1,8 @@
 package com.pingpongx.smb.warning.biz.moudle;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class Trie<Key,Val> {
@@ -42,7 +44,7 @@ public class Trie<Key,Val> {
         return root.getOrCreate(copy);
     }
 
-    public Node<Key,Val> getOrCreate(IdentityPath<Key> path,Val defaultVal){
+    public Node<Key,Val> getOrCreate(IdentityPath<Key> path, Supplier<Val> defaultVal){
         IdentityPath<Key> copy = path.deepCopy();
         return root.getOrCreate(copy,defaultVal);
     }

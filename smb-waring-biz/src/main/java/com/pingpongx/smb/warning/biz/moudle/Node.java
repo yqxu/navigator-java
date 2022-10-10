@@ -6,6 +6,7 @@ import org.checkerframework.checker.units.qual.K;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 @Slf4j
 public class Node<Key,Val> implements Identified {
@@ -22,10 +23,10 @@ public class Node<Key,Val> implements Identified {
          return node;
      }
 
-    public static <Key,Val> Node<Key,Val> buildNode(Key identify,Val data){
+    public static <Key,Val> Node<Key,Val> buildNode(Key identify,Supplier<Val> defaultVal){
         Node<Key,Val> node = new Node();
         node.identify = identify;
-        node.data = data;
+        node.data = defaultVal.get();
         return node;
     }
 
@@ -69,7 +70,7 @@ public class Node<Key,Val> implements Identified {
         return nextLevel.getOrCreate(path);
     }
 
-    public Node<Key,Val> getOrCreate(IdentityPath<Key> path,Val defaultVal){
+    public Node<Key,Val> getOrCreate(IdentityPath<Key> path, Supplier<Val> defaultVal){
         log.info("path:"+path.size());
         if (path.size() == 0){
             return this;
