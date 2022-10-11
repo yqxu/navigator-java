@@ -37,12 +37,12 @@ public class MerchantParser implements AlertParser {
     @Override
     public JiraGenerateRequest generateJiraRequest(ThirdPartAlert alert) {
         MerchantAlert fireResultInfo = (MerchantAlert) alert;
-        String summary = StringUtils.substring(fireResultInfo.getContent(), 0, 200);
+        String summary = StringUtils.substring(fireResultInfo.throwContent(), 0, 200);
         JiraGenerateRequest build = JiraGenerateRequest.builder()
-                .appName(fireResultInfo.getAppName())
-                .traceId(StringUtils.defaultIfBlank(fireResultInfo.getTraceId(),"#"))
+                .appName(fireResultInfo.throwAppName())
+                .traceId("#")
                 .summary(summary)
-                .description(fireResultInfo.getContent())
+                .description(fireResultInfo.throwContent())
                 .build();
         return build;
     }
