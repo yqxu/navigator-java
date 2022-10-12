@@ -16,6 +16,7 @@ import com.pingpongx.smb.warning.api.request.JiraGenerateRequest;
 import com.pingpongx.smb.warning.api.service.BusinessAlertService;
 import com.pingpongx.smb.warning.biz.cache.BusinessAlertsCache;
 import com.pingpongx.smb.warning.biz.constants.JiraConsts;
+import com.pingpongx.smb.warning.biz.redis.BusinessAlertsRedisHelper;
 import com.pingpongx.smb.warning.biz.util.BeanUtils;
 import com.pingpongx.smb.warning.biz.util.ConvertUtil;
 import com.pingpongx.smb.warning.biz.util.HttpAPI;
@@ -43,6 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.HttpHeaders;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -72,6 +74,8 @@ public class BusinessAlertServiceImpl implements BusinessAlertService {
     // 小量不改动本地缓存
     private static final Map<String, BusinessAlertsAppDTO> APP_DICT = Maps.newHashMap();
 
+    @Autowired
+    BusinessAlertsRedisHelper businessAlertsRedisHelper;
     /**
      * 获取应用告警负责人数据
      * @param appName 应用名
@@ -97,6 +101,9 @@ public class BusinessAlertServiceImpl implements BusinessAlertService {
     @Override
     public void generateJira(JiraGenerateRequest request) {
         request.check();
+        if (businessAlertsRedisHelper.hasCreateJiraByCache(request.getAppName(), request.getSummary())) {
+            return;
+        }
         String req = buildRequest(request).toJSONString();
         Map<String, Object> headers = Maps.newHashMap();
         headers.put(HttpHeaders.AUTHORIZATION, "Bearer " + jiraToken);

@@ -4,15 +4,14 @@ import com.google.common.base.Preconditions;
 import com.pingpongx.business.common.exception.BizException;
 import com.pingpongx.business.common.exception.ErrorCode;
 import com.pingpongx.smb.warning.biz.alert.AlertConf;
-import com.pingpongx.smb.warning.biz.alert.CountNeededAlertConf;
-import com.pingpongx.smb.warning.biz.alert.ThresholdAlertConf;
+import com.pingpongx.smb.warning.biz.alert.CountConf;
 import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Stream;
 
-public class SlidingCounter {
+public class SlidingCounter  implements Counter{
     long duration;
     TimeUnit unit;
     int partNum;
@@ -36,11 +35,8 @@ public class SlidingCounter {
                 .forEach(counter -> buckets.add(counter));
     }
 
-    public static SlidingCounter of(AlertConf conf){
-        if (!(conf instanceof CountNeededAlertConf)){
-            throw new BizException(ErrorCode.SYSTEM_ERROR,"alert conf not supported.");
-        }
-        CountNeededAlertConf c = (CountNeededAlertConf)conf;
+    public static SlidingCounter of(CountConf conf){
+        CountConf c = conf;
         SlidingCounter counter = new SlidingCounter();
         counter.partNum = c.getPartNum();
         counter.duration = c.getDuration();

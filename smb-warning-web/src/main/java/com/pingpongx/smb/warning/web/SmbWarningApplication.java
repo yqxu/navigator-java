@@ -7,6 +7,7 @@ import com.pingpongx.flowmore.cloud.base.server.app.BaseApplicationRun;
 import com.pingpongx.smb.warning.biz.constants.ServiceConstants;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableAsync;
 import springfox.documentation.service.ApiInfo;
 
 /**
@@ -16,6 +17,7 @@ import springfox.documentation.service.ApiInfo;
  * @Version:
  */
 @SpringBootApplication(scanBasePackages = {"com.pingpongx.smb.warning", "com.pingpongx.passwordcallback"})
+@EnableAsync
 public class SmbWarningApplication implements BaseApplicationDocable {
 
     @Override

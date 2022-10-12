@@ -4,20 +4,18 @@ import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
 
 
 
-public class ThresholdAlertConf<T> implements AlertConf<T>,CountNeededAlertConf<T>{
-    public ThresholdAlertConf(long duration, TimeUnit unit, int partNum, long alertThreshold, Class<T> sourceType) {
+public class ThresholdAlertConf<T> implements AlertConf<T>, CountConf{
+    public ThresholdAlertConf(long duration, TimeUnit unit, int partNum, long alertThreshold) {
         this.duration = duration;
         this.unit = unit;
         this.partNum = partNum;
         this.alertThreshold = alertThreshold;
-        this.sourceType = sourceType;
     }
 
     long duration;
     TimeUnit unit;
     int partNum;
     long alertThreshold;
-    Class<T> sourceType;
 
     public long getDuration() {
         return duration;
@@ -51,14 +49,6 @@ public class ThresholdAlertConf<T> implements AlertConf<T>,CountNeededAlertConf<
         this.alertThreshold = alertThreshold;
     }
 
-    @Override
-    public String getAlertType() {
-        return "Threshold";
-    }
 
-    @Override
-    public Class<T> sourceType() {
-        return sourceType;
-    }
 
 }
