@@ -99,16 +99,17 @@ public class BusinessAlertServiceImpl implements BusinessAlertService {
 
     @SneakyThrows
     @Override
-    public void generateJira(JiraGenerateRequest request) {
+    public int generateJira(JiraGenerateRequest request) {
         request.check();
         if (businessAlertsRedisHelper.hasCreateJiraByCache(request.getAppName(), request.getSummary())) {
-            return;
+            return 200;
         }
         String req = buildRequest(request).toJSONString();
         Map<String, Object> headers = Maps.newHashMap();
         headers.put(HttpHeaders.AUTHORIZATION, "Bearer " + jiraToken);
         HttpResult httpResult = new HttpAPI().postJson(JiraConsts.JIRA_ISSUE_URL, headers, req);
         log.info("[BusinessAlertServiceImpl.generateJira] request [{}], HttpResult [{}]", req, httpResult);
+        return httpResult.getCode();
     }
 
     private JSONObject buildRequest(JiraGenerateRequest request) {

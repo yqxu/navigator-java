@@ -29,7 +29,7 @@ public interface BusinessAlertService {
     /**
      * 生成jira
      */
-    void generateJira(JiraGenerateRequest request);
+    int generateJira(JiraGenerateRequest request);
 
     /**
      * 查询所有应用负责人
