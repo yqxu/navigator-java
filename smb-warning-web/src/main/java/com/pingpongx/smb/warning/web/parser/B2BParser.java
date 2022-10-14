@@ -15,19 +15,14 @@ import java.util.stream.Stream;
 
 @Component
 public class B2BParser implements AlertParser {
+
     @Override
-    public ThirdPartAlert toAlert(String data) {
+    public List<ThirdPartAlert> toAlerts(String data) {
         if (data == null){
             return null;
         }
         SlsAlert ret = JSON.parseObject(data, SlsAlert.class);
-        return ret;
-    }
-
-    @Override
-    public List<ThirdPartAlert> toAlerts(String data) {
-        List<ThirdPartAlert> ret = JSON.parseArray(data, SlsAlert.class).stream().collect(Collectors.toList());
-        return ret;
+        return Stream.of(ret).collect(Collectors.toList());
     }
 
     @Override

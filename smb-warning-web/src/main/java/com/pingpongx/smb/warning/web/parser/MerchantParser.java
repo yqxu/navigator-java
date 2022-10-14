@@ -3,6 +3,7 @@ package com.pingpongx.smb.warning.web.parser;
 import com.alibaba.fastjson.JSON;
 import com.pingpongx.smb.warning.api.request.JiraGenerateRequest;
 import com.pingpongx.smb.warning.biz.alert.model.MerchantAlert;
+import com.pingpongx.smb.warning.biz.alert.model.MerchantAlerts;
 import com.pingpongx.smb.warning.biz.alert.model.SlsAlert;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
 import com.pingpongx.smb.warning.biz.constant.Constant;
@@ -16,21 +17,17 @@ import java.util.stream.Stream;
 
 @Component
 public class MerchantParser implements AlertParser {
-    @Override
-    public ThirdPartAlert toAlert(String data) {
-        if (data == null){
-            return null;
-        }
-        MerchantAlert ret = JSON.parseObject(data, MerchantAlert.class);
-        return ret;
-    }
 
     @Override
     public List<ThirdPartAlert> toAlerts(String data) {
         if (data == null){
             return null;
         }
-        List<ThirdPartAlert> ret = JSON.parseArray(data, MerchantAlert.class).stream().collect(Collectors.toList());
+        MerchantAlerts alerts = JSON.parseObject(data, MerchantAlerts.class);
+        if (alerts.getFire_results()==null){
+            return null;
+        }
+        List<ThirdPartAlert> ret = alerts.getFire_results().stream().collect(Collectors.toList());
         return ret;
     }
 
