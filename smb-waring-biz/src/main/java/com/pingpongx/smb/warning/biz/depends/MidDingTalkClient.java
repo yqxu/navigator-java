@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @Auther: jiangkun
@@ -19,8 +21,8 @@ public  class MidDingTalkClient extends AbstractPPDingTalkClient implements PPDi
         return Constant.Mid.url;
     }
     @Override
-    public String getDepartName() {
-        return Constant.Mid.name;
+    public List<String> supportDepartNames() {
+        return Stream.of(Constant.Mid.name,"Grafana-"+Constant.Mid.name).collect(Collectors.toList());
     }
 
     @Override

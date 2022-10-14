@@ -6,6 +6,7 @@ import com.pingpongx.smb.warning.biz.alert.event.AlertReceived;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
 import com.pingpongx.smb.warning.web.helper.BusinessAlertHelper;
 import com.pingpongx.smb.warning.web.parser.AlertParser;
+import com.pingpongx.smb.warning.web.parser.GrafanaMsgParser;
 import com.pingpongx.smb.warning.web.parser.ParserFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +57,7 @@ public class GrafanaController {
     @NoAuth(isPack = false)
     public List<ThirdPartAlert> createAlertWorkOrder(@PathVariable("depart") String depart, @RequestBody String message) {
         log.info("msg received:\n\n"+message+"\n\n");
-        AlertParser parser = parserFactory.departOf(depart.toUpperCase());
+        AlertParser parser =  parserFactory.departOf("Grafana-"+depart);
         List<ThirdPartAlert> alerts = parser.parse(message);
         alerts.stream().forEach(alert->{
             alert.departSet(depart);

@@ -45,7 +45,7 @@ public class GrafanaAlert implements ThirdPartAlert{
 
     @Override
     public String throwAppName() {
-        return "grafana";
+        return depart();
     }
 
     @Override
@@ -55,7 +55,7 @@ public class GrafanaAlert implements ThirdPartAlert{
 
     @Override
     public String depart() {
-        return labels.get("depart");
+        return "Grafana-"+labels.get("depart").toUpperCase();
     }
 
     @Override

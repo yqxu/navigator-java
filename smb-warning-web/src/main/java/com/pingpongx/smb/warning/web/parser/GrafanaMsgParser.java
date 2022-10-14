@@ -5,6 +5,7 @@ import com.pingpongx.smb.warning.api.request.JiraGenerateRequest;
 import com.pingpongx.smb.warning.biz.alert.model.GrafanaAlert;
 import com.pingpongx.smb.warning.biz.alert.model.GrafanaAlerts;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
+import com.pingpongx.smb.warning.biz.constant.Constant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +46,7 @@ public class GrafanaMsgParser implements AlertParser {
 
     @Override
     public Set<String> getSupportDepart() {
-        return Stream.of("Grafana").collect(Collectors.toSet());
+        return Stream.of(Constant.Merchant.name,Constant.B2B.name,Constant.FlowMore.name,Constant.Mid.name).map(name->"Grafana-"+name).collect(Collectors.toSet());
     }
 
 

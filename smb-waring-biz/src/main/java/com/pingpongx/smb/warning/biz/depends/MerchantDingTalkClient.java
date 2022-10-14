@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @Auther: jiangkun
@@ -19,10 +21,9 @@ public class MerchantDingTalkClient extends AbstractPPDingTalkClient implements 
         return Constant.Merchant.url;
     }
     @Override
-    public String getDepartName() {
-        return Constant.Merchant.name;
+    public List<String> supportDepartNames() {
+        return Stream.of(Constant.Merchant.name,"Grafana-"+Constant.Merchant.name).collect(Collectors.toList());
     }
-
     @Override
     public List<String> getAppNames() {
         return null;

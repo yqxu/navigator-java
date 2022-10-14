@@ -47,7 +47,7 @@ public class SlsAlert implements ThirdPartAlert{
 
     @Override
     public String depart() {
-        return depart;
+        return depart.toUpperCase();
     }
 
     @Override
