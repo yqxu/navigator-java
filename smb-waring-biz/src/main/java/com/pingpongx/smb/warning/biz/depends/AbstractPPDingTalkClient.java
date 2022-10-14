@@ -36,9 +36,9 @@ public abstract class AbstractPPDingTalkClient implements PPDingTalkClient {
         robotRequest.setMsgtype("markdown");
         Markdown markdown =  new Markdown();
         markdown.setTitle(title);
-        markdown.setText(content);
         String atStr = notifyDingUserList.stream().map(p->"@"+p).collect(Collectors.joining(","));
-        robotRequest.setMarkdown(markdown+"\n"+atStr);
+        markdown.setText(content+"\n"+atStr);
+        robotRequest.setMarkdown(markdown);
         robotRequest.setAt(atUser(notifyDingUserList));
         this.doSend(robotRequest);
     }
