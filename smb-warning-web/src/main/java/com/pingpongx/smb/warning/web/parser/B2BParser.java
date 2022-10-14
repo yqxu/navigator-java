@@ -1,7 +1,6 @@
 package com.pingpongx.smb.warning.web.parser;
 
 import com.alibaba.fastjson.JSON;
-import com.pingpongx.smb.warning.api.dto.JiraDTO;
 import com.pingpongx.smb.warning.api.request.JiraGenerateRequest;
 import com.pingpongx.smb.warning.biz.alert.model.SlsAlert;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
@@ -9,6 +8,7 @@ import com.pingpongx.smb.warning.biz.constant.Constant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -21,6 +21,12 @@ public class B2BParser implements AlertParser {
             return null;
         }
         SlsAlert ret = JSON.parseObject(data, SlsAlert.class);
+        return ret;
+    }
+
+    @Override
+    public List<ThirdPartAlert> toAlerts(String data) {
+        List<ThirdPartAlert> ret = JSON.parseArray(data, SlsAlert.class).stream().collect(Collectors.toList());
         return ret;
     }
 

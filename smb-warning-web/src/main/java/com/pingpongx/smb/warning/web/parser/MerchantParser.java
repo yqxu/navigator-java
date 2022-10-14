@@ -9,6 +9,7 @@ import com.pingpongx.smb.warning.biz.constant.Constant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -21,6 +22,15 @@ public class MerchantParser implements AlertParser {
             return null;
         }
         MerchantAlert ret = JSON.parseObject(data, MerchantAlert.class);
+        return ret;
+    }
+
+    @Override
+    public List<ThirdPartAlert> toAlerts(String data) {
+        if (data == null){
+            return null;
+        }
+        List<ThirdPartAlert> ret = JSON.parseArray(data, MerchantAlert.class).stream().collect(Collectors.toList());
         return ret;
     }
 

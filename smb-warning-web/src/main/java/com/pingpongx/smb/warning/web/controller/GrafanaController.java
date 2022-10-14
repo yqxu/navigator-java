@@ -26,9 +26,9 @@ import java.util.regex.Pattern;
 
 @Slf4j
 @RestController
-@RequestMapping("/v2/alert")
+@RequestMapping("/v2/grafana")
 @RequiredArgsConstructor
-public class AlertController {
+public class GrafanaController {
     private final ParserFactory parserFactory;
     private final ApplicationContext context;
 
