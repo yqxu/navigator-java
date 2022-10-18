@@ -2,15 +2,9 @@ package com.pingpongx.smb.warning.biz.alert.routers.operatiors.batch;
 
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.MatchOperation;
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.StrEquals;
-import com.pingpongx.smb.warning.biz.alert.routers.operatiors.StringContains;
-import com.pingpongx.smb.warning.biz.moudle.ACTrie;
-import com.pingpongx.smb.warning.biz.moudle.FSMNode;
-import com.pingpongx.smb.warning.biz.moudle.IdentityPath;
-import com.pingpongx.smb.warning.biz.moudle.Node;
 import com.pingpongx.smb.warning.biz.rules.RuleLeaf;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +41,7 @@ public class BatchStrEquals implements BatchMatcher<String>{
 
     @Override
     public void putRule(RuleLeaf<?,String> rule) {
-        String exp = rule.excepted();
+        String exp = rule.expected();
         Set<String> ruleSet = ruleMap.get(exp);
         if (ruleSet == null){
             ruleSet = new HashSet<>();

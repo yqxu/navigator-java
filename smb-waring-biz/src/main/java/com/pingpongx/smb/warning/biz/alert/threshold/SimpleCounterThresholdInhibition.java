@@ -27,10 +27,10 @@ public class SimpleCounterThresholdInhibition<T extends ThirdPartAlert> extends 
         if (context == null){
             log.error("matched but no context found.Method:needInhibition,Class:"+this.getClass().getName());
         }
-        CountContext handler = (CountContext) context.get(CountContext.IDENTIFY());
         if (context == null){
             log.error("matched but no counter found.Method:needInhibition,Class:"+this.getClass().getName());
         }
+        CountContext handler = (CountContext) context.get(CountContext.IDENTIFY());
         Counter counter = handler.getCounter(date);
         if (counter.sum()>=threshold){
             return InhibitionResultEnum.MatchedAndNeedThrow;

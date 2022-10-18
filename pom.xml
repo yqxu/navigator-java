@@ -9,6 +9,7 @@
         <module>smb-warning-web</module>
         <module>smb-warning-dal</module>
         <module>smb-waring-biz</module>
+        <module>smb-rules</module>
     </modules>
 
     <parent>

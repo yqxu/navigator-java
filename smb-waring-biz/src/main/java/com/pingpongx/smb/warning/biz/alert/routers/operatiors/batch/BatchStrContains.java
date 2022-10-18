@@ -52,7 +52,7 @@ public class BatchStrContains implements BatchMatcher<String>{
 
     @Override
     public void putRule(RuleLeaf<?, String> rule) {
-        String exp = rule.excepted();
+        String exp = rule.expected();
         //TODO:Init 完成节点做一次reindex
         putAndReIndex(exp,rule.getIdentify());
     }
