@@ -8,8 +8,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-public class BizExpRule extends ConfiguredLeafRule {
-    private static String except = "com.pingpongx.business.common.exception.BizException: 邮箱已被注册！";
+public class BizExpRule3 extends ConfiguredLeafRule {
+    private static String except = "[1021]店铺提现金额不满足";
+
     @PostConstruct
     void init(){
         this.setType(SlsAlert.class.getTypeName());
@@ -17,5 +18,4 @@ public class BizExpRule extends ConfiguredLeafRule {
         this.setOperation(StringContains.getInstance());
         this.setExcepted(except);
     }
-
 }
