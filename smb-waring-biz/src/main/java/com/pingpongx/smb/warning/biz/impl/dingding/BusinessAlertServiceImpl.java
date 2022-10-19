@@ -68,7 +68,7 @@ public class BusinessAlertServiceImpl implements BusinessAlertService {
     @Value("${business.jira.token:MTAwODgyMDk4MTY3OuZqSyEfQLeo/IFKtYhwSudgjme0}")
     private String jiraToken;
 
-    @Value("${business.jira.app-test.dict:{\"SMB-国内收款\":\"yangyx\",\"SMB-公共\":\"chenlg\", \"SMB-福贸\":\"fuww\", \"SMB-B2B\":\"xuhy1\"}}")
+    @Value("${business.jira.app-test.dict:{\"SMB-国内收款\":\"wangqq\",\"SMB-公共\":\"chenlg\", \"SMB-福贸\":\"fuww\", \"SMB-B2B\":\"xuhy1\"}}")
     private String jiraAppTestDict;
 
     // 小量不改动本地缓存
