@@ -1,5 +1,5 @@
 package com.pingpongx.smb.warning.biz.alert;
 
-public interface AlertConf<T> {
+public interface AlertConf{
 //    String getAlertType();
 }

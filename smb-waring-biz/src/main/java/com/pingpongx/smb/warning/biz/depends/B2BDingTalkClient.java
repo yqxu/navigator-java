@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @Auther: jiangkun
@@ -20,9 +22,10 @@ public class B2BDingTalkClient extends AbstractPPDingTalkClient implements PPDin
     }
 
     @Override
-    public String getDepartName() {
-        return Constant.B2B.name;
+    public List<String> supportDepartNames() {
+        return Stream.of(Constant.B2B.name,"Grafana-"+Constant.B2B.name).collect(Collectors.toList());
     }
+
 
     @Override
     public List<String> getAppNames() {

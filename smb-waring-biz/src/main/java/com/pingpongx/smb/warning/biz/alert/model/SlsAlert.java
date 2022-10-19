@@ -41,12 +41,13 @@ public class SlsAlert implements ThirdPartAlert{
 
     @Override
     public String throwContent() {
-        return content;
+        String ret = "appName:"+appName+"\n"+"className:"+className+"\n"+"traceId:"+traceId+"\n\n"+content;
+        return ret;
     }
 
     @Override
     public String depart() {
-        return depart;
+        return depart.toUpperCase();
     }
 
     @Override

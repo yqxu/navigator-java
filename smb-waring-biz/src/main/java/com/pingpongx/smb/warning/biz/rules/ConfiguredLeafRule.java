@@ -37,7 +37,7 @@ public class ConfiguredLeafRule extends RuleLeaf<ThirdPartAlert ,String> {
     }
 
     @Override
-    public String excepted() {
+    public String expected() {
         return excepted;
     }
 

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Auther: jiangkun
@@ -35,7 +36,8 @@ public abstract class AbstractPPDingTalkClient implements PPDingTalkClient {
         robotRequest.setMsgtype("markdown");
         Markdown markdown =  new Markdown();
         markdown.setTitle(title);
-        markdown.setText(content);
+        String atStr = notifyDingUserList.stream().map(p->"@"+p).collect(Collectors.joining(","));
+        markdown.setText(content+"\n"+atStr);
         robotRequest.setMarkdown(markdown);
         robotRequest.setAt(atUser(notifyDingUserList));
         this.doSend(robotRequest);

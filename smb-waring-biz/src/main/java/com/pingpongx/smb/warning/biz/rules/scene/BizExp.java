@@ -10,6 +10,7 @@ import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
 import com.pingpongx.smb.warning.biz.rules.Rule;
 import com.pingpongx.smb.warning.biz.rules.RuleTrie;
 import com.pingpongx.smb.warning.biz.rules.bizexp.BizExpRule;
+import com.pingpongx.smb.warning.biz.rules.bizexp.BizExpRule2;
 import com.pingpongx.smb.warning.biz.rules.dubbo.timeout.StrExcept1;
 import com.pingpongx.smb.warning.biz.rules.dubbo.timeout.StrExcept2;
 import com.pingpongx.smb.warning.biz.rules.dubbo.timeout.StrExcept3;
@@ -23,6 +24,9 @@ import javax.annotation.PostConstruct;
 public class BizExp {
     @Autowired
     BizExpRule exp1;
+
+    @Autowired
+    BizExpRule2 exp2;
     @Autowired
     RuleTrie ruleTrie;
 
@@ -30,7 +34,7 @@ public class BizExp {
     InhibitionFactory inhibitionFactory;
     Rule or;
 
-    public static ThresholdAlertConf conf = new ThresholdAlertConf<>(5, TimeUnit.Minutes,10,10);
+    public static ThresholdAlertConf conf = new ThresholdAlertConf(5, TimeUnit.Minutes,10,10);
 
     @PostConstruct
     void init(){

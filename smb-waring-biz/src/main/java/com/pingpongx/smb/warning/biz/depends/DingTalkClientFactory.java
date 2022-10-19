@@ -1,5 +1,6 @@
 package com.pingpongx.smb.warning.biz.depends;
 
+import io.vavr.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +19,7 @@ public class DingTalkClientFactory {
 
     @PostConstruct
     private void init(){
-        departMap = dingTalkClientMapOrigin.values().stream().collect(Collectors.toMap(client->client.getDepartName(),client->client));
-        departMap = dingTalkClientMapOrigin.values().stream().collect(Collectors.toMap(client->client.getDepartName(),client->client));
+        departMap = dingTalkClientMapOrigin.values().stream().flatMap(ppDingTalkClient -> ppDingTalkClient.supportDepartNames().stream().map(str->Tuple.of(str,ppDingTalkClient))).collect(Collectors.toMap(t->t._1(), t->t._2()));
     }
 
     public PPDingTalkClient getByDepart(String departName){

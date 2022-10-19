@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @Auther: jiangkun
@@ -19,8 +21,8 @@ public class FlowMoreDingTalkClient extends AbstractPPDingTalkClient implements 
         return Constant.FlowMore.url;
     }
     @Override
-    public String getDepartName() {
-        return Constant.FlowMore.name;
+    public List<String> supportDepartNames() {
+        return Stream.of(Constant.FlowMore.name,"Grafana-"+Constant.FlowMore.name).collect(Collectors.toList());
     }
 
     @Override

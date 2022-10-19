@@ -33,5 +33,10 @@ public class BusinessAlertsToUser extends BaseDO {
     @TableField("userId")
     private String userId;
 
+    /**
+     * DEV/TEST
+     */
+    @TableField("role")
+    private String role;
 
 }

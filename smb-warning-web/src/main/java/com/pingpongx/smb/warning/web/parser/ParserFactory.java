@@ -19,10 +19,10 @@ public class ParserFactory {
     private void init(){
         origin.values().stream()
                 .flatMap(p->p.getSupportDepart().stream().map(dep->Tuple.of(dep,p)))
-                .forEach(tuple->parserMap.put(tuple._1(), tuple._2()));
+                .forEach(tuple->parserMap.put(tuple._1().toUpperCase(), tuple._2()));
     }
 
     public AlertParser departOf(String depart){
-        return parserMap.get(depart);
+        return parserMap.get(depart.toUpperCase());
     }
 }
