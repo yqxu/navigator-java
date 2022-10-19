@@ -7,7 +7,6 @@ import com.pingpongx.smb.warning.biz.alert.counter.CountContext;
 import com.pingpongx.smb.warning.biz.alert.global.GlobalCountContext;
 import com.pingpongx.smb.warning.biz.alert.model.SlsAlert;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
-import com.pingpongx.smb.warning.biz.alert.threshold.DubboTimeOutInhibition;
 import com.pingpongx.smb.warning.biz.alert.threshold.Inhibition;
 import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
 import com.pingpongx.smb.warning.biz.rules.Rule;
@@ -39,7 +38,7 @@ public class DubbleTimeOut {
     InhibitionFactory inhibitionFactory;
     Rule or;
 
-    public static ThresholdAlertConf conf = new ThresholdAlertConf<>(5, TimeUnit.Minutes,10,10);
+    public static ThresholdAlertConf conf = new ThresholdAlertConf(5, TimeUnit.Minutes,10,10);
 
     @PostConstruct
     void init(){

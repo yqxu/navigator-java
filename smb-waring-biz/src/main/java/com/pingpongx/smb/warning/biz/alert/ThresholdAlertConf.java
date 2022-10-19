@@ -2,9 +2,10 @@ package com.pingpongx.smb.warning.biz.alert;
 
 import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
 
+import java.io.Serializable;
 
 
-public class ThresholdAlertConf<T> implements AlertConf<T>, CountConf{
+public class ThresholdAlertConf implements AlertConf, CountConf, Serializable {
     public ThresholdAlertConf(long duration, TimeUnit unit, int partNum, long alertThreshold) {
         this.duration = duration;
         this.unit = unit;

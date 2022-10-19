@@ -27,7 +27,7 @@ public class BalanceNotEnoughBizExp {
     InhibitionFactory inhibitionFactory;
     Rule or;
 
-    public static ThresholdAlertConf conf = new ThresholdAlertConf<>(5, TimeUnit.Minutes,10,10);
+    public static ThresholdAlertConf conf = new ThresholdAlertConf(5, TimeUnit.Minutes,10,10);
 
     @PostConstruct
     void init(){
