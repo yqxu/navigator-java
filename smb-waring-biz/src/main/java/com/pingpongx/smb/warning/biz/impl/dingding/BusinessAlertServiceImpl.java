@@ -68,7 +68,7 @@ public class BusinessAlertServiceImpl implements BusinessAlertService {
     @Value("${business.jira.token:MTAwODgyMDk4MTY3OuZqSyEfQLeo/IFKtYhwSudgjme0}")
     private String jiraToken;
 
-    @Value("${business.jira.app-test.dict:{\"SMB-福贸\":\"fuww\", \"SMB-B2B\":\"xuhy1\"}}")
+    @Value("${business.jira.app-test.dict:{\"SMB-国内收款\":\"yangyx\",\"SMB-公共\":\"chenlg\", \"SMB-福贸\":\"fuww\", \"SMB-B2B\":\"xuhy1\"}}")
     private String jiraAppTestDict;
 
     // 小量不改动本地缓存
@@ -118,7 +118,9 @@ public class BusinessAlertServiceImpl implements BusinessAlertService {
         String summary = CharSequenceUtil.removeAllLineBreaks(StringEscapeUtils.unescapeJava(HtmlUtil.filter(request.getSummary())));
         summary = StringUtils.substring(summary, 0, 200);
         String businessLine = Optional.ofNullable(getAppDTO(appName)).map(BusinessAlertsAppDTO::getClassify).orElse("SMB-B2B");
-        String testName = (String) JSON.parseObject(jiraAppTestDict).getOrDefault(businessLine, "fuww");
+        List<BusinessAlertsUserMap> users = businessAlertsCache.findByAppName(appName);
+        String aDefault = (String) JSON.parseObject(jiraAppTestDict).getOrDefault(businessLine, "fuww");
+        String testName = users.stream().filter(user->"Test".equalsIgnoreCase(user.getRole())).map(BusinessAlertsUserMap::getDomainAccount).findFirst().orElse(aDefault);
         JSONObject req = new JSONObject();
         JSONObject fields = new JSONObject();
         req.put("fields", fields);

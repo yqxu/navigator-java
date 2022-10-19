@@ -66,7 +66,12 @@ public class BusinessAlertsCache {
             return;
         }
         for (BusinessAlertsUserMap alertsUser : allBusinessAlertUsers) {
-            businessAlertUserMap.computeIfAbsent(alertsUser.getAppName(), k -> new ArrayList<>()).add(alertsUser);
+            List<BusinessAlertsUserMap> list = businessAlertUserMap.get(alertsUser.getAppName());
+            if (list == null){
+                list = new ArrayList<>();
+                businessAlertUserMap.put(alertsUser.getAppName(),list);
+            }
+            list.add(alertsUser);
         }
         log.info("BusinessAlertsCache.initAlertUser[业务告警应用负责人缓存信息:{}]", JSONObject.toJSONString(businessAlertUserMap));
     }

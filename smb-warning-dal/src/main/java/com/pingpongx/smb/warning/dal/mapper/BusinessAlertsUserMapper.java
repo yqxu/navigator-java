@@ -17,7 +17,7 @@ import org.apache.ibatis.annotations.Select;
  */
 public interface BusinessAlertsUserMapper extends DefaultMapper<BusinessAlertsUser> {
 
-    @Select("select a.appName,u.userId,u.teamLeaderId,u.name,u.callingPrefix,u.phone,u.email,u.domainAccount from business_alerts_to_user a left join business_alerts_user u on a.userId = u.userId where a.flag = 1 and u.flag =1")
+    @Select("select a.appName,a.role,u.userId,u.teamLeaderId,u.name,u.callingPrefix,u.phone,u.email,u.domainAccount from business_alerts_to_user a left join business_alerts_user u on a.userId = u.userId where a.flag = 1 and u.flag =1")
     List<BusinessAlertsUserMap> findAllBusinessAlertUsers();
 
     List<BusinessAlertsUserMap> findUserByAppNames(@Param("appNames") List<String> appNames);

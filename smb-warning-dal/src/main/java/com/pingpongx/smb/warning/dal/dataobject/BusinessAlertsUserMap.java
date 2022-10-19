@@ -15,6 +15,8 @@ public class BusinessAlertsUserMap implements Serializable {
     private static final long serialVersionUID = -119775768767246980L;
     private String appName;
 
+    private String role;
+
     private String userId;
 
     /**
