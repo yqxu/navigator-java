@@ -52,8 +52,8 @@ public class SimpleCounterThresholdInhibition<T extends ThirdPartAlert> extends 
 
     @Override
     public void handleMatchedData(T data, MatchResult matchContext) {
+        log.info(getPath().toString());
         InhibitionResultEnum inhibitionResult = needInhibition(data,matchContext);
-
         if (InhibitionResultEnum.MatchedAndNeedInhibition.equals(inhibitionResult)){
             ToInhibition toInhibition = new ToInhibition(applicationContext,data);
             applicationContext.publishEvent(toInhibition);
