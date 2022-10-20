@@ -14,7 +14,7 @@ public class BizExpRule3 extends ConfiguredLeafRule {
 
     @PostConstruct
     void init(){
-        this.setType(MerchantAlert.class.getTypeName());
+        this.setType(MerchantAlert.class.getSimpleName());
         this.setAttr("content");
         this.setOperation(StringContains.getInstance());
         this.setExcepted(except);

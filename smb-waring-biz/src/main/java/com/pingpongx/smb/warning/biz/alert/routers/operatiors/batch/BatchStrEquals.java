@@ -2,16 +2,19 @@ package com.pingpongx.smb.warning.biz.alert.routers.operatiors.batch;
 
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.MatchOperation;
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.StrEquals;
+import com.pingpongx.smb.warning.biz.constant.Constant;
 import com.pingpongx.smb.warning.biz.rules.RuleLeaf;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
+
 public class BatchStrEquals implements BatchMatcher<String>{
+
     Map<String,Set<String>> ruleMap = new ConcurrentHashMap<>();
 
     public void putOnly(String str,String ruleIdentify){
@@ -54,8 +57,7 @@ public class BatchStrEquals implements BatchMatcher<String>{
         return (String) supportedOperation().getIdentify();
     }
 
-    @Override
-    public BatchMatcher<String> newInstance() {
+    public static BatchMatcher<String> newInstance() {
         BatchStrEquals strContains = new BatchStrEquals();
         return strContains;
     }

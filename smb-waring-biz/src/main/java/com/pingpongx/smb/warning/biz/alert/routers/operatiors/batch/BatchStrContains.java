@@ -2,13 +2,12 @@ package com.pingpongx.smb.warning.biz.alert.routers.operatiors.batch;
 
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.MatchOperation;
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.StringContains;
+import com.pingpongx.smb.warning.biz.constant.Constant;
 import com.pingpongx.smb.warning.biz.moudle.*;
 import com.pingpongx.smb.warning.biz.rules.RuleLeaf;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Component
 public class BatchStrContains implements BatchMatcher<String>{
     ACTrie<Character,Set<String>> trie = new ACTrie<>();
 
@@ -57,8 +56,7 @@ public class BatchStrContains implements BatchMatcher<String>{
         putAndReIndex(exp,rule.getIdentify());
     }
 
-    @Override
-    public BatchMatcher<String> newInstance() {
+    public static BatchMatcher<String> newInstance() {
         BatchStrContains strContains = new BatchStrContains();
         return strContains;
     }

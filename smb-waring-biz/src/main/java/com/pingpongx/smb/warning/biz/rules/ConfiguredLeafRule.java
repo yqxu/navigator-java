@@ -4,6 +4,9 @@ import com.pingpongx.smb.warning.biz.alert.model.MerchantAlert;
 import com.pingpongx.smb.warning.biz.alert.model.SlsAlert;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.MatchOperation;
+import com.pingpongx.smb.warning.biz.alert.routers.operatiors.OperationFactory;
+import com.pingpongx.smb.warning.biz.rules.scene.configure.LeafRuleConf;
+import org.checkerframework.checker.units.qual.C;
 
 public class ConfiguredLeafRule extends RuleLeaf<ThirdPartAlert ,String> {
 
@@ -12,9 +15,14 @@ public class ConfiguredLeafRule extends RuleLeaf<ThirdPartAlert ,String> {
     MatchOperation operation;
     String excepted;
 
-    public static ConfiguredLeafRule resumeByConf(){
-        //TODO:
-        return null;
+    public static ConfiguredLeafRule resumeByConf(LeafRuleConf conf){
+        ConfiguredLeafRule rule = new ConfiguredLeafRule();
+        rule.attr = conf.getAttr();
+        rule.type = conf.getType();
+        rule.excepted = conf.getExcepted();
+        rule.operation = OperationFactory.getInstance(conf.getOperation());
+//        rule.setOperation();
+        return rule;
     }
 
     @Override

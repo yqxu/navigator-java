@@ -1,5 +1,8 @@
 package com.pingpongx.smb.warning.biz.constant;
 
+import com.pingpongx.smb.warning.biz.alert.routers.operatiors.StrEquals;
+import com.pingpongx.smb.warning.biz.alert.routers.operatiors.StringContains;
+
 public class Constant {
     public static class B2B{
         public static String name = "B2B";
@@ -19,7 +22,7 @@ public class Constant {
     }
 
     public static class Operations{
-        public static String StringContains = "StringContains";
-        public static String Equals = "Equals";
+        public static String StrContains = StringContains.class.getSimpleName();
+        public static String Equals = StrEquals.class.getSimpleName();
     }
 }

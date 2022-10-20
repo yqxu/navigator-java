@@ -32,10 +32,6 @@ public class RuleTrie {
     @Autowired
     DataAttrMapper attrMapper ;
 
-    @Autowired
-    BatchMatcherFactory batchMatcherFactory;
-
-
 
     Rule newAnd(Rule rule,Rule rule2){
         return RuleAnd.newAnd(rule).and(rule2);
@@ -138,7 +134,7 @@ public class RuleTrie {
                     TreeMap<String,BatchMatcher>  matchers = matcherMapper.matchers(dpObj,dpAttr);
                     BatchMatcher matcher = matchers.get(opIdentity);
                     if (matcher==null){
-                        matcher = batchMatcherFactory.newBatchMatcher(opIdentity);
+                        matcher = BatchMatcherFactory.newBatchMatcher(opIdentity);
                         matcherMapper.put(dpObj,dpAttr,matcher);
                     }
                     matcher.putRule((RuleLeaf<?, ?>) r);

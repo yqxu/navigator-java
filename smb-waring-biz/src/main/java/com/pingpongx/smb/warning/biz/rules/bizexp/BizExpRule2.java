@@ -13,7 +13,7 @@ public class BizExpRule2 extends ConfiguredLeafRule {
 
     @PostConstruct
     void init(){
-        this.setType(SlsAlert.class.getTypeName());
+        this.setType(SlsAlert.class.getSimpleName());
         this.setAttr("content");
         this.setOperation(StringContains.getInstance());
         this.setExcepted(except);

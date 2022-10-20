@@ -1,9 +1,10 @@
 package com.pingpongx.smb.warning.biz.alert.routers.operatiors;
 
 import com.pingpongx.smb.warning.biz.constant.Constant;
+import org.springframework.stereotype.Component;
+
 
 public class StrEquals implements MatchOperation<String> {
-
     public static StrEquals getInstance(){
         return new StrEquals();
     }

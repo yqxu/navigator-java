@@ -23,5 +23,4 @@ public interface BatchMatcher<T> extends Comparable<BatchMatcher<T>>, Identified
 
     void putRule(RuleLeaf<?,T> rule);
 
-    BatchMatcher<T> newInstance();
 }
