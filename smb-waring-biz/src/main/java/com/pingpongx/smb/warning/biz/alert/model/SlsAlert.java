@@ -3,6 +3,7 @@ package com.pingpongx.smb.warning.biz.alert.model;
 import com.pingpongx.smb.warning.biz.moudle.IdentityPath;
 import lombok.Data;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,7 +32,7 @@ public class SlsAlert implements ThirdPartAlert{
 
     @Override
     public IdentityPath<String> countPath() {
-        return IdentityPath.of(Stream.of(appName,className).collect(Collectors.toList()));
+        return IdentityPath.of(Stream.of(appName,className).filter(Objects::nonNull).collect(Collectors.toList()));
     }
 
     @Override

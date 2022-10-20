@@ -57,4 +57,14 @@ public class BatchStrContains implements BatchMatcher<String>{
         putAndReIndex(exp,rule.getIdentify());
     }
 
+    @Override
+    public BatchMatcher<String> newInstance() {
+        BatchStrContains strContains = new BatchStrContains();
+        return strContains;
+    }
+
+    @Override
+    public String getIdentify() {
+        return (String) supportedOperation().getIdentify();
+    }
 }

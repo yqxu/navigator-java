@@ -1,6 +1,5 @@
 package com.pingpongx.smb.warning.biz.rules;
 
-import cn.hutool.core.collection.ConcurrentHashSet;
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.batch.BatchMatcher;
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.batch.BatchMatcherFactory;
 import com.pingpongx.smb.warning.biz.moudle.IdentityPath;
@@ -26,14 +25,15 @@ public class RuleTrie {
     @Autowired
     RuleStore ruleStore;
 
-    @Autowired
-    BatchMatcherFactory batchMatcherFactory;
 
     @Autowired
     BatchMatcherMapper matcherMapper;
 
     @Autowired
     DataAttrMapper attrMapper ;
+
+    @Autowired
+    BatchMatcherFactory batchMatcherFactory;
 
 
 
@@ -65,8 +65,8 @@ public class RuleTrie {
             return result;
         }
         attrs.stream().forEach(attr->{
-            TreeSet<BatchMatcher> sortedMatcher = matcherMapper.routeMatchers(data,attr);
-            Iterator<BatchMatcher> it = sortedMatcher.iterator();
+            TreeMap<String,BatchMatcher> sortedMatcher = matcherMapper.routeMatchers(data,attr);
+            Iterator<BatchMatcher> it = sortedMatcher.values().iterator();
             try{
                 while(it.hasNext()){
                     Field field = data.getClass().getDeclaredField(attr);
@@ -132,8 +132,15 @@ public class RuleTrie {
                 .filter(r->r instanceof RuleLeaf)
                 .forEach(r->{
                     //TODO NOT logic
-                    BatchMatcher matcher = batchMatcherFactory.getBatchMatcher((String) ((RuleLeaf)r).operatorType().getIdentify());
-                    matcherMapper.put(((RuleLeaf<?, ?>) r).dependsObject().getSimpleName(),((RuleLeaf<?, ?>) r).dependsAttr(),matcher);
+                    String dpObj = ((RuleLeaf<?, ?>) r).dependsObject().getSimpleName();
+                    String dpAttr = ((RuleLeaf<?, ?>) r).dependsAttr();
+                    String opIdentity = (String) ((RuleLeaf<?, ?>) r).operatorType().getIdentify();
+                    TreeMap<String,BatchMatcher>  matchers = matcherMapper.matchers(dpObj,dpAttr);
+                    BatchMatcher matcher = matchers.get(opIdentity);
+                    if (matcher==null){
+                        matcher = batchMatcherFactory.newBatchMatcher(opIdentity);
+                        matcherMapper.put(dpObj,dpAttr,matcher);
+                    }
                     matcher.putRule((RuleLeaf<?, ?>) r);
                 });
 

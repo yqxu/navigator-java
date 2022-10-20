@@ -49,5 +49,14 @@ public class BatchStrEquals implements BatchMatcher<String>{
         }
         ruleSet.add(rule.getIdentify());
     }
+    @Override
+    public String getIdentify() {
+        return (String) supportedOperation().getIdentify();
+    }
 
+    @Override
+    public BatchMatcher<String> newInstance() {
+        BatchStrEquals strContains = new BatchStrEquals();
+        return strContains;
+    }
 }

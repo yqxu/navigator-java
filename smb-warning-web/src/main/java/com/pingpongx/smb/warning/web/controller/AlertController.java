@@ -58,6 +58,9 @@ public class AlertController {
         log.info("msg received:\n\n"+message+"\n\n");
         AlertParser parser = parserFactory.departOf(depart.toUpperCase());
         List<ThirdPartAlert> alerts = parser.parse(message);
+        if (alerts == null){
+            return null;
+        }
         alerts.stream().forEach(alert->{
             alert.departSet(depart);
             if (canPass(alert)){
