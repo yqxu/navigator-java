@@ -42,7 +42,11 @@ public class SlsAlert implements ThirdPartAlert{
 
     @Override
     public String throwContent() {
-        String ret = "appName:"+appName+"\n"+"className:"+className+"\n"+"traceId:"+traceId+"\n\n"+content;
+
+        String ret = "appName:"+"["+appName+"](链接地址)"+appName+"\n\n"
+                +"className:"+className+"\n\n"
+                +"traceId:"+traceId+"\n\n"
+                +content;
         return ret;
     }
 
