@@ -22,19 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 @Component
 public class ConfiguredScene {
-    @Value("${configured.scene:}")
-    private String configuredScenes;
-
     @Autowired
     RuleTrie ruleTrie;
 
     @Autowired
     InhibitionFactory inhibitionFactory;
 
-    @PostConstruct
-    void init(){
-        loadConfigStr(configuredScenes);
-    }
 
     public void loadConfigStr(String confStr){
         List<Scene> scenes = JSON.parseArray(confStr, Scene.class);
