@@ -33,7 +33,11 @@ public class ConfiguredScene {
 
     @PostConstruct
     void init(){
-        List<Scene> scenes = JSON.parseArray(configuredScenes, Scene.class);
+        loadConfigStr(configuredScenes);
+    }
+
+    public void loadConfigStr(String confStr){
+        List<Scene> scenes = JSON.parseArray(confStr, Scene.class);
         if (scenes == null){
             return;
         }

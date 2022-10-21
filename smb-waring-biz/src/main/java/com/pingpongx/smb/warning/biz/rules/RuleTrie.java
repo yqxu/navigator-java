@@ -5,7 +5,6 @@ import com.pingpongx.smb.warning.biz.alert.routers.operatiors.batch.BatchMatcher
 import com.pingpongx.smb.warning.biz.moudle.IdentityPath;
 import com.pingpongx.smb.warning.biz.moudle.Node;
 import com.pingpongx.smb.warning.biz.moudle.Trie;
-import com.pingpongx.smb.warning.biz.rules.store.RuleStore;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,9 +20,6 @@ import java.util.stream.Collectors;
 public class RuleTrie {
     Trie<String, Map<String,RuleHandler>> ruleTrie = new Trie<>();
     Trie<String, Map<String,RuleHandler>> notTrie = new Trie<>();
-
-    @Autowired
-    RuleStore ruleStore;
 
 
     @Autowired
@@ -50,7 +46,6 @@ public class RuleTrie {
     public MatchResult match(Object data){
         String type = data.getClass().getSimpleName();
         Set<String> attrs = attrMapper.attrsOf(type);
-        Map<String,RuleHandler> matchedHandlers = new ConcurrentHashMap<>();
         Set<String> matchedRulesRepeat = new HashSet<>();
         List<String> matchedRules = new ArrayList<>();
         Set<String> exceptRulesRepeat = new HashSet<>();

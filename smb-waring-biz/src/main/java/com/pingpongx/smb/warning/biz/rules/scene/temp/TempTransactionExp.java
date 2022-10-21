@@ -8,8 +8,6 @@ import com.pingpongx.smb.warning.biz.alert.threshold.Inhibition;
 import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
 import com.pingpongx.smb.warning.biz.rules.Rule;
 import com.pingpongx.smb.warning.biz.rules.RuleTrie;
-import com.pingpongx.smb.warning.biz.rules.bizexp.BizExpRule;
-import com.pingpongx.smb.warning.biz.rules.bizexp.BizExpRule2;
 import com.pingpongx.smb.warning.biz.rules.temp.TempRule1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
