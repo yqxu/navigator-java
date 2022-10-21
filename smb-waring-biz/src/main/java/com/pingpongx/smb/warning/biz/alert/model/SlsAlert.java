@@ -42,11 +42,10 @@ public class SlsAlert implements ThirdPartAlert{
 
     @Override
     public String throwContent() {
-
-        String ret = "appName:"+"["+appName+"](链接地址)"+appName+"\n\n"
-                +"className:"+className+"\n\n"
-                +"traceId:"+traceId+"\n\n"
-                +content;
+        String ret = "- appName:" + "["+appName+"](https://sls.console.aliyun.com/lognext/project/prd-b2b-app-log/logsearch/prd-b2b-app-log)"+"\n"
+                +"- className:"+ className+"\n"
+                +"- traceId:"+ "["+traceId+"](https://sls.console.aliyun.com/lognext/project/prd-b2b-app-log/logsearch/prd-b2b-app-log?queryString="+traceId+")"+"\n"
+                +"- content:\n"+ content;
         return ret;
     }
 
