@@ -15,7 +15,7 @@ public class BizExpRule extends ConfiguredLeafRule {
         this.setType(SlsAlert.class.getSimpleName());
         this.setAttr("content");
         this.setOperation(StringContains.getInstance());
-        this.setExcepted(except);
+        this.setExpected(except);
     }
 
 }

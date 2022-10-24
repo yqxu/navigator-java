@@ -14,10 +14,8 @@ import com.pingpongx.smb.warning.biz.rules.scene.configure.LeafRuleConf;
 import com.pingpongx.smb.warning.biz.rules.scene.configure.Or;
 import com.pingpongx.smb.warning.biz.rules.scene.configure.Scene;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 @Component
@@ -66,7 +64,7 @@ public class ConfiguredScene {
         and.getAndRules().add(rule);
         rule.setAttr("content");
         rule.setType("SlsAlert");
-        rule.setExcepted("Test");
+        rule.setExpected("Test");
         rule.setOperation(Constant.Operations.StrContains);
         Scene scene = new Scene();
         scene.setCountWith(new ThresholdAlertConf(5, TimeUnit.Minutes,10,10));

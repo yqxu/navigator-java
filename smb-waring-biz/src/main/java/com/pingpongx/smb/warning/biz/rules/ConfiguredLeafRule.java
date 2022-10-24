@@ -6,20 +6,19 @@ import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.MatchOperation;
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.OperationFactory;
 import com.pingpongx.smb.warning.biz.rules.scene.configure.LeafRuleConf;
-import org.checkerframework.checker.units.qual.C;
 
 public class ConfiguredLeafRule extends RuleLeaf<ThirdPartAlert ,String> {
 
     String type;
     String attr;
     MatchOperation operation;
-    String excepted;
+    String expected;
 
     public static ConfiguredLeafRule resumeByConf(LeafRuleConf conf){
         ConfiguredLeafRule rule = new ConfiguredLeafRule();
         rule.attr = conf.getAttr();
         rule.type = conf.getType();
-        rule.excepted = conf.getExcepted();
+        rule.expected = conf.getExpected();
         rule.operation = OperationFactory.getInstance(conf.getOperation());
 //        rule.setOperation();
         return rule;
@@ -46,7 +45,7 @@ public class ConfiguredLeafRule extends RuleLeaf<ThirdPartAlert ,String> {
 
     @Override
     public String expected() {
-        return excepted;
+        return expected;
     }
 
 
@@ -74,11 +73,11 @@ public class ConfiguredLeafRule extends RuleLeaf<ThirdPartAlert ,String> {
         this.operation = operation;
     }
 
-    public String getExcepted() {
-        return excepted;
+    public String getExpected() {
+        return expected;
     }
 
-    public void setExcepted(String excepted) {
-        this.excepted = excepted;
+    public void setExpected(String expected) {
+        this.expected = expected;
     }
 }

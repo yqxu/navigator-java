@@ -16,7 +16,7 @@ public class TempRule1 extends ConfiguredLeafRule {
         this.setType(SlsAlert.class.getTypeName());
         this.setAttr("content");
         this.setOperation(StringContains.getInstance());
-        this.setExcepted(except);
+        this.setExpected(except);
     }
 
 }

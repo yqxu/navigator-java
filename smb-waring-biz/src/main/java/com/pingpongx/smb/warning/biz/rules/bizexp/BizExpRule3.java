@@ -1,7 +1,6 @@
 package com.pingpongx.smb.warning.biz.rules.bizexp;
 
 import com.pingpongx.smb.warning.biz.alert.model.MerchantAlert;
-import com.pingpongx.smb.warning.biz.alert.model.SlsAlert;
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.StringContains;
 import com.pingpongx.smb.warning.biz.rules.ConfiguredLeafRule;
 import org.springframework.stereotype.Component;
@@ -17,6 +16,6 @@ public class BizExpRule3 extends ConfiguredLeafRule {
         this.setType(MerchantAlert.class.getSimpleName());
         this.setAttr("content");
         this.setOperation(StringContains.getInstance());
-        this.setExcepted(except);
+        this.setExpected(except);
     }
 }
