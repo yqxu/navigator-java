@@ -12,10 +12,10 @@ public class BizExpRule extends ConfiguredLeafRule {
     private static String except = "com.pingpongx.business.common.exception.BizException: 邮箱已被注册！";
     @PostConstruct
     void init(){
-        this.setType(SlsAlert.class.getTypeName());
+        this.setType(SlsAlert.class.getSimpleName());
         this.setAttr("content");
         this.setOperation(StringContains.getInstance());
-        this.setExcepted(except);
+        this.setExpected(except);
     }
 
 }

@@ -25,10 +25,8 @@ public class SimpleCounterThresholdInhibition<T extends ThirdPartAlert> extends 
     public InhibitionResultEnum needInhibition(T date,MatchResult matchContext){
         Map<String, RuleHandler> context = matchContext.getMatchedData().get(getPath().toString());
         if (context == null){
-            log.error("matched but no context found.Method:needInhibition,Class:"+this.getClass().getName());
-        }
-        if (context == null){
-            log.error("matched but no counter found.Method:needInhibition,Class:"+this.getClass().getName());
+            log.error("matched but no context found.Method:needInhibition,Class:"+this.getClass().getName()+"\npath:"+getPath().toString());
+            return InhibitionResultEnum.MatchedAndNeedThrow;
         }
         CountContext handler = (CountContext) context.get(CountContext.IDENTIFY());
         Counter counter = handler.getCounter(date);
@@ -54,8 +52,8 @@ public class SimpleCounterThresholdInhibition<T extends ThirdPartAlert> extends 
 
     @Override
     public void handleMatchedData(T data, MatchResult matchContext) {
+        log.info(getPath().toString());
         InhibitionResultEnum inhibitionResult = needInhibition(data,matchContext);
-
         if (InhibitionResultEnum.MatchedAndNeedInhibition.equals(inhibitionResult)){
             ToInhibition toInhibition = new ToInhibition(applicationContext,data);
             applicationContext.publishEvent(toInhibition);

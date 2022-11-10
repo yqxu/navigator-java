@@ -3,6 +3,7 @@ package com.pingpongx.smb.warning.biz.alert.model;
 import com.pingpongx.smb.warning.biz.moudle.IdentityPath;
 import lombok.Data;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,7 +32,7 @@ public class SlsAlert implements ThirdPartAlert{
 
     @Override
     public IdentityPath<String> countPath() {
-        return IdentityPath.of(Stream.of(appName,className).collect(Collectors.toList()));
+        return IdentityPath.of(Stream.of(appName,className).filter(Objects::nonNull).collect(Collectors.toList()));
     }
 
     @Override
@@ -41,7 +42,10 @@ public class SlsAlert implements ThirdPartAlert{
 
     @Override
     public String throwContent() {
-        String ret = "appName:"+appName+"\n"+"className:"+className+"\n"+"traceId:"+traceId+"\n\n"+content;
+        String ret = "- appName:" + "["+appName+"](https://sls.console.aliyun.com/lognext/project/prd-b2b-app-log/logsearch/prd-b2b-app-log)"+"\n"
+                +"- className:"+ className+"\n"
+                +"- traceId:"+ "["+traceId+"](https://sls.console.aliyun.com/lognext/project/prd-b2b-app-log/logsearch/prd-b2b-app-log?queryString="+traceId+")"+"\n"
+                +"- content:\n"+ content;
         return ret;
     }
 

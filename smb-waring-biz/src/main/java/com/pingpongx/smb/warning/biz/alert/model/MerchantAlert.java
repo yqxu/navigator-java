@@ -36,6 +36,8 @@ public class MerchantAlert implements ThirdPartAlert{
     @Override
     public String throwContent() {
         String ret = "appName:"+application+"\n"+content;
+
+
         return ret;
     }
 

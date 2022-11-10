@@ -44,7 +44,7 @@ public class DubbleTimeOut {
     void init(){
         or = exp1.or(exp2).or(exp3).or(exp4);
         CountContext countContext = new CountContext( conf);
-        ruleTrie.put(or, countContext);
+        ruleTrie.put(or,countContext);
         Inhibition<ThirdPartAlert> inhibition = inhibitionFactory.getInhibition(conf);
         ruleTrie.put(or,inhibition);
     }

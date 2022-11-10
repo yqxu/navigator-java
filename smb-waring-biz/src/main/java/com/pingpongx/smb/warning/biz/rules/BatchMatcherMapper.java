@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -17,29 +18,31 @@ import java.util.stream.Stream;
 @Component
 @Slf4j
 public class BatchMatcherMapper {
-    Trie<String, TreeSet<BatchMatcher>> ruleTries = new Trie<>();
+    Trie<String, TreeMap<String,BatchMatcher>> ruleTries = new Trie<>();
 
     @Autowired
     DataAttrMapper attrMapper;
-    TreeSet<BatchMatcher> matchers(String type, String attr){
+
+    TreeMap<String,BatchMatcher> matchers(String type, String attr){
         IdentityPath<String> path = IdentityPath.of(Stream.of(type,attr).collect(Collectors.toList()));
-        Node<String,TreeSet<BatchMatcher>> node = ruleTries.getOrCreate(path);
+        Node<String, TreeMap<String,BatchMatcher>> node = ruleTries.getOrCreate(path);
         log.info("type:"+type+" attr:"+attr+" node:\n"+node);
         if (node.isNew()){
-            node.setData(new TreeSet<>());
+            node.setData(new TreeMap<>());
         }
         return node.getData();
     }
 
     public BatchMatcherMapper put(String type,String attr,BatchMatcher matcher){
-        matchers(type,attr).add(matcher);
+        matchers(type,attr).put((String) matcher.getIdentify(),matcher);
         attrMapper.put(type,attr);
         return this;
     }
 
 
-    public TreeSet<BatchMatcher> routeMatchers(Object data,String attr){
+    public TreeMap<String,BatchMatcher> routeMatchers(Object data,String attr){
         String type = data.getClass().getSimpleName();
         return matchers(type,attr);
     }
+
 }

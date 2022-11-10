@@ -1,5 +1,8 @@
 package com.pingpongx.smb.warning.biz.constant;
 
+import com.pingpongx.smb.warning.biz.alert.routers.operatiors.StrEquals;
+import com.pingpongx.smb.warning.biz.alert.routers.operatiors.StringContains;
+
 public class Constant {
     public static class B2B{
         public static String name = "B2B";
@@ -18,8 +21,13 @@ public class Constant {
         public static String url = "https://oapi.dingtalk.com/robot/send?access_token=7f729e976805ed64ed6ab12d5eef5b9c718eccebd89bc53632c35ab6c625479c";
     }
 
+    public static class TEST {
+        public static String name = "FLOWMORE-TEST-DINGDING";
+        public static String url = "https://oapi.dingtalk.com/robot/send?access_token=d179a07829b8e4c7475c815d4b0514b09d29083ce595a7e357f4e789b5ae1116";
+    }
+
     public static class Operations{
-        public static String StringContains = "StringContains";
-        public static String Equals = "Equals";
+        public static String StrContains = StringContains.class.getSimpleName();
+        public static String Equals = StrEquals.class.getSimpleName();
     }
 }

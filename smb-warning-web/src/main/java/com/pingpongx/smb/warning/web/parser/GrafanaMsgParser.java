@@ -46,7 +46,7 @@ public class GrafanaMsgParser implements AlertParser {
 
     @Override
     public Set<String> getSupportDepart() {
-        return Stream.of(Constant.Merchant.name,Constant.B2B.name,Constant.FlowMore.name,Constant.Mid.name).map(name->"Grafana-"+name).collect(Collectors.toSet());
+        return Stream.of(Constant.Merchant.name,Constant.B2B.name,Constant.FlowMore.name,Constant.Mid.name,Constant.TEST.name).map(name->"Grafana-"+name).collect(Collectors.toSet());
     }
 
 

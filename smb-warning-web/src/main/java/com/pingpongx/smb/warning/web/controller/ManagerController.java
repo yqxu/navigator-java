@@ -1,5 +1,6 @@
 package com.pingpongx.smb.warning.web.controller;
 
+import com.pingpongx.business.dal.core.BaseDO;
 import com.pingpongx.flowmore.cloud.base.server.annotation.NoAuth;
 import com.pingpongx.smb.warning.biz.alert.event.AlertReceived;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
@@ -35,13 +36,19 @@ public class ManagerController {
     private final BusinessAlertsToUserRepository relationRepository;
     private final BusinessAlertsUserRepository userRepository;
 
-    @PostMapping("/{app}/buildRelation")
+    @PostMapping("/{app}/bind")
     @NoAuth(isPack = false)
-    public BusinessAlertsToUser createAlertWorkOrder(@PathVariable("app") String app, @RequestBody BusinessAlertsToUser relation) {
+    public BusinessAlertsToUser bind(@PathVariable("app") String app, @RequestBody BusinessAlertsToUser relation) {
         relation.setAppName(app);
         relationRepository.save(relation);
         return relation;
     }
 
 
+    @PostMapping("/{app}/unbind")
+    @NoAuth(isPack = false)
+    public boolean unBind(@PathVariable("app") String app, @RequestBody String userId) {
+        boolean updated = relationRepository.lambdaUpdate().eq(BusinessAlertsToUser::getUserId,userId).eq(BusinessAlertsToUser::getAppName,app).set(BaseDO::getFlag,0).update();
+        return updated;
+    }
 }

@@ -35,13 +35,14 @@ public class WebhookController {
     @PostMapping("/jirahook")
     @NoAuth(isPack = false)
     public void jiraHook(@RequestBody String message) {
-        log.info("jiraHook message:[{}]", message);
-        try {
-            JiraDTO jiraDTO = JiraUtils.parseJiraDTO(message);
-            businessAlertHelper.sendDingTalkMarkDown(jiraDTO);
-        } catch (Exception e) {
-            log.warn("[jiraHook] error, message [{}]", message, e);
-        }
+        return;
+//        log.info("jiraHook message:[{}]", message);
+//        try {
+//            JiraDTO jiraDTO = JiraUtils.parseJiraDTO(message);
+//            businessAlertHelper.sendDingTalkMarkDown(jiraDTO);
+//        } catch (Exception e) {
+//            log.warn("[jiraHook] error, message [{}]", message, e);
+//        }
     }
 
     @ApiOperation("钉钉机器人-消息回调通知")

@@ -1,25 +1,29 @@
 package com.pingpongx.smb.warning.biz.alert.routers.operatiors.batch;
 
+import com.pingpongx.smb.warning.biz.alert.routers.operatiors.StrEquals;
+import com.pingpongx.smb.warning.biz.alert.routers.operatiors.StringContains;
+import com.pingpongx.smb.warning.biz.constant.Constant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
+import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
-@Component
+
 public class BatchMatcherFactory {
-    @Autowired
-    Map<String,BatchMatcher> originMatchers;
-    Map<String,BatchMatcher> map = new ConcurrentHashMap<>();
 
-    @PostConstruct
-    void init(){
-        originMatchers.values().stream().forEach(batchMatcher -> map.put((String) batchMatcher.supportedOperation().getIdentify(),batchMatcher));
+    public static Map<String, Supplier<BatchMatcher>> map = new ConcurrentHashMap<>();
+    static {
+        map.put(Constant.Operations.Equals,BatchStrEquals::newInstance);
+        map.put(Constant.Operations.StrContains,BatchStrContains::newInstance);
     }
 
-    public BatchMatcher getBatchMatcher(String identify){
-        return map.get(identify);
+    public static BatchMatcher newBatchMatcher(String identify){
+        return Optional.ofNullable(map.get(identify)).map(Supplier::get).orElse(null);
     }
 
 }
