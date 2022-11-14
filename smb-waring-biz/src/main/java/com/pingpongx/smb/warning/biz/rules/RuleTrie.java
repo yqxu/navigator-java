@@ -19,8 +19,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class RuleTrie {
     Trie<String, Map<String,RuleHandler>> ruleTrie = new Trie<>();
-    Trie<String, Map<String,RuleHandler>> notTrie = new Trie<>();
-
 
     @Autowired
     BatchMatcherMapper matcherMapper;
@@ -64,21 +62,12 @@ public class RuleTrie {
                     field.setAccessible(true);
                     Object attrVal = ReflectionUtils.getField(field,data);
                     BatchMatcher matcher = it.next();
-                    boolean logicOfNot = matcher.supportedOperation().logicOfNot();
                     Set<String> matchedRule = matcher.batchMatch(attrVal);
-                    if (logicOfNot){
-                        matchedRule.stream().forEach(r->{
-                            if (!exceptRulesRepeat.contains(r)){
-                                exceptRules.add(r);
-                            }
-                        });
-                    }else {
-                        matchedRule.stream().forEach(r->{
-                            if (!matchedRulesRepeat.contains(r)){
-                                matchedRules.add(r);
-                            }
-                        });
-                    }
+                    matchedRule.stream().forEach(r->{
+                        if (matchedRulesRepeat.add(r)){
+                            matchedRules.add(r);
+                        }
+                    });
                 }
             }catch (Exception e){
                 log.error("获取字段失败:"+attr,e);

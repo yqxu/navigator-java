@@ -10,4 +10,5 @@ public class LeafRuleConf implements Serializable {
     String attr;
     String operation;
     String expected;
+    boolean not = false;
 }
