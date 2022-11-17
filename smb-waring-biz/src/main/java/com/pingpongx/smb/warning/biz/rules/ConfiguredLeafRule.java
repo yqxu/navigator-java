@@ -54,6 +54,9 @@ public class ConfiguredLeafRule extends RuleLeaf<ThirdPartAlert ,String> {
         return not;
     }
 
+    public void setNot(boolean not) {
+        this.not = not;
+    }
 
     public String getType() {
         return type;

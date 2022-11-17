@@ -11,10 +11,7 @@ import com.pingpongx.smb.warning.biz.alert.threshold.Inhibition;
 import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
 import com.pingpongx.smb.warning.biz.rules.Rule;
 import com.pingpongx.smb.warning.biz.rules.RuleTrie;
-import com.pingpongx.smb.warning.biz.rules.dubbo.timeout.StrExcept1;
-import com.pingpongx.smb.warning.biz.rules.dubbo.timeout.StrExcept2;
-import com.pingpongx.smb.warning.biz.rules.dubbo.timeout.StrExcept3;
-import com.pingpongx.smb.warning.biz.rules.dubbo.timeout.StrExcept4;
+import com.pingpongx.smb.warning.biz.rules.dubbo.timeout.*;
 import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,17 +33,31 @@ public class DubbleTimeOut {
 
     @Autowired
     InhibitionFactory inhibitionFactory;
-    Rule or;
+    Rule normalRule;
+
+    Rule gateWayRule;
 
     public static ThresholdAlertConf conf = new ThresholdAlertConf(5, TimeUnit.Minutes,10,10);
+    public static ThresholdAlertConf gateWayConf = new ThresholdAlertConf(5, TimeUnit.Minutes,10,200);
 
     @PostConstruct
     void init(){
-        or = exp1.or(exp2).or(exp3).or(exp4);
+        AppName appName = new AppName();
+        AppName appNameNot = new AppName();
+        appNameNot.setNot(true);
+
+        normalRule = exp1.or(exp2).or(exp3).or(exp4).and(appNameNot);
+        gateWayRule = exp1.or(exp2).or(exp3).or(exp4).and(appName);
+
         CountContext countContext = new CountContext( conf);
-        ruleTrie.put(or,countContext);
+        ruleTrie.put(normalRule,countContext);
         Inhibition<ThirdPartAlert> inhibition = inhibitionFactory.getInhibition(conf);
-        ruleTrie.put(or,inhibition);
+        ruleTrie.put(normalRule,inhibition);
+
+        CountContext gateWayContext = new CountContext( gateWayConf);
+        ruleTrie.put(gateWayRule,gateWayContext);
+        Inhibition<ThirdPartAlert> getWayInhibition = inhibitionFactory.getInhibition(gateWayConf);
+        ruleTrie.put(gateWayRule,getWayInhibition);
     }
 
 }

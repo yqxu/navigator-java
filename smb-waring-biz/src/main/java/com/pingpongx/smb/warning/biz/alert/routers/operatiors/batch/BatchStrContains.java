@@ -65,7 +65,7 @@ public class BatchStrContains implements BatchMatcher<String>{
     public void putRule(RuleLeaf<?, String> rule) {
         String exp = rule.expected();
         //TODO:Init 完成节点做一次reindex
-        putAndReIndex(exp,rule.getIdentify(),rule.operatorType().logicOfNot());
+        putAndReIndex(exp,rule.getIdentify(),rule.isNot());
     }
 
     public static BatchMatcher<String> newInstance() {
