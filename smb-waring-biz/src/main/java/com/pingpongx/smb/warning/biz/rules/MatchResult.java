@@ -6,8 +6,10 @@ import lombok.Data;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Data
 public class MatchResult {
-    Map<String,Map<String,RuleHandler>>  matchedData;
+    Set<RuleHandler> matchedData;
+
 }

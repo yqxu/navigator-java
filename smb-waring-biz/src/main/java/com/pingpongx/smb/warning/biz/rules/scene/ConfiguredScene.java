@@ -26,7 +26,6 @@ public class ConfiguredScene {
     @Autowired
     InhibitionFactory inhibitionFactory;
 
-
     public void loadConfigStr(String confStr){
         List<Scene> scenes = JSON.parseArray(confStr, Scene.class);
         if (scenes == null){
@@ -34,9 +33,9 @@ public class ConfiguredScene {
         }
         scenes.stream().forEach(scene -> {
             RuleOr rule = buildRule(scene.getRulesOf());
-            CountContext countContext = new CountContext(scene.getCountWith());
+            CountContext countContext = new CountContext(scene);
             ruleTrie.put(rule, countContext);
-            Inhibition<ThirdPartAlert> inhibition = inhibitionFactory.getInhibition(scene.getCountWith());
+            Inhibition<ThirdPartAlert> inhibition = inhibitionFactory.newInhibition(scene.getIdentity(),scene.getCountWith());
             ruleTrie.put(rule,inhibition);
         });
     }

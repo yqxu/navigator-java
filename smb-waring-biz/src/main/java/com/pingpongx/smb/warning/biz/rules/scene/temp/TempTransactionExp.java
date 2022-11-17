@@ -28,12 +28,13 @@ public class TempTransactionExp {
 
     public static ThresholdAlertConf conf = new ThresholdAlertConf(5, TimeUnit.Minutes,10,10);
 
+    public static  String sceneId = "TempTransactionExp";
     @PostConstruct
     void init(){
         or = exp;
-        CountContext countContext = new CountContext( conf);
+        CountContext countContext = new CountContext( sceneId,conf);
         ruleTrie.put(or, countContext);
-        Inhibition<ThirdPartAlert> inhibition = inhibitionFactory.getInhibition(conf);
+        Inhibition<ThirdPartAlert> inhibition = inhibitionFactory.newInhibition(sceneId,conf);
         ruleTrie.put(or,inhibition);
     }
 

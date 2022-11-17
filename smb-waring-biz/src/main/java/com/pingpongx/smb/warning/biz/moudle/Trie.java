@@ -17,9 +17,9 @@ public class Trie<Key,Val> {
         return root.getChild(copy);
     }
 
-    public Map<String,Val> bfsGet(IdentityPath<Key> path){
+    public Map<IdentityPath<Key>,Val> bfsGet(IdentityPath<Key> path){
         IdentityPath<Key> copy = path.deepCopy();
-        Map<String,Val> ret = new HashMap<>();
+        Map<IdentityPath<Key>,Val> ret = new HashMap<>();
         Set<Node<Key,Val>> repeated = new HashSet<>();
         List<Node<Key,Val>> visited = new ArrayList<>();
         visited.add(getRoot());
@@ -35,7 +35,7 @@ public class Trie<Key,Val> {
                         if (repeated.add(keyValNode)){
                             newVisited.add(keyValNode);
                             if (keyValNode.getData()!=null){
-                                ret.put(keyValNode.getPath().toString(),keyValNode.getData());
+                                ret.put(keyValNode.getPath(),keyValNode.getData());
                             }
                         }
                     });

@@ -46,11 +46,9 @@ public class RuleTrie {
         Set<String> attrs = attrMapper.attrsOf(type);
         Set<String> matchedRulesRepeat = new HashSet<>();
         List<String> matchedRules = new ArrayList<>();
-        Set<String> exceptRulesRepeat = new HashSet<>();
-        List<String> exceptRules = new ArrayList<>();
         MatchResult result = new MatchResult();
         if (attrs == null){
-            result.setMatchedData(new HashMap<>());
+            result.setMatchedData(new HashSet<>());
             return result;
         }
         attrs.stream().forEach(attr->{
@@ -75,8 +73,9 @@ public class RuleTrie {
         });
         IdentityPath<String> path = IdentityPath.of(matchedRules.stream().collect(Collectors.toList()));
         //TODO: 可以优化成向父追溯，为id 建立node的倒排索引，复杂度可以优化为On n=len（path）目前为O（n+1）*n/2 近似n方 n同为匹配条件数
-        Map<String,Map<String,RuleHandler>> matched = ruleTrie.bfsGet(path);
-        result.setMatchedData(matched);
+        Map<IdentityPath<String>,Map<String, RuleHandler>> matched = ruleTrie.bfsGet(path);
+        Set<RuleHandler>  handlerSet =  matched.values().stream().flatMap(m->m.values().stream()).collect(Collectors.toSet());
+        result.setMatchedData(handlerSet);
         return result;
     }
 
@@ -105,7 +104,6 @@ public class RuleTrie {
         if (node.isNew()){
             node.setData(new ConcurrentHashMap<>());
         }
-        handler.setPath(node.getPath());
         node.getData().put((String) handler.getIdentify(),handler);
 
         and.andRuleList.stream()
