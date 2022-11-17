@@ -29,6 +29,7 @@ public class CountDoneHandler implements ApplicationListener<CountDone> {
         MatchResult result = ruleTrie.match(alert);
         result.getMatchedData().values().stream().map(Map::values)
                 .flatMap(c->c.stream()).filter(handler -> handler instanceof Inhibition)
+                .distinct()
                 .forEach(handler -> handler.handleMatchedData(alert,result));
     }
 }

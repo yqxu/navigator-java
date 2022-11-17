@@ -13,7 +13,7 @@ public class AppName extends ConfiguredLeafRule {
     private static String except = "business-gateway";
 
     @PostConstruct
-    void init(){
+    public void init(){
         this.setType(SlsAlert.class.getSimpleName());
         this.setAttr("appName");
         this.setOperation(StrEquals.getInstance());

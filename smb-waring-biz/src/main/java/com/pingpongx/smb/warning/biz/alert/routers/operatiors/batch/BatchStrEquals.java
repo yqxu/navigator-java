@@ -26,11 +26,7 @@ public class BatchStrEquals implements BatchMatcher<String>{
             ret = new MatchedSet();
             ruleMap.put(str,ret);
         }
-        if (isNot){
-            ret.matchedNotRule.add(ruleIdentify);
-        }else{
-            ret.matchedRule.add(ruleIdentify);
-        }
+        ret.add(ruleIdentify,isNot);
     }
 
     /****
@@ -40,8 +36,14 @@ public class BatchStrEquals implements BatchMatcher<String>{
      */
     public Set<String> batchMatch(String input){
         MatchedSet matchedSet = ruleMap.get(input);
-        Set<String> ret = matchedSet.getMatchedRule();
-        ret.addAll(notSet.stream().filter(s->matchedSet.getMatchedNotRule().contains(s)).collect(Collectors.toSet()));
+        Set<String> ret;
+        if (matchedSet!=null){
+            ret = matchedSet.getMatchedRule();
+            ret.addAll(notSet.stream().filter(s->!matchedSet.getMatchedNotRule().contains(s)).collect(Collectors.toSet()));
+            return ret;
+        }else{
+            ret = notSet.stream().collect(Collectors.toSet());
+        }
         return ret;
     }
 

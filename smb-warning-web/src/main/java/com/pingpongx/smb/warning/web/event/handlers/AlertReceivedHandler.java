@@ -40,6 +40,7 @@ public class AlertReceivedHandler implements ApplicationListener<AlertReceived> 
         }
         result.getMatchedData().values().stream().map(Map::values)
                 .flatMap(c->c.stream()).filter(handler -> handler instanceof CountContext)
+                .distinct()
                 .forEach(handler -> handler.handleMatchedData(alert,result));
         CountDone countDone = new CountDone(applicationContext,alert,result);
         applicationContext.publishEvent(countDone);

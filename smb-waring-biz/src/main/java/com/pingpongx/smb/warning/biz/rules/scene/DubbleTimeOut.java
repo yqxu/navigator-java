@@ -44,10 +44,12 @@ public class DubbleTimeOut {
     void init(){
         AppName appName = new AppName();
         AppName appNameNot = new AppName();
+        appNameNot.init();
+        appName.init();
         appNameNot.setNot(true);
 
-        normalRule = exp1.or(exp2).or(exp3).or(exp4).and(appNameNot);
         gateWayRule = exp1.or(exp2).or(exp3).or(exp4).and(appName);
+        normalRule = exp1.or(exp2).or(exp3).or(exp4).and(appNameNot);
 
         CountContext countContext = new CountContext( conf);
         ruleTrie.put(normalRule,countContext);

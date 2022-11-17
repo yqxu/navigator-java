@@ -17,10 +17,6 @@ public abstract class RuleLeaf<D,T> implements Rule<D,T>, Identified<String> {
 
     public abstract boolean isNot();
 
-    public int compareTo(RuleLeaf<D, T> o) {
-        return this.operatorType().sortBy()-o.operatorType().sortBy();
-    }
-
     public String getIdentify(){
         return dependsObject().getSimpleName()+"."+dependsAttr()+"->"+(isNot()?"!":"")+operatorType().getIdentify()+":"+ expected();
     }
@@ -34,7 +30,7 @@ public abstract class RuleLeaf<D,T> implements Rule<D,T>, Identified<String> {
         }else if (o instanceof  RuleOr){
             other = -2;
         }else {
-            other =  this.operatorType().sortBy();
+            other =  ((RuleLeaf<D,T>)o).operatorType().sortBy();
         }
         return one - other;
     }
