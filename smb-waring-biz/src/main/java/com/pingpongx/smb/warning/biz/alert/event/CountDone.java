@@ -2,11 +2,13 @@ package com.pingpongx.smb.warning.biz.alert.event;
 
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
 import com.pingpongx.smb.warning.biz.rules.MatchResult;
+import com.pingpongx.smb.warning.biz.rules.PipelineContext;
 import org.springframework.context.ApplicationEvent;
 
 public class CountDone  extends ApplicationEvent {
-    MatchResult context;
+    PipelineContext context;
     ThirdPartAlert alert;
+
 
     /**
      * Create a new {@code ApplicationEvent}.
@@ -14,7 +16,7 @@ public class CountDone  extends ApplicationEvent {
      * @param source the object on which the event initially occurred or with
      *               which the event is associated (never {@code null})
      */
-    public CountDone(Object source, ThirdPartAlert alert, MatchResult context) {
+    public CountDone(Object source, ThirdPartAlert alert, PipelineContext context) {
         super(source);
         this.alert = alert;
         this.context = context;
@@ -23,4 +25,17 @@ public class CountDone  extends ApplicationEvent {
     public ThirdPartAlert getAlert() {
         return this.alert;
     }
+
+    public PipelineContext getContext() {
+        return context;
+    }
+
+    public void setContext(PipelineContext context) {
+        this.context = context;
+    }
+
+    public void setAlert(ThirdPartAlert alert) {
+        this.alert = alert;
+    }
+
 }

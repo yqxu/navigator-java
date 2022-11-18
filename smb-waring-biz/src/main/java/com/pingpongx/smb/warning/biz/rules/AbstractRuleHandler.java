@@ -6,15 +6,16 @@ import org.springframework.context.ApplicationContext;
 
 public abstract class AbstractRuleHandler<T> implements RuleHandler<T>{
 
-    private IdentityPath<String> path;
+    private MatchResult handleContext;
     private ApplicationContext applicationContext;
+    protected String sceneIdentity;
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof RuleHandler)){
+        if (! (o instanceof RuleHandler)){
             return false;
         }
-        return getIdentify().equals(((RuleHandler<?>) o).getIdentify());
+        return this.getIdentify().equals(((RuleHandler<?>) o).getIdentify());
     }
 
     @Override
@@ -22,11 +23,23 @@ public abstract class AbstractRuleHandler<T> implements RuleHandler<T>{
         return getIdentify().hashCode();
     }
 
-    public IdentityPath<String> getPath(){
-        return path;
-    }
-    public void setPath(IdentityPath<String> path){
-        this.path = path;
+    public MatchResult getHandleContext() {
+        return handleContext;
     }
 
+    public void setHandleContext(MatchResult handleContext) {
+        this.handleContext = handleContext;
+    }
+
+    public String getSceneIdentity() {
+        return sceneIdentity;
+    }
+
+    public void setSceneIdentity(String sceneIdentity) {
+        this.sceneIdentity = sceneIdentity;
+    }
+
+    public String scene(){
+        return sceneIdentity;
+    }
 }

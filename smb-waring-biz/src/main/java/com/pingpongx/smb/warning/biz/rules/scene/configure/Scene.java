@@ -6,6 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 @Data
 public class Scene implements Serializable {
+    String identity;
     Or rulesOf;
     ThresholdAlertConf countWith;
 }

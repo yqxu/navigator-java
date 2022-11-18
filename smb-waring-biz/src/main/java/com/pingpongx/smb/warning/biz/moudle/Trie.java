@@ -17,9 +17,10 @@ public class Trie<Key,Val> {
         return root.getChild(copy);
     }
 
-    public Map<String,Val> bfsGet(IdentityPath<Key> path){
+    public Map<IdentityPath<Key>,Val> bfsGet(IdentityPath<Key> path){
         IdentityPath<Key> copy = path.deepCopy();
-        Map<String,Val> ret = new HashMap<>();
+        Map<IdentityPath<Key>,Val> ret = new HashMap<>();
+        Set<Node<Key,Val>> repeated = new HashSet<>();
         List<Node<Key,Val>> visited = new ArrayList<>();
         visited.add(getRoot());
         while(copy.size()>0){
@@ -31,8 +32,12 @@ public class Trie<Key,Val> {
                     .map(m->m.get(current))
                     .filter(Objects::nonNull)
                     .forEach(keyValNode -> {
-                        ret.put(keyValNode.getPath().toString(),keyValNode.getData());
-                        newVisited.add(keyValNode);
+                        if (repeated.add(keyValNode)){
+                            newVisited.add(keyValNode);
+                            if (keyValNode.getData()!=null){
+                                ret.put(keyValNode.getPath(),keyValNode.getData());
+                            }
+                        }
                     });
             visited.addAll(newVisited);
         }

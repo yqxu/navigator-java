@@ -13,6 +13,7 @@ public class ConfiguredLeafRule extends RuleLeaf<ThirdPartAlert ,String> {
     String attr;
     MatchOperation operation;
     String expected;
+    boolean not;
 
     public static ConfiguredLeafRule resumeByConf(LeafRuleConf conf){
         ConfiguredLeafRule rule = new ConfiguredLeafRule();
@@ -20,7 +21,7 @@ public class ConfiguredLeafRule extends RuleLeaf<ThirdPartAlert ,String> {
         rule.type = conf.getType();
         rule.expected = conf.getExpected();
         rule.operation = OperationFactory.getInstance(conf.getOperation());
-//        rule.setOperation();
+        rule.not = conf.isNot();
         return rule;
     }
 
@@ -48,6 +49,14 @@ public class ConfiguredLeafRule extends RuleLeaf<ThirdPartAlert ,String> {
         return expected;
     }
 
+    @Override
+    public boolean isNot() {
+        return not;
+    }
+
+    public void setNot(boolean not) {
+        this.not = not;
+    }
 
     public String getType() {
         return type;

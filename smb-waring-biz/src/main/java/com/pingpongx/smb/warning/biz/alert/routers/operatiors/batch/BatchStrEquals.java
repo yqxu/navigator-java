@@ -2,30 +2,31 @@ package com.pingpongx.smb.warning.biz.alert.routers.operatiors.batch;
 
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.MatchOperation;
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.StrEquals;
-import com.pingpongx.smb.warning.biz.constant.Constant;
 import com.pingpongx.smb.warning.biz.rules.RuleLeaf;
-import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 
 public class BatchStrEquals implements BatchMatcher<String>{
 
-    Map<String,Set<String>> ruleMap = new ConcurrentHashMap<>();
+    Map<String,MatchedSet> ruleMap = new ConcurrentHashMap<>();
 
-    public void putOnly(String str,String ruleIdentify){
-        Set<String> ret = ruleMap.get(str);
-        if (ret == null){
-            ret = new HashSet<>();
-            ret.add(ruleIdentify);
-            ruleMap.put(str,ret);
-            return;
+    Set<String> notSet = new HashSet<>();
+
+    public void putOnly(String str,String ruleIdentify,boolean isNot){
+        if (isNot){
+            notSet.add(ruleIdentify);
         }
-        ret.add(ruleIdentify);
+        MatchedSet ret = ruleMap.get(str);
+        if (ret == null){
+            ret = new MatchedSet();
+            ruleMap.put(str,ret);
+        }
+        ret.add(ruleIdentify,isNot);
     }
 
     /****
@@ -34,7 +35,16 @@ public class BatchStrEquals implements BatchMatcher<String>{
      * @return 用了contains 规则的rule 的 identify 集合
      */
     public Set<String> batchMatch(String input){
-        return ruleMap.get(input);
+        MatchedSet matchedSet = ruleMap.get(input);
+        Set<String> ret;
+        if (matchedSet!=null){
+            ret = matchedSet.getMatchedRule();
+            ret.addAll(notSet.stream().filter(s->!matchedSet.getMatchedNotRule().contains(s)).collect(Collectors.toSet()));
+            return ret;
+        }else{
+            ret = notSet.stream().collect(Collectors.toSet());
+        }
+        return ret;
     }
 
     @Override
@@ -45,12 +55,7 @@ public class BatchStrEquals implements BatchMatcher<String>{
     @Override
     public void putRule(RuleLeaf<?,String> rule) {
         String exp = rule.expected();
-        Set<String> ruleSet = ruleMap.get(exp);
-        if (ruleSet == null){
-            ruleSet = new HashSet<>();
-            ruleMap.put(exp,ruleSet);
-        }
-        ruleSet.add(rule.getIdentify());
+        putOnly(exp,rule.getIdentify(),rule.isNot());
     }
     @Override
     public String getIdentify() {

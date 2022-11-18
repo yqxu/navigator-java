@@ -6,8 +6,11 @@ import com.pingpongx.smb.warning.biz.alert.event.AlertReceived;
 import com.pingpongx.smb.warning.biz.alert.event.CountDone;
 import com.pingpongx.smb.warning.biz.alert.event.ToExecute;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
+import com.pingpongx.smb.warning.biz.alert.threshold.Inhibition;
 import com.pingpongx.smb.warning.biz.rules.MatchResult;
+import com.pingpongx.smb.warning.biz.rules.PipelineContext;
 import com.pingpongx.smb.warning.biz.rules.RuleTrie;
+import io.vavr.Tuple;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -38,10 +41,19 @@ public class AlertReceivedHandler implements ApplicationListener<AlertReceived> 
             applicationContext.publishEvent(toExecute);
             return;
         }
-        result.getMatchedData().values().stream().map(Map::values)
-                .flatMap(c->c.stream()).filter(handler -> handler instanceof CountContext)
-                .forEach(handler -> handler.handleMatchedData(alert,result));
-        CountDone countDone = new CountDone(applicationContext,alert,result);
-        applicationContext.publishEvent(countDone);
+//        result.getMatchedData().entrySet().stream().map(entry-> Tuple.of(entry.getKey(),entry.getValue().values()))
+//                .flatMap(tuple2->tuple2._2().stream()
+//                        .filter(handler -> handler instanceof CountContext)
+//                        .map(handler -> Tuple.of(tuple2._1(),handler) ))
+//                .forEach(tuple-> tuple._2().handleMatchedData(alert,tuple._1(),result));
+        result.getMatchedData().stream()
+                        .filter(handler -> handler instanceof CountContext)
+                        .map(handler-> {
+                            PipelineContext context = PipelineContext.of(result,((CountContext)handler).getSceneIdentity());
+                            handler.handleMatchedData(alert, context);
+                            return context;
+                        })
+                .map(context->new CountDone(applicationContext,alert,context))
+                .forEach(countDone -> applicationContext.publishEvent(countDone));
     }
 }

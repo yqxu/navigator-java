@@ -8,8 +8,8 @@ import com.pingpongx.smb.warning.biz.alert.threshold.Inhibition;
 import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
 import com.pingpongx.smb.warning.biz.rules.Rule;
 import com.pingpongx.smb.warning.biz.rules.RuleTrie;
-import com.pingpongx.smb.warning.biz.rules.bizexp.BizExpRule;
 import com.pingpongx.smb.warning.biz.rules.bizexp.BizExpRule2;
+import com.pingpongx.smb.warning.biz.rules.scene.configure.Scene;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,12 +29,15 @@ public class BalanceNotEnoughBizExp {
 
     public static ThresholdAlertConf conf = new ThresholdAlertConf(5, TimeUnit.Minutes,10,10);
 
+    public static Scene scene = new Scene();
     @PostConstruct
     void init(){
         or = exp2;
-        CountContext countContext = new CountContext( conf);
+        scene.setIdentity("BalanceNotEnough");
+        scene.setCountWith(conf);
+        CountContext countContext = new CountContext(scene);
         ruleTrie.put(or, countContext);
-        Inhibition<ThirdPartAlert> inhibition = inhibitionFactory.getInhibition(conf);
+        Inhibition<ThirdPartAlert> inhibition = inhibitionFactory.newInhibition(scene.getIdentity(),conf);
         ruleTrie.put(or,inhibition);
     }
 

@@ -27,7 +27,8 @@ public class SlsAlert implements ThirdPartAlert{
     String ip;
     String level;
     String traceId;
-
+    String time;
+    String namespace;
     String depart;
 
     @Override
@@ -45,6 +46,7 @@ public class SlsAlert implements ThirdPartAlert{
         String ret = "- appName:" + "["+appName+"](https://sls.console.aliyun.com/lognext/project/prd-b2b-app-log/logsearch/prd-b2b-app-log)"+"\n"
                 +"- className:"+ className+"\n"
                 +"- traceId:"+ "["+traceId+"](https://sls.console.aliyun.com/lognext/project/prd-b2b-app-log/logsearch/prd-b2b-app-log?queryString="+traceId+")"+"\n"
+                +"- time:"+ time+"\n"
                 +"- content:\n"+ content;
         return ret;
     }

@@ -2,32 +2,37 @@ package com.pingpongx.smb.warning.biz.alert.routers.operatiors.batch;
 
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.MatchOperation;
 import com.pingpongx.smb.warning.biz.alert.routers.operatiors.StringContains;
-import com.pingpongx.smb.warning.biz.constant.Constant;
 import com.pingpongx.smb.warning.biz.moudle.*;
 import com.pingpongx.smb.warning.biz.rules.RuleLeaf;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BatchStrContains implements BatchMatcher<String>{
-    ACTrie<Character,Set<String>> trie = new ACTrie<>();
+    ACTrie<Character, MatchedSet> trie = new ACTrie<>();
 
-    public void putAndReIndex(String str,String ruleIdentify){
-        putOnly(str,ruleIdentify);
+    Set<String> notSet = new HashSet<>();
+
+    public void putAndReIndex(String str,String ruleIdentify,boolean isNot){
+        putOnly(str,ruleIdentify,isNot);
         trie.failBackRebuild();
     }
 
-    public void putOnly(String str,String ruleIdentify){
+    public void putOnly(String str,String ruleIdentify,boolean isNot){
+        if (isNot){
+            notSet.add(ruleIdentify);
+        }
         //规则入树
         IdentityPath<Character> path = IdentityPath.of(str.toCharArray());
-        Node<Character,FSMNode<Character,Set<String>>> node = trie.getOrCreate(path,()->new FSMNode<>());
+        Node<Character,FSMNode<Character, MatchedSet>> node = trie.getOrCreate(path,FSMNode::new);
 
         if (node.getData().getData()==null){
-            Set<String> ruleSet = new HashSet<>();
-            ruleSet.add(ruleIdentify);
-            FSMNode<Character,Set<String>> fsmNode = node.getData();
+            MatchedSet ruleSet = new MatchedSet();
+            ruleSet.add(ruleIdentify,isNot);
+            FSMNode<Character, MatchedSet> fsmNode = node.getData();
             fsmNode.setData(ruleSet);
         }else{
-            node.getData().getData().add(ruleIdentify);
+            node.getData().getData().add(ruleIdentify,isNot);
         }
     }
 
@@ -38,10 +43,17 @@ public class BatchStrContains implements BatchMatcher<String>{
      */
     public Set<String> batchMatch(String input){
         IdentityPath<Character> path = IdentityPath.of(input.toCharArray());
-        return trie.walk(path).stream().map(Node::getData).map(FSMNode::getData).filter(Objects::nonNull).reduce((set1,set2)->{
-            set1.addAll(set2);
+        MatchedSet matchedSet = trie.walk(path).stream().map(Node::getData).map(FSMNode::getData).filter(Objects::nonNull).reduce((set1,set2)->{
+            set1.getMatchedRule().addAll(set2.getMatchedRule());
+            set1.getMatchedNotRule().addAll(set2.getMatchedNotRule());
             return set1;
-        }).orElse(new HashSet<>());
+        }).orElse(new MatchedSet());
+        Set<String> ret =  matchedSet.getMatchedRule();
+        ret.addAll(notSet.stream()
+                .filter(s -> !matchedSet.matchedNotRule.contains(s))
+                .collect(Collectors.toSet()));
+        return ret;
+
     }
 
     @Override
@@ -53,7 +65,7 @@ public class BatchStrContains implements BatchMatcher<String>{
     public void putRule(RuleLeaf<?, String> rule) {
         String exp = rule.expected();
         //TODO:Init 完成节点做一次reindex
-        putAndReIndex(exp,rule.getIdentify());
+        putAndReIndex(exp,rule.getIdentify(),rule.isNot());
     }
 
     public static BatchMatcher<String> newInstance() {

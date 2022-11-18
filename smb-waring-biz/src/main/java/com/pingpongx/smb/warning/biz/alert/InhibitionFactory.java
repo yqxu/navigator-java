@@ -14,11 +14,12 @@ public class InhibitionFactory {
     @Autowired
     ApplicationContext applicationContext;
 
-    public  <T> Inhibition<T> getInhibition(AlertConf conf) {
+    public  <T> Inhibition<T> newInhibition(String scene,AlertConf conf) {
         SimpleCounterThresholdInhibition in = new SimpleCounterThresholdInhibition<>();
         ThresholdAlertConf c = (ThresholdAlertConf)conf;
         in.setThreshold(c.getAlertThreshold());
         in.setApplicationContext(applicationContext);
+        in.setSceneIdentity(scene);
         return in;
     }
 }

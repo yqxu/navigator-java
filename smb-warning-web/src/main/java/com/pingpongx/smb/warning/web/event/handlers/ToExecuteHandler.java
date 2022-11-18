@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -45,10 +46,18 @@ public class ToExecuteHandler implements ApplicationListener<ToExecute> {
         AlertParser parser = parserFactory.departOf(alert.depart());
         String msg = parser.toDingTalkMsg(alert);
         DingDingReceiverDTO receiverDTO = businessAlertService.findDingDingReceivers(alert.throwAppName());
-        List<String> phones = receiverDTO.getReceivers().stream().map(DingDReceiverDTO::getPhone).collect(Collectors.toList());
+        if (receiverDTO == null||receiverDTO.getReceivers()==null){
+            log.error(event.getAlert().throwAppName()+" 未设置对应负责人列表。");
+            return;
+        }
+        List<String> phones = receiverDTO.getReceivers().stream().filter(Objects::nonNull).map(DingDReceiverDTO::getPhone).collect(Collectors.toList());
         client.sendMarkDown("您有来自线上的预警待处理",msg,phones);
-        //Jira 工单
-        JiraGenerateRequest req = parser.generateJiraRequest(alert);
-        businessAlertService.generateJira(req);
+        if (phones.size() == 0){
+            log.error(event.getAlert().throwAppName()+" 未设置对应负责人列表。");
+        }else {
+            //Jira 工单
+            JiraGenerateRequest req = parser.generateJiraRequest(alert);
+            businessAlertService.generateJira(req);
+        }
     }
 }
