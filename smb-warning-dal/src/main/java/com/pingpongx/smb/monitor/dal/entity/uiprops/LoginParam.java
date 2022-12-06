@@ -12,16 +12,16 @@ import org.springframework.beans.factory.annotation.Value;
 public class LoginParam {
 
 
-    @Value("${uimonitor.fm.host}")
+    @Value("${uimonitor.fm.host:https://flowmore.pingpongx.com}")
     private String monitorFmHost;
 
-    @Value("${uimonitor.fm.login.username}")
+    @Value("${uimonitor.fm.login.username:fuww@pingpongx.com}")
     private String fmLoginUserName;
 
-    @Value("${uimonitor.fm.login.password}")
+    @Value("${uimonitor.fm.login.password:pingpong0000}")
     private String fmLoginPassword;
 
-    @Value("${uimonitor.fm.login.url}")
+    @Value("${uimonitor.fm.login.url:https://flowmore.pingpongx.com/entrance/signin}")
     private String fmLoginUrl;
 
 }

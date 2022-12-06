@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 @Setter
 public class HostParam {
 
-    @Value("${uimonitor.env}")
+    @Value("${uimonitor.env:local}")
     private String monitorEnv;
 
 }
