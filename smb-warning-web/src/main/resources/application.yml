@@ -25,12 +25,3 @@ dubbo:
     #    去除默认异常,使用B2B生成的异常过滤器
     filter: -exception
   logByCode: true
-
-uimonitor:
-  env: local
-  fm:
-    host: https://flowmore.pingpongx.com
-    login:
-      url: https://flowmore.pingpongx.com/entrance/signin
-      username: fuww@pingpongx.com
-      password: pingpong0000
