@@ -2,6 +2,7 @@ package com.pingpongx.smb.monitor.biz.pages.fm;
 
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.WaitUntilState;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,7 @@ public class LoginPage {
         page.getByPlaceholder("登录密码").click();
         page.getByPlaceholder("登录密码").fill(loginPassword);
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("登录")).click();
+        page.waitForLoadState(LoadState.DOMCONTENTLOADED);
 
     }
 

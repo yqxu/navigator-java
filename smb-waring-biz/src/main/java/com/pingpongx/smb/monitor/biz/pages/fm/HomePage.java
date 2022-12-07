@@ -63,11 +63,18 @@ public class HomePage {
                 break;
             case "发起付款":
                 page.getByText("付款", new Page.GetByTextOptions().setExact(true)).first().hover();
-                page.getByText("发起付款").click();
+                if (page.getByRole(AriaRole.TOOLTIP).getByText("供应商付款").isVisible()) {
+                    page.getByRole(AriaRole.TOOLTIP).getByText("供应商付款").hover();
+                }
+                log.info("发起付款:{}", page.getByText("发起付款").count());
+                page.getByText("发起付款").last().click();
                 break;
             case "收款人管理":
                 page.getByText("付款", new Page.GetByTextOptions().setExact(true)).hover();
-                page.getByText("收款人管理").click();
+                if (page.getByRole(AriaRole.TOOLTIP).getByText("供应商付款").isVisible()) {
+                    page.getByRole(AriaRole.TOOLTIP).getByText("供应商付款").hover();
+                }
+                page.getByText("收款人管理").last().click();
                 break;
             case "外贸收款明细":
                 boolean jiaoYiChaXunVisible = page.getByText("交易查询", new Page.GetByTextOptions().setExact(true)).isVisible();

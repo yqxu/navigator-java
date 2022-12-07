@@ -10,6 +10,7 @@ import com.pingpongx.smb.monitor.biz.pages.fm.HomePage;
 import com.pingpongx.smb.monitor.biz.pages.fm.LoginPage;
 import com.pingpongx.smb.monitor.dal.entity.constant.BusinessLine;
 import com.pingpongx.smb.monitor.dal.entity.constant.FMMainPages;
+import com.pingpongx.smb.monitor.dal.entity.constant.MonitorEnv;
 import com.pingpongx.smb.monitor.dal.entity.dataobj.ApiDetail;
 import com.pingpongx.smb.monitor.dal.entity.dataobj.TaskRecord;
 import com.pingpongx.smb.monitor.dal.entity.uiprops.HostParam;
@@ -173,7 +174,10 @@ public class FMMonitor {
         data.put("hostName", loginParam.getMonitorFmHost());
         data.put("time", getFormattedTime());
 
-        apiRequestContext.post("https://smb-warning.pingpongx.com/v2/alert/FLOWMORE", RequestOptions.create().setData(data));
+        // 如果当前是生产环境，发告警出来
+        if (hostParam.getMonitorEnv().equals(MonitorEnv.PROD.getMonitorEnv())) {
+            apiRequestContext.post("https://smb-warning.pingpongx.com/v2/alert/FLOWMORE", RequestOptions.create().setData(data));
+        }
 
     }
 
