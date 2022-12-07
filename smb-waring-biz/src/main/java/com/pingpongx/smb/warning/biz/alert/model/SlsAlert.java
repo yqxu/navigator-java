@@ -1,10 +1,9 @@
 package com.pingpongx.smb.warning.biz.alert.model;
 
-import com.pingpongx.smb.warning.biz.moudle.IdentityPath;
+import com.pingpongx.smb.common.IdentityPath;
 import lombok.Data;
 
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

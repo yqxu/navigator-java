@@ -37,7 +37,11 @@
             <artifactId>smb-warning-dal</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.pingpongx.smb</groupId>
+            <artifactId>smb-rules</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
         <!--flowmore-base-server-->
         <dependency>
             <groupId>com.pingpongx.flowmore.cloud</groupId>
@@ -72,6 +76,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+        <!--   UI自动化的依赖     -->
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>1.28.0</version>
+        </dependency>
+
     </dependencies>
 
 </project>

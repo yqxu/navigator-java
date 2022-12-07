@@ -1,8 +1,7 @@
 package com.pingpongx.smb.warning.biz.alert.event;
 
+import com.pingpongx.smb.export.module.PipelineContext;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
-import com.pingpongx.smb.warning.biz.rules.MatchResult;
-import com.pingpongx.smb.warning.biz.rules.PipelineContext;
 import org.springframework.context.ApplicationEvent;
 
 public class CountDone  extends ApplicationEvent {
