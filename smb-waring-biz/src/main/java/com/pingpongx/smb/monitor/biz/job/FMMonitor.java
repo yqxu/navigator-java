@@ -125,7 +125,7 @@ public class FMMonitor {
             loginPage.logout();
 
             // 执行成功，将结果写入库表
-            insertRecord("success", "");
+            insertRecord("success", "na");
         } catch (Exception e) {
             // 执行失败，截个图的，可以通过命令将文件复制出容器查看：curl -F 'x=@/tmp/ui-monitor/20221130101603.png' file.pingpongx.com/disk
             // 打开地址：https://file.pingpongx.com/disk
