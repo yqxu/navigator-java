@@ -41,6 +41,9 @@ public class WebhookControllerV2 {
                                         @RequestParam("projectId") String projectId,
                                         @RequestParam("projectKey") String projectKey) {
         log.info("客户服务-jira消息回调内容 message = {}, issueId= {}, issueKey = {}, projectId={}, projectKey ={}", message, issueId, issueKey, projectId, projectKey);
+        if (!"RECALL".equals(projectKey)) {
+            return;
+        }
         JiraDTO jiraDTO = JiraUtils.parseJiraDTO(message);
         jiraInfoDao.updateStatus(jiraDTO.getStatus(), issueId, projectKey);
     }
