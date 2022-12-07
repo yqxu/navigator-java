@@ -8,6 +8,7 @@ import com.pingpongx.smb.warning.biz.constants.ServiceConstants;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.service.ApiInfo;
 
 /**
@@ -16,8 +17,9 @@ import springfox.documentation.service.ApiInfo;
  * @Description: 启动类
  * @Version:
  */
-@SpringBootApplication(scanBasePackages = {"com.pingpongx.smb.warning", "com.pingpongx.passwordcallback"})
+@SpringBootApplication(scanBasePackages = {"com.pingpongx.smb.warning","com.pingpongx.smb.monitor", "com.pingpongx.passwordcallback"})
 @EnableAsync
+@EnableScheduling
 public class SmbWarningApplication implements BaseApplicationDocable {
 
     @Override

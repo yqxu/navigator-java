@@ -8,7 +8,65 @@ spring:
     host: ${redis.host} # 读取redis公共组配置
     port: ${redis.port}
     password: ${redis.password} # 读取redis公共组配置
-
+#  datasource:
+#    druid:
+#      warning:
+#        connection-properties: config.file=${mysql.business_core}
+#        #下面这些参数为固定参数,无需修改
+#        filters: config,wall
+#        db-type: mysql
+#        driver-class-name: com.mysql.cj.jdbc.Driver
+#        # 连接池配置
+#        initial-size: 1
+#        min-idle: 1
+#        max-active: 20
+#        max-wait: 60000
+#        min-evictable-idle-time-millis: 300000
+#        validation-query: SELECT 'x'
+#        test-while-idle: true
+#        test-on-borrow: false
+#        test-on-return: false
+#        pool-prepared-statements: false
+#        max-pool-prepared-statement-per-connection-size: 20
+#        filter:
+#          stat:
+#            enabled: false
+#          wall:
+#            enabled: true
+#        web-stat-filter:
+#          enabled: false
+#        stat-view-servlet:
+#          enabled: false
+#        name: business-core
+#      jira:
+#        connection-properties: config.file=${mysql.business_user}
+#        #下面这些参数为固定参数,无需修改
+#        filters: config,wall
+#        db-type: mysql
+#        driver-class-name: com.mysql.cj.jdbc.Driver
+#        # 连接池配置
+#        initial-size: 1
+#        min-idle: 1
+#        max-active: 20
+#        max-wait: 60000
+#        min-evictable-idle-time-millis: 300000
+#        validation-query: SELECT 'x'
+#        test-while-idle: true
+#        test-on-borrow: false
+#        test-on-return: false
+#        pool-prepared-statements: false
+#        max-pool-prepared-statement-per-connection-size: 20
+#        filter:
+#          config:
+#            enabled: true
+#          stat:
+#            enabled: false
+#          wall:
+#            enabled: true
+#        web-stat-filter:
+#          enabled: false
+#        stat-view-servlet:
+#          enabled: false
 # dubbo配置
 dubbo:
   application:

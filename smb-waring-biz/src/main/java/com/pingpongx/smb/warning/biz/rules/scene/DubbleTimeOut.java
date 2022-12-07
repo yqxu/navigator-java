@@ -1,15 +1,14 @@
 package com.pingpongx.smb.warning.biz.rules.scene;
 
+import com.pingpongx.smb.export.globle.Engine;
+import com.pingpongx.smb.export.module.Rule;
 import com.pingpongx.smb.warning.biz.alert.InhibitionFactory;
 import com.pingpongx.smb.warning.biz.alert.ThresholdAlertConf;
 import com.pingpongx.smb.warning.biz.alert.counter.CountContext;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
 import com.pingpongx.smb.warning.biz.alert.threshold.Inhibition;
 import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
-import com.pingpongx.smb.warning.biz.rules.Rule;
-import com.pingpongx.smb.warning.biz.rules.RuleTrie;
 import com.pingpongx.smb.warning.biz.rules.dubbo.timeout.*;
-import com.pingpongx.smb.warning.biz.rules.scene.configure.Scene;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +17,8 @@ import javax.annotation.PostConstruct;
 @Component
 public class DubbleTimeOut {
     @Autowired
+    Engine engine;
+    @Autowired
     StrExcept1 exp1;
     @Autowired
     StrExcept2 exp2;
@@ -25,8 +26,7 @@ public class DubbleTimeOut {
     StrExcept3 exp3;
     @Autowired
     StrExcept4 exp4;
-    @Autowired
-    RuleTrie ruleTrie;
+
 
     @Autowired
     InhibitionFactory inhibitionFactory;
@@ -51,14 +51,14 @@ public class DubbleTimeOut {
         normalRule = exp1.or(exp2).or(exp3).or(exp4).and(appNameNot);
 
         CountContext countContext = new CountContext(dubboTimeOutScene, conf);
-        ruleTrie.put(normalRule,countContext);
+        engine.put(normalRule,countContext);
         Inhibition<ThirdPartAlert> inhibition = inhibitionFactory.newInhibition(dubboTimeOutScene,conf);
-        ruleTrie.put(normalRule,inhibition);
+        engine.put(normalRule,inhibition);
 
         CountContext gateWayContext = new CountContext(dubboTimeOutGateWayScene, gateWayConf);
-        ruleTrie.put(gateWayRule,gateWayContext);
+        engine.put(gateWayRule,gateWayContext);
         Inhibition<ThirdPartAlert> getWayInhibition = inhibitionFactory.newInhibition(dubboTimeOutGateWayScene,gateWayConf);
-        ruleTrie.put(gateWayRule,getWayInhibition);
+        engine.put(gateWayRule,getWayInhibition);
     }
 
 }
