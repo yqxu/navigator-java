@@ -33,7 +33,6 @@ public class HomePage {
                 break;
             case "外贸收款":
                 page.locator("#payment-link").getByText("外贸收款").click();
-                page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("付款人名称/收款账户")).click();
                 break;
             case "外贸收款账户管理":
                 page.locator("#receive-link").getByText("收款账户").hover();
