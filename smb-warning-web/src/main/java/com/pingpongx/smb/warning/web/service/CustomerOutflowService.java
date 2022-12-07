@@ -76,6 +76,10 @@ public class CustomerOutflowService {
      */
     public void preWarnOfOutflow() {
         List<PPUser> ppUsers = ppUserClient.queryUserInfo();
+        if (ppUsers.isEmpty()) {
+            log.info("预警人为空，结束预警");
+            return;
+        }
         Map<String, PPUser> ppUserMap = ppUsers.stream().collect(Collectors.toMap(PPUser::getEmail, Function.identity(), (k1, k2) -> k1));
         List<CustomerInfo> customerInfos = smbDataClient.queryCustomerInfo();
         //获取P0 P1用户
@@ -90,7 +94,7 @@ public class CustomerOutflowService {
             PPUser ppUser = ppUserMap.get(email);
             if (ppUser != null) {
                 log.info("{} 您名下无中高优先级的重点客户", email);
-                dingtalkClient.batchSend(ppUser.getUserid(), noHighLevelContent);
+                dingtalkClient.sendContent(ppUser.getUserid(), noHighLevelContent);
             } else {
                 log.info("{} 未找到此人..0", email);
             }
@@ -104,7 +108,7 @@ public class CustomerOutflowService {
                 PPUser ppUser = ppUserMap.get(entry.getKey());
                 if (ppUser != null) {
                     log.info("{}, 您名下有{}个中高优先级的重点客户，客户当前状态为正常，请继续保持。", entry.getKey(), lowRisk.size());
-                    dingtalkClient.batchSend(ppUser.getUserid(), String.format(highLevelContent, entry.getValue().size()));
+                    dingtalkClient.sendContent(ppUser.getUserid(), String.format(highLevelContent, entry.getValue().size()));
                 } else {
                     log.info("{} 未找到此人..1", entry.getKey());
                 }
@@ -121,7 +125,7 @@ public class CustomerOutflowService {
                         }
                     }
                     String jira = Joiner.on(",").join(customerOrderInfos.stream().map(CustomerOrderInfo::getUrl).collect(Collectors.toList()));
-                    dingtalkClient.batchSend(ppUser.getUserid(), String.format(highRiskLevelContent, entry.getValue().size(), highRisk.size(), jira));
+                    dingtalkClient.sendContent(ppUser.getUserid(), String.format(highRiskLevelContent, entry.getValue().size(), highRisk.size(), jira));
                 } else {
                     log.info("{} 未找到此人..2", entry.getKey());
                 }
@@ -161,7 +165,8 @@ public class CustomerOutflowService {
             IssueReq issueReq = new IssueReq();
             issueReq.setFields(field);
             IssueResp issueResp = jira2vClient.createIssue(issueReq);
-            log.info("issueResp = {}", PPConverter.toJsonStringIgnoreException(issueResp));
+            String url = jira2vClientConfig.getBaseUrl() + "/browse/" + issueResp.getKey();
+            log.info("issueResp = {}, url = {}", PPConverter.toJsonStringIgnoreException(issueResp), url);
             CustomerOrderInfo customerOrderInfo = TransferUtils.newInstance(CustomerOrderInfo::new, d -> {
                 d.setClientId(customerInfo.getClientid());
                 d.setIssueId(issueResp.getId());
@@ -171,7 +176,7 @@ public class CustomerOutflowService {
                 d.setPriorityLevel(customerInfo.getClientPriorityLevel());
                 d.setSummary(summary);
                 d.setIssueType(jira2vClientConfig.getIssuetype());
-                d.setUrl(issueResp.getSelf());
+                d.setUrl(url);
                 d.setStatus("待解决");
                 d.setOrderId(orderId);
             });
@@ -181,7 +186,7 @@ public class CustomerOutflowService {
             return customerOrderInfo;
         } catch (Exception e) {
             MeterRegistryProvider.provider().counter(outflow, Tags.of(MeterTag.status, MeterTagValue.Status.fail)).increment();
-            log.error("创建jira工单异常, clientId = {}, email = {}", customerInfo.getClientid(), ppUser.getEmail());
+            log.error("创建jira工单异常, clientId = {}, email = {}", customerInfo.getClientid(), ppUser.getEmail(), e);
             return null;
         }
     }
@@ -207,7 +212,7 @@ public class CustomerOutflowService {
                 PPUser ppUser = ppUserMap.get(entry.getKey());
                 if (ppUser != null) {
                     String jira = Joiner.on(",").join(entry.getValue().stream().map(JiraInfo::getUrl).collect(Collectors.toList()));
-                    dingtalkClient.batchSend(ppUser.getUserid(), String.format(regularWarnContent, jira));
+                    dingtalkClient.sendContent(ppUser.getUserid(), String.format(regularWarnContent, jira));
                 } else {
                     log.info("未找到相关运营人员，不通知, {}", entry.getKey());
                 }

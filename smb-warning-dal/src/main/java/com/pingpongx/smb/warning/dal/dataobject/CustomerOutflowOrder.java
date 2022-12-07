@@ -11,7 +11,7 @@ import java.io.Serializable;
  *
  * @TableName customer_churn_order
  */
-@TableName(value = "customer_churn_order")
+@TableName(value = "customer_outflow_order")
 @Data
 public class CustomerOutflowOrder extends BaseDO implements Serializable {
 

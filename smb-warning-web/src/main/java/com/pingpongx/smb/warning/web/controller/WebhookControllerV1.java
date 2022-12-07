@@ -11,6 +11,7 @@ import com.pingpongx.smb.warning.web.module.JiraChangelog;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -49,8 +50,12 @@ public class WebhookControllerV1 {
         }
         Map<String, Object> stringObjectMap = PPConverter.toObject(message, new TypeReference<JSONObject>() {
         });
-        JiraChangelog jiraChangelog = PPConverter.toObject(PPConverter.toJsonString(stringObjectMap.get("changelog")), JiraChangelog.class);
-        log.info("jiraChangelog = {}", PPConverter.toJsonStringIgnoreException(jiraChangelog));
+        if (stringObjectMap.get("changelog") == null) {
+            return;
+        }
+        String changelogContent = PPConverter.toJsonString(stringObjectMap.get("changelog"));
+        log.info("jiraChangelog = {}", changelogContent);
+        JiraChangelog jiraChangelog = PPConverter.toObject(changelogContent, JiraChangelog.class);
         if (jiraChangelog == null || jiraChangelog.getItems() == null || jiraChangelog.getItems().isEmpty()) {
             return;
         }
