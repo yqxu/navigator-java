@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = WarnConstants.BASE_PATH_V2 + "/v1/smb/webhook")
-public class WebhookControllerV2 {
+@RequestMapping(value = WarnConstants.BASE_PATH + "/smb/webhook")
+public class WebhookControllerV1 {
     private final JiraInfoDao jiraInfoDao;
 
     @ApiOperation("客户服务-消息回调通知")
