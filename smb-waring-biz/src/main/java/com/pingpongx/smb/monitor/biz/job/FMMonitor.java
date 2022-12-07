@@ -1,5 +1,6 @@
 package com.pingpongx.smb.monitor.biz.job;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONPath;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.RequestOptions;
@@ -53,7 +54,7 @@ public class FMMonitor {
 
     @Scheduled(fixedDelay = 60000)
     public void monitorFM() {
-        log.info("开始时间：" + getFormattedTime());
+        log.info("开始时间：{}, 当前monitor的环境：{}", getFormattedTime(), hostParam.getMonitorEnv());
         Consumer<Response> listener = null;
         Playwright playwright = null;
         Browser browser = null;
@@ -175,7 +176,6 @@ public class FMMonitor {
         data.put("time", getFormattedTime());
 
         // 如果当前是生产环境，发告警出来
-        log.info("当前monitor的环境：{}", hostParam.getMonitorEnv());
         if (hostParam.getMonitorEnv().equals(MonitorEnv.PROD.getMonitorEnv())) {
             apiRequestContext.post("https://smb-warning.pingpongx.com/v2/alert/FLOWMORE", RequestOptions.create().setData(data));
         }
@@ -188,6 +188,7 @@ public class FMMonitor {
         record.setBusinessLine(BusinessLine.FM.getBusinessLine());
         record.setFailReason(failReason);
         record.setTaskResult(result);
+        log.debug("recode:{}", JSON.toJSONString(record));
         taskRecordMapper.insert(record);
     }
 
