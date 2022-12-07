@@ -188,7 +188,7 @@ public class FMMonitor {
         record.setBusinessLine(BusinessLine.FM.getBusinessLine());
         record.setFailReason(failReason);
         record.setTaskResult(result);
-        log.debug("recode:{}", JSON.toJSONString(record));
+        // log.info("record is : {}", JSON.toJSONString(record));
         taskRecordMapper.insert(record);
     }
 
@@ -217,11 +217,13 @@ public class FMMonitor {
                         int code = JSONPath.read(resText, "$.code", Integer.class);
                         // todo 如果响应信息的内容长度过长需要告警吗？例如有一个接口的响应内容超过64K，目前超64K插入库表会报错的
                         // saveResponseDetail(response, code);
-                        // 后续可能需要考虑code的判断条件，比如如果服务端错误，是5开头这种
+                        // 后续可能需要考虑code的判断条件，比如如果服务端错误，是5开头这种，
                         if (code != 0 && code != 401) {
                             saveResponseDetail(response, code);
-                            // 发送告警
-                             sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
+                            // 发送告警，50004是服务端超时错误，暂时不发告警
+                            if (code != 50004) {
+                                sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
+                            }
                             log.error("api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
                         }
                     }
