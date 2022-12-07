@@ -27,7 +27,7 @@ public class Jira2vClientConfig {
     @Value("${customer.churn.jira2v.summary:%s优先级客户%s，存在流失风险，请及时跟进}")
     private String summary;
 
-    @Value("${customer.churn.jira2v.desc:请及时跟进存在流失风险的重点客户，并认真填写工单信息；P0级别客户需要任务生成1周后完成；P1级别客户需要任务生成2周后完成！！！}")
+    @Value("${customer.churn.jira2v.desc:{color:#FF0000}请及时跟进存在流失风险的重点客户，并认真填写工单信息；P0级别客户需要任务生成1周后完成；P1级别客户需要任务生成2周后完成！！！{color}}")
     private String desc;
 
     @Bean

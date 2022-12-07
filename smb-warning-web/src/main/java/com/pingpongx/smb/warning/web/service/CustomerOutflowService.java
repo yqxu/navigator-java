@@ -124,7 +124,7 @@ public class CustomerOutflowService {
                             customerOrderInfos.add(customerOrderInfo);
                         }
                     }
-                    String jira = Joiner.on(",").join(customerOrderInfos.stream().map(CustomerOrderInfo::getUrl).collect(Collectors.toList()));
+                    String jira = Joiner.on(" ").join(customerOrderInfos.stream().map(CustomerOrderInfo::getUrl).collect(Collectors.toList()));
                     dingtalkClient.sendContent(ppUser.getUserid(), String.format(highRiskLevelContent, entry.getValue().size(), highRisk.size(), jira));
                 } else {
                     log.info("{} 未找到此人..2", entry.getKey());
@@ -200,7 +200,7 @@ public class CustomerOutflowService {
         zonedDateTime = zonedDateTime.minusDays(7);
         List<JiraInfo> P0jiraInfos = jiraInfoDao.query(jira2vClientConfig.getProject(), "待解决", JiraInfo.PriorityLevel.P0.name(), LocalDateUtils.time(zonedDateTime));
         zonedDateTime = zonedDateTime.minusDays(7);
-        List<JiraInfo> P1jiraInfos = jiraInfoDao.query(jira2vClientConfig.getProject(), "待解决", JiraInfo.PriorityLevel.P0.name(), LocalDateUtils.time(zonedDateTime));
+        List<JiraInfo> P1jiraInfos = jiraInfoDao.query(jira2vClientConfig.getProject(), "待解决", JiraInfo.PriorityLevel.P1.name(), LocalDateUtils.time(zonedDateTime));
         List<JiraInfo> jiraInfos = Lists.newArrayList();
         jiraInfos.addAll(P0jiraInfos);
         jiraInfos.addAll(P1jiraInfos);
@@ -211,12 +211,14 @@ public class CustomerOutflowService {
             for (Map.Entry<String, List<JiraInfo>> entry : jiraInfoMap.entrySet()) {
                 PPUser ppUser = ppUserMap.get(entry.getKey());
                 if (ppUser != null) {
-                    String jira = Joiner.on(",").join(entry.getValue().stream().map(JiraInfo::getUrl).collect(Collectors.toList()));
+                    String jira = Joiner.on(" ").join(entry.getValue().stream().map(JiraInfo::getUrl).collect(Collectors.toList()));
                     dingtalkClient.sendContent(ppUser.getUserid(), String.format(regularWarnContent, jira));
                 } else {
                     log.info("未找到相关运营人员，不通知, {}", entry.getKey());
                 }
             }
+        } else {
+            log.info("数据为空，没有巡检");
         }
     }
 }

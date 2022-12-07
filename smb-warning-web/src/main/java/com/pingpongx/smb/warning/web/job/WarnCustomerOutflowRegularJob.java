@@ -19,12 +19,12 @@ public class WarnCustomerOutflowRegularJob extends IJobHandler {
     @Override
     public ReturnT<String> execute(String s) {
         try {
-            log.info("循环提现客户流失预警");
+            log.info("客户流失预警巡检");
             customerOutflowService.regularWarn();
-            log.info("循环提现客户流失预警成功");
+            log.info("客户流失预警巡检成功");
             return ReturnT.SUCCESS;
         } catch (Exception e) {
-            log.error("循环提现客户流失预警异常", e);
+            log.error("客户流失预警巡检异常", e);
             return ReturnT.FAIL;
         }
     }
