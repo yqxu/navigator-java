@@ -12,16 +12,16 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 public class DingtalkClientConfig {
 
-    @Value("customer.churn.dingtalk.baseUrl")
+    @Value("${customer.churn.dingtalk.baseUrl:https://api.dingtalk.com}")
     private String baseUrl;
 
-    @Value("customer.churn.dingtalk.oapiUrl")
+    @Value("${customer.churn.dingtalk.oapiUrl:https://oapi.dingtalk.com}")
     private String oapiUrl;
 
-    @Value("customer.churn.dingtalk.appId")
+    @Value("${customer.churn.dingtalk.appId}")
     private String appId;
 
-    @Value("customer.churn.dingtalk.appSecret")
+    @Value("${customer.churn.dingtalk.appSecret}")
     private String appSecret;
 
     @Bean

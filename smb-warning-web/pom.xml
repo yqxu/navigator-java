@@ -39,7 +39,7 @@
         </dependency>
         <dependency>
             <groupId>com.pingpongx.flowmore.cloud</groupId>
-            <artifactId>http-sdk-client-dingtalk</artifactId>
+            <artifactId>http-skd-client-dingtalk</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
