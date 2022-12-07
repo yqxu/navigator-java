@@ -77,7 +77,7 @@ public class CustomerOutflowService {
     public void preWarnOfOutflow() {
         List<PPUser> ppUsers = ppUserClient.queryUserInfo();
         Map<String, PPUser> ppUserMap = ppUsers.stream().collect(Collectors.toMap(PPUser::getEmail, Function.identity(), (k1, k2) -> k1));
-        List<CustomerInfo> customerInfos = smbDataClient.queryCustomerInfo(Lists.newArrayList(ppUserMap.keySet()));
+        List<CustomerInfo> customerInfos = smbDataClient.queryCustomerInfo();
         //获取P0 P1用户
         customerInfos = customerInfos.stream().filter(customerInfo -> "P0".equals(customerInfo.getClientPriorityLevel()) || "P1".equals(customerInfo.getClientPriorityLevel())).collect(Collectors.toList());
         Map<String, List<CustomerInfo>> customerInfoGroup = customerInfos.stream().collect(Collectors.groupingBy(CustomerInfo::getSalesEmail));
