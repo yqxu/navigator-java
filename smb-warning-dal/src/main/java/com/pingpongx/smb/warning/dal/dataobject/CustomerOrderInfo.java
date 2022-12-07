@@ -1,4 +1,4 @@
-package com.pingpongx.smb.warning.web.module;
+package com.pingpongx.smb.warning.dal.dataobject;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -57,6 +57,6 @@ public class CustomerOrderInfo {
      */
     private String status;
 
-    private String orderId;
+    private Long orderId;
 
 }

@@ -14,6 +14,9 @@ import java.io.Serializable;
 @TableName(value = "customer_churn_order")
 @Data
 public class CustomerOutflowOrder extends BaseDO implements Serializable {
+
+    private Long orderId;
+
     /**
      * clientId
      */
@@ -22,9 +25,7 @@ public class CustomerOutflowOrder extends BaseDO implements Serializable {
     /**
      * jira issueId
      */
-    private String issueId;
-
-    private String orderId;
+    private Long jiraId;
 
     /**
      * salesEmail

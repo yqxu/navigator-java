@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.pingpongx.flowmore.cloud.base.commom.constants.MeterTag;
 import com.pingpongx.flowmore.cloud.base.commom.constants.MeterTagValue;
+import com.pingpongx.flowmore.cloud.base.commom.utils.LocalDateUtils;
 import com.pingpongx.flowmore.cloud.base.commom.utils.PPConverter;
 import com.pingpongx.flowmore.cloud.base.commom.utils.UUIDUtils;
 import com.pingpongx.flowmore.cloud.base.server.provider.MeterRegistryProvider;
@@ -14,12 +15,14 @@ import com.pingpongx.smb.cloud.model.Field;
 import com.pingpongx.smb.cloud.model.IssueReq;
 import com.pingpongx.smb.cloud.model.IssueResp;
 import com.pingpongx.smb.organization.common.resp.PPUser;
+import com.pingpongx.smb.warning.dal.dataobject.CustomerOrderInfo;
+import com.pingpongx.smb.warning.dal.dataobject.JiraInfo;
 import com.pingpongx.smb.warning.web.client.PPUserClient;
 import com.pingpongx.smb.warning.web.client.SMBDataClient;
 import com.pingpongx.smb.warning.web.config.Jira2vClientConfig;
 import com.pingpongx.smb.warning.web.dao.CustomerOutflowDao;
+import com.pingpongx.smb.warning.web.dao.JiraInfoDao;
 import com.pingpongx.smb.warning.web.module.CustomerInfo;
-import com.pingpongx.smb.warning.web.module.CustomerOrderInfo;
 import com.pingpongx.smb.warning.web.module.CustomerWarnJira;
 import io.micrometer.core.instrument.Tags;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,6 +57,8 @@ public class CustomerOutflowService {
 
     private final CustomerOutflowDao customerOutflowDao;
 
+    private final JiraInfoDao jiraInfoDao;
+
     @Value("${warnContent: 您名下无中高优先级的重点客户。}")
     private String noHighLevelContent;
 
@@ -60,6 +67,9 @@ public class CustomerOutflowService {
 
     @Value("${noticeContent:您名下有%s个中高优先级的重点客户，其中有%s个高危客户，存在流失风险，已为您生成对应gr工单，请及时跟进。\n %s}")
     private String highRiskLevelContent;
+
+    @Value("${regularWarnContent:您还存在待跟进的⼯单，请及时跟进。\n %s}")
+    private String regularWarnContent;
 
     /**
      * 流失预警
@@ -121,6 +131,7 @@ public class CustomerOutflowService {
     }
 
     private final static String outflow = "customer_outflow_jira2v";
+
     //创建jira工单
     private CustomerOrderInfo createOrder(CustomerInfo customerInfo, PPUser ppUser) {
         try {
@@ -132,22 +143,20 @@ public class CustomerOutflowService {
             field.setDescription(jira2vClientConfig.getDesc());
             field.setIssuetype(new Field.Name(jira2vClientConfig.getIssuetype()));
             field.setProject(new Field.Key(jira2vClientConfig.getProject()));
-            String assignee = ppUser.getEmail().split("@")[0];
-            field.setAssignee(new Field.Name(assignee));
+            field.setAssignee(new Field.Name(ppUser.getDomainAccount()));
 
-            String orderId = UUIDUtils.UUID32();
-            field.setOrderId(orderId);
+            long orderId = UUIDUtils.nextId();
+            field.setOrderId("" + orderId);
             field.setClientId(customerInfo.getClientid());
             field.setLevel(new Field.Value(customerInfo.getClientPriorityLevel()));
             field.setKaType(new Field.Value(customerInfo.getKaType()));
-            field.setIndustryLevel(""); //todo
+            field.setIndustryLevel(customerInfo.getCategory());
             field.setOutflowStatus(new Field.Value(customerInfo.getClientLostStatus()));
             field.setOutflowTag(new Field.Value(customerInfo.getClientLostWorthStatus()));
             field.setActiveStatus(new Field.Value(customerInfo.getClientActiveStatus()));
             field.setActiveTag(new Field.Value(customerInfo.getClientActiveWorthStatus()));
-            field.setAvgTradeNum(1);//todo
-            field.setFollowUp(new Field.Name(assignee));
-
+            field.setAvgTradeNum(customerInfo.getAvgInboundCnt3sm());
+            field.setFollowUp(new Field.Name(ppUser.getDomainAccount()));
 
             IssueReq issueReq = new IssueReq();
             issueReq.setFields(field);
@@ -158,7 +167,7 @@ public class CustomerOutflowService {
                 d.setIssueId(issueResp.getId());
                 d.setSalesEmail(customerInfo.getSalesEmail());
                 d.setProjectKey(jira2vClientConfig.getProject());
-                d.setAssignee(assignee);
+                d.setAssignee(ppUser.getDomainAccount());
                 d.setPriorityLevel(customerInfo.getClientPriorityLevel());
                 d.setSummary(summary);
                 d.setIssueType(jira2vClientConfig.getIssuetype());
@@ -178,4 +187,31 @@ public class CustomerOutflowService {
     }
 
 
+    /**
+     * 定期预警
+     */
+    public void regularWarn() {
+        ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneOffset.ofHours(8));
+        zonedDateTime = zonedDateTime.minusDays(7);
+        List<JiraInfo> P0jiraInfos = jiraInfoDao.query(jira2vClientConfig.getProject(), "待解决", JiraInfo.PriorityLevel.P0.name(), LocalDateUtils.time(zonedDateTime));
+        zonedDateTime = zonedDateTime.minusDays(7);
+        List<JiraInfo> P1jiraInfos = jiraInfoDao.query(jira2vClientConfig.getProject(), "待解决", JiraInfo.PriorityLevel.P0.name(), LocalDateUtils.time(zonedDateTime));
+        List<JiraInfo> jiraInfos = Lists.newArrayList();
+        jiraInfos.addAll(P0jiraInfos);
+        jiraInfos.addAll(P1jiraInfos);
+        if (!jiraInfos.isEmpty()) {
+            List<PPUser> ppUsers = ppUserClient.queryUserInfo();
+            Map<String, PPUser> ppUserMap = ppUsers.stream().collect(Collectors.toMap(PPUser::getDomainAccount, Function.identity(), (k1, k2) -> k1));
+            Map<String, List<JiraInfo>> jiraInfoMap = jiraInfos.stream().collect(Collectors.groupingBy(JiraInfo::getAssignee));
+            for (Map.Entry<String, List<JiraInfo>> entry : jiraInfoMap.entrySet()) {
+                PPUser ppUser = ppUserMap.get(entry.getKey());
+                if (ppUser != null) {
+                    String jira = Joiner.on(",").join(entry.getValue().stream().map(JiraInfo::getUrl).collect(Collectors.toList()));
+                    dingtalkClient.batchSend(ppUser.getUserid(), String.format(regularWarnContent, jira));
+                } else {
+                    log.info("未找到相关运营人员，不通知, {}", entry.getKey());
+                }
+            }
+        }
+    }
 }

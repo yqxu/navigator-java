@@ -9,9 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@JobHandler("WarnCustomerOutflowJob")
+@JobHandler("WarnCustomerOutflowRegularJob")
 @Component
-public class WarnCustomerOutflowJob extends IJobHandler {
+public class WarnCustomerOutflowRegularJob extends IJobHandler {
 
     @Autowired
     private CustomerOutflowService customerOutflowService;
@@ -19,12 +19,12 @@ public class WarnCustomerOutflowJob extends IJobHandler {
     @Override
     public ReturnT<String> execute(String s) {
         try {
-            log.info("客户流失预警");
-            customerOutflowService.preWarnOfOutflow();
-            log.info("客户流失预警成功");
+            log.info("循环提现客户流失预警");
+            customerOutflowService.regularWarn();
+            log.info("循环提现客户流失预警成功");
             return ReturnT.SUCCESS;
         } catch (Exception e) {
-            log.error("客户流失预警异常", e);
+            log.error("循环提现客户流失预警异常", e);
             return ReturnT.FAIL;
         }
     }

@@ -14,6 +14,8 @@ import java.io.Serializable;
 @TableName(value = "jira_info")
 @Data
 public class JiraInfo extends BaseDO implements Serializable {
+
+    private Long jiraId;
     /**
      * issueId
      */
@@ -55,5 +57,9 @@ public class JiraInfo extends BaseDO implements Serializable {
     private String status;
 
     private static final long serialVersionUID = 1L;
+
+    public enum PriorityLevel {
+        P0, P1, P2
+    }
 
 }

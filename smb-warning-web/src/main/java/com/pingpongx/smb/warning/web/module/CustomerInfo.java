@@ -28,4 +28,8 @@ public class CustomerInfo {
 
     private String kaType;
 
+    private String category;
+
+    private int avgInboundCnt3sm;
+
 }
