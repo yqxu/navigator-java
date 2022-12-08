@@ -66,7 +66,7 @@ public class CustomerWarnJira extends Field {
 
     private Value customfield_11243 = new Field.Value("-1");
 
-    private String customfield_11244 = "1980-01-01 11:02:02";
+    private String customfield_11244 = "2000-01-01T00:00:00.000+0000";
 
     private Value customfield_11245 = new Field.Value("-1");
 
