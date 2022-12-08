@@ -46,10 +46,28 @@ public class CustomerWarnJira extends Field {
 
     //客户交易月均笔数
     @SerializedName("customfield_11234")
-    private Integer avgTradeNum;
+    private Integer avgTradeNum=-1;
 
     //任务跟进人是必需的
     @SerializedName("customfield_11246")
     private Name followUp;
+
+    private String customfield_11231 = "-1";
+
+    private Integer customfield_11233 = -1;
+
+    private Value customfield_11239= new Field.Value("-1");
+
+    private Value customfield_11240= new Field.Value("-1");
+
+    private String customfield_11241= "-1";
+
+    private String customfield_11242= "-1";
+
+    private Value customfield_11243= new Field.Value("-1");
+
+    private String customfield_11244= "1980-01-01 11:02:02";
+
+    private Value customfield_11245= new Field.Value("-1");
 
 }

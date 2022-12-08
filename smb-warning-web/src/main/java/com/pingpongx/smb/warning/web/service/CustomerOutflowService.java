@@ -184,7 +184,6 @@ public class CustomerOutflowService {
             field.setOutflowTag(new Field.Value(StringUtils.isBlank(customerInfo.getClientLostWorthStatus()) ? "-1" : customerInfo.getClientLostWorthStatus()));
             field.setActiveStatus(new Field.Value(StringUtils.isBlank(customerInfo.getClientActiveStatus()) ? "-1" : customerInfo.getClientActiveStatus()));
             field.setActiveTag(new Field.Value(StringUtils.isBlank(customerInfo.getClientActiveWorthStatus()) ? "-1" : customerInfo.getClientActiveWorthStatus()));
-            field.setAvgTradeNum(customerInfo.getAvgInboundCnt3sm() == null ? -1 : customerInfo.getAvgInboundCnt3sm());
             field.setFollowUp(new Field.Name(ppUser.getDomainAccount()));
 
             IssueReq issueReq = new IssueReq();
