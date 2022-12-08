@@ -17,7 +17,7 @@ import org.springframework.transaction.PlatformTransactionManager;
  * @Version:
  */
 @Configuration
-@MapperScan("com.pingpongx.smb.warning.dal.mapper")
+@MapperScan({"com.pingpongx.smb.warning.dal.mapper", "com.pingpongx.smb.monitor.dal.mapper"})
 public class MybatisConfig {
 
     private final DataSource dataSource;

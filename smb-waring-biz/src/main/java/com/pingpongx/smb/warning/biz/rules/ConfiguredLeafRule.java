@@ -1,29 +1,20 @@
 package com.pingpongx.smb.warning.biz.rules;
 
+import com.pingpongx.smb.export.globle.Engine;
+import com.pingpongx.smb.export.module.MatchOperation;
+import com.pingpongx.smb.export.module.operation.RuleLeaf;
+import com.pingpongx.smb.rule.routers.operatiors.OperationFactory;
 import com.pingpongx.smb.warning.biz.alert.model.MerchantAlert;
 import com.pingpongx.smb.warning.biz.alert.model.SlsAlert;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
-import com.pingpongx.smb.warning.biz.alert.routers.operatiors.MatchOperation;
-import com.pingpongx.smb.warning.biz.alert.routers.operatiors.OperationFactory;
 import com.pingpongx.smb.warning.biz.rules.scene.configure.LeafRuleConf;
 
 public class ConfiguredLeafRule extends RuleLeaf<ThirdPartAlert ,String> {
-
-    String type;
+    Class type;
     String attr;
     MatchOperation operation;
     String expected;
     boolean not;
-
-    public static ConfiguredLeafRule resumeByConf(LeafRuleConf conf){
-        ConfiguredLeafRule rule = new ConfiguredLeafRule();
-        rule.attr = conf.getAttr();
-        rule.type = conf.getType();
-        rule.expected = conf.getExpected();
-        rule.operation = OperationFactory.getInstance(conf.getOperation());
-        rule.not = conf.isNot();
-        return rule;
-    }
 
     @Override
     public Class dependsObject() {
@@ -58,11 +49,7 @@ public class ConfiguredLeafRule extends RuleLeaf<ThirdPartAlert ,String> {
         this.not = not;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
+    public void setType(Class type) {
         this.type = type;
     }
 
@@ -88,5 +75,10 @@ public class ConfiguredLeafRule extends RuleLeaf<ThirdPartAlert ,String> {
 
     public void setExpected(String expected) {
         this.expected = expected;
+    }
+
+    @Override
+    public Class type() {
+        return type;
     }
 }
