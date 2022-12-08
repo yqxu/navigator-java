@@ -38,25 +38,24 @@ public class ToExecuteHandler implements ApplicationListener<ToExecute> {
 
     @Override
     public void onApplicationEvent(ToExecute event) {
-        return;
-//        //DingDing 通知
-//        ThirdPartAlert alert = event.getAlert();
-//        PPDingTalkClient client = dingTalkClientFactory.getByDepart(alert.depart());
-//        AlertParser parser = parserFactory.departOf(alert.depart());
-//        String msg = parser.toDingTalkMsg(alert);
-//        DingDingReceiverDTO receiverDTO = businessAlertService.findDingDingReceivers(alert.throwAppName());
-//        if (receiverDTO == null||receiverDTO.getReceivers()==null){
-//            log.error(event.getAlert().throwAppName()+" 未设置对应负责人列表。");
-//            return;
-//        }
-//        List<String> phones = receiverDTO.getReceivers().stream().filter(Objects::nonNull).map(DingDReceiverDTO::getPhone).collect(Collectors.toList());
-//        client.sendMarkDown("您有来自线上的预警待处理",msg,phones);
-//        if (phones.size() == 0){
-//            log.error(event.getAlert().throwAppName()+" 未设置对应负责人列表。");
-//        }else {
-//            //Jira 工单
-//            JiraGenerateRequest req = parser.generateJiraRequest(alert);
-//            businessAlertService.generateJira(req);
-//        }
+        //DingDing 通知
+        ThirdPartAlert alert = event.getAlert();
+        PPDingTalkClient client = dingTalkClientFactory.getByDepart(alert.depart());
+        AlertParser parser = parserFactory.departOf(alert.depart());
+        String msg = parser.toDingTalkMsg(alert);
+        DingDingReceiverDTO receiverDTO = businessAlertService.findDingDingReceivers(alert.throwAppName());
+        if (receiverDTO == null||receiverDTO.getReceivers()==null){
+            log.error(event.getAlert().throwAppName()+" 未设置对应负责人列表。");
+            return;
+        }
+        List<String> phones = receiverDTO.getReceivers().stream().filter(Objects::nonNull).map(DingDReceiverDTO::getPhone).collect(Collectors.toList());
+        client.sendMarkDown("您有来自线上的预警待处理",msg,phones);
+        if (phones.size() == 0){
+            log.error(event.getAlert().throwAppName()+" 未设置对应负责人列表。");
+        }else {
+            //Jira 工单
+            JiraGenerateRequest req = parser.generateJiraRequest(alert);
+            businessAlertService.generateJira(req);
+        }
     }
 }

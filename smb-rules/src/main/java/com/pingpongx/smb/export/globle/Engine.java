@@ -12,6 +12,7 @@ import com.pingpongx.smb.export.module.RuleTrie;
 import com.pingpongx.smb.store.BatchMatcherMapper;
 import com.pingpongx.smb.store.DataAttrMapper;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -51,7 +52,9 @@ public class Engine {
     public MatchResult match(Class clazz,Object data){
         RuleTrie ruleTrie = ruleTries.get(clazz);
         if (ruleTrie == null){
-            return new MatchResult();
+            MatchResult ret = new MatchResult();
+            ret.setMatchedData(new HashSet<>());
+            return ret;
         }
         return ruleTrie.match(data);
     }
