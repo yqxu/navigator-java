@@ -25,9 +25,11 @@ import com.pingpongx.smb.warning.web.dao.JiraInfoDao;
 import com.pingpongx.smb.warning.web.module.CustomerInfo;
 import com.pingpongx.smb.warning.web.module.CustomerWarnJira;
 import io.micrometer.core.instrument.Tags;
-import lombok.RequiredArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -44,7 +46,6 @@ import java.util.stream.Collectors;
  */
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class CustomerOutflowService {
 
     private final PPUserClient ppUserClient;
@@ -60,15 +61,33 @@ public class CustomerOutflowService {
 
     private final JiraInfoDao jiraInfoDao;
 
+    @Autowired
+    public CustomerOutflowService(PPUserClient ppUserClient, SMBDataClient smbDataClient, DingtalkClient dingtalkClient, Jira2vClient jira2vClient, Jira2vClientConfig jira2vClientConfig, CustomerOutflowDao customerOutflowDao, JiraInfoDao jiraInfoDao) {
+        this.ppUserClient = ppUserClient;
+        this.smbDataClient = smbDataClient;
+        this.dingtalkClient = dingtalkClient;
+        this.jira2vClient = jira2vClient;
+        this.jira2vClientConfig = jira2vClientConfig;
+        this.customerOutflowDao = customerOutflowDao;
+        this.jiraInfoDao = jiraInfoDao;
+    }
+
+    @Setter
+    @Getter
     @Value("${warnContent: 您名下无中高优先级的重点客户。}")
     private String noHighLevelContent;
 
+    @Setter
+    @Getter
+
     @Value("${noticeContent:您名下有%s个中高优先级的重点客户，客户当前状态为正常，请继续保持。}")
     private String highLevelContent;
-
+    @Setter
+    @Getter
     @Value("${noticeContent:您名下有%s个中高优先级的重点客户，其中有%s个高危客户，存在流失风险，已为您生成对应gr工单，请及时跟进。\n %s}")
     private String highRiskLevelContent;
-
+    @Setter
+    @Getter
     @Value("${regularWarnContent:您还存在待跟进的⼯单，请及时跟进。\n %s}")
     private String regularWarnContent;
 
@@ -187,8 +206,8 @@ public class CustomerOutflowService {
             log.info("创建jira工单完成, clientId = {}, email = {}", customerInfo.getClientid(), ppUser.getEmail());
             return customerOrderInfo;
         } catch (Exception e) {
-            MeterRegistryProvider.provider().counter(outflow, Tags.of(MeterTag.status, MeterTagValue.Status.fail)).increment();
             log.error("创建jira工单异常, clientId = {}, email = {}", customerInfo.getClientid(), ppUser.getEmail(), e);
+            MeterRegistryProvider.provider().counter(outflow, Tags.of(MeterTag.status, MeterTagValue.Status.fail)).increment();
             return null;
         }
     }
