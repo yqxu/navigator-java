@@ -85,7 +85,7 @@ public class CustomerOutflowServiceTest {
         PPUser ppUser = new PPUser();
         ppUser.setDomainAccount("jianggm");
         ppUser.setEmail("jianggm@pingpongx.com");
-        ppUser.setUserid("01193837751079");
+        ppUser.setUserid("122912174322778049");
 
 
         when(ppUserClient.queryUserInfo()).thenReturn(Lists.newArrayList(ppUser));
@@ -99,7 +99,7 @@ public class CustomerOutflowServiceTest {
         customerInfo.setClientActiveWorthStatus("低价值");
         customerInfo.setClientPriorityLevel("P1");
         customerInfo.setIfHighRisk(1);
-        customerInfo.setSalesEmail("jianggm1@pingpongx.com");
+        customerInfo.setSalesEmail("jianggm@pingpongx.com");
         customerInfo.setKaType("ka");
         customerInfo.setCategory("玩具、运动和爱好物品:乐器");
         customerInfo.setAvgInboundCnt3sm(10);
@@ -113,7 +113,7 @@ public class CustomerOutflowServiceTest {
         customerInfo.setClientActiveWorthStatus("低价值");
         customerInfo.setClientPriorityLevel("P1");
         customerInfo.setIfHighRisk(0);
-        customerInfo.setSalesEmail("jianggm1@pingpongx.com");
+        customerInfo.setSalesEmail("jianggm@pingpongx.com");
         customerInfo.setKaType("ka");
         customerInfo.setCategory("玩具、运动和爱好物品:乐器");
         customerInfo.setAvgInboundCnt3sm(10);
@@ -127,7 +127,7 @@ public class CustomerOutflowServiceTest {
         customerInfo.setClientActiveWorthStatus("低价值");
         customerInfo.setClientPriorityLevel("P2");
         customerInfo.setIfHighRisk(0);
-        customerInfo.setSalesEmail("jianggm1@pingpongx.com");
+        customerInfo.setSalesEmail("jianggm@pingpongx.com");
         customerInfo.setKaType("ka");
         customerInfo.setCategory("玩具、运动和爱好物品:乐器");
         customerInfo.setAvgInboundCnt3sm(10);
@@ -141,7 +141,7 @@ public class CustomerOutflowServiceTest {
         customerInfo.setClientActiveWorthStatus("低价值");//中价值
         customerInfo.setClientPriorityLevel("P0");
         customerInfo.setIfHighRisk(0);
-        customerInfo.setSalesEmail("jianggm1@pingpongx.com");
+        customerInfo.setSalesEmail("jianggm@pingpongx.com");
         customerInfo.setKaType("ka");
         customerInfo.setCategory("玩具、运动和爱好物品:乐器");
         customerInfo.setAvgInboundCnt3sm(10);
