@@ -163,6 +163,7 @@ public class CustomerOutflowServiceTest {
             log.info("发送钉钉消息成功:{},{}", userid, content);
             return null;
         });
+
         when(jira2vClient.createIssue(any())).thenAnswer(invocationOnMock -> {
             Object[] objects = invocationOnMock.getArguments();
             IssueReq issueReq = (IssueReq) objects[0];
@@ -176,6 +177,11 @@ public class CustomerOutflowServiceTest {
         });
         doNothing().when(customerOutflowDao).save(any());
         customerOutflowService.preWarnOfOutflow();
+        verify(dingtalkClient, times(3)).sendContent(any(), anyString());
+        verify(jira2vClient, times(2)).createIssue(any());
+        verify(customerOutflowDao, times(2)).save(any());
+        verify(smbDataClient, times(1)).queryCustomerInfo();
+        verify(ppUserClient, times(1)).queryUserInfo();
     }
 
 
