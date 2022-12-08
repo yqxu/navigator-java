@@ -27,6 +27,7 @@ import com.pingpongx.smb.warning.web.module.CustomerWarnJira;
 import io.micrometer.core.instrument.Tags;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -152,14 +153,15 @@ public class CustomerOutflowService {
             long orderId = UUIDUtils.nextId();
             field.setOrderId("" + orderId);
             field.setClientId(customerInfo.getClientid());
-            field.setLevel(new Field.Value(customerInfo.getClientPriorityLevel()));
-            field.setKaType(new Field.Value(customerInfo.getKaType()));
-            field.setIndustryLevel(customerInfo.getCategory());
-            field.setOutflowStatus(new Field.Value(customerInfo.getClientLostStatus()));
-            field.setOutflowTag(new Field.Value(customerInfo.getClientLostWorthStatus()));
-            field.setActiveStatus(new Field.Value(customerInfo.getClientActiveStatus()));
-            field.setActiveTag(new Field.Value(customerInfo.getClientActiveWorthStatus()));
-            field.setAvgTradeNum(customerInfo.getAvgInboundCnt3sm());
+
+            field.setLevel(new Field.Value(StringUtils.isBlank(customerInfo.getClientPriorityLevel()) ? "-1" : customerInfo.getClientPriorityLevel()));
+            field.setKaType(new Field.Value(StringUtils.isBlank(customerInfo.getKaType()) ? "-1" : customerInfo.getKaType()));
+            field.setIndustryLevel(StringUtils.isBlank(customerInfo.getCategory()) ? "-1" : customerInfo.getCategory());
+            field.setOutflowStatus(new Field.Value(StringUtils.isBlank(customerInfo.getClientLostStatus()) ? "-1" : customerInfo.getClientLostStatus()));
+            field.setOutflowTag(new Field.Value(StringUtils.isBlank(customerInfo.getClientLostWorthStatus()) ? "-1" : customerInfo.getClientLostWorthStatus()));
+            field.setActiveStatus(new Field.Value(StringUtils.isBlank(customerInfo.getClientActiveStatus()) ? "-1" : customerInfo.getClientActiveStatus()));
+            field.setActiveTag(new Field.Value(StringUtils.isBlank(customerInfo.getClientActiveWorthStatus()) ? "-1" : customerInfo.getClientActiveWorthStatus()));
+            field.setAvgTradeNum(customerInfo.getAvgInboundCnt3sm() == null ? -1 : customerInfo.getAvgInboundCnt3sm());
             field.setFollowUp(new Field.Name(ppUser.getDomainAccount()));
 
             IssueReq issueReq = new IssueReq();

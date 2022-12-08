@@ -30,6 +30,6 @@ public class CustomerInfo {
 
     private String category;
 
-    private int avgInboundCnt3sm;
+    private Integer avgInboundCnt3sm;
 
 }
