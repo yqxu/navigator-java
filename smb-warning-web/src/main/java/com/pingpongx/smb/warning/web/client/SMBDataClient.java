@@ -1,6 +1,7 @@
 package com.pingpongx.smb.warning.web.client;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.pingpongx.flowmore.cloud.base.commom.exceptions.BaseErrorCode;
 import com.pingpongx.flowmore.cloud.base.commom.exceptions.BaseRuntimeException;
 import com.pingpongx.flowmore.cloud.base.commom.utils.PPConverter;
@@ -34,15 +35,15 @@ public class SMBDataClient {
         BaseResponse<SmbDataQueryResponse> result;
         try {
             result = smbClient.invoke(dataApi);
+            if (Objects.nonNull(result) && result.getSuccess()) {
+                return PPConverter.toObject(result.getData().getResultList().toString(), new TypeReference<List<CustomerInfo>>() {});//.toJavaList(CustomerInfo.class);
+            } else {
+                log.error("smb-data信息查询失败, request:{}, result:{}", PPConverter.toJsonStringIgnoreException(request), PPConverter.toJsonStringIgnoreException(result));
+                throw new BaseRuntimeException(result.getCode(), result.getMessage());
+            }
         } catch (Exception e) {
-            throw new BaseRuntimeException(BaseErrorCode.BIZ_BREAK, "smb-data信息查询异常.");
-        }
-        System.out.println(PPConverter.toJsonStringIgnoreException(result));
-        if (Objects.nonNull(result) && result.getSuccess()) {
-            return Lists.newArrayList();
-        } else {
-            log.error("smb-data信息查询失败, request:{}, result:{}", PPConverter.toJsonStringIgnoreException(request), PPConverter.toJsonStringIgnoreException(result));
-            throw new BaseRuntimeException(result.getCode(), result.getMessage());
+            log.error("FM_CUSTOMER_LOST_V1, 查询smd data异常", e);
+            throw new BaseRuntimeException(BaseErrorCode.BIZ_BREAK, "smb-data信息查询异常.", e);
         }
     }
 

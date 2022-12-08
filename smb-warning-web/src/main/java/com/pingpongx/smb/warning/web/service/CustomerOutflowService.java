@@ -74,17 +74,17 @@ public class CustomerOutflowService {
 
     @Setter
     @Getter
-    @Value("${warnContent: 您名下无中高优先级的重点客户。}")
+    @Value("${warnContent: 您名下无中高优先级的重点客户。具体客户明细请查看：https://data.pingpongx.com/#/report/858}")
     private String noHighLevelContent;
 
     @Setter
     @Getter
 
-    @Value("${noticeContent:您名下有%s个中高优先级的重点客户，客户当前状态为正常，请继续保持。}")
+    @Value("${noticeContent:您名下有%s个中高优先级的重点客户，客户当前状态为正常，请继续保持。具体客户明细请查看：https://data.pingpongx.com/#/report/858}")
     private String highLevelContent;
     @Setter
     @Getter
-    @Value("${noticeContent:您名下有%s个中高优先级的重点客户，其中有%s个高危客户，存在流失风险，已为您生成对应gr工单，请及时跟进。\n %s}")
+    @Value("${noticeContent:您名下有%s个中高优先级的重点客户，重点客户明细请查看：https://data.pingpongx.com/#/report/858 \n 其中有%s个高危客户，存在流失风险，已为您生成对应gr工单，请及时跟进；\n %s}")
     private String highRiskLevelContent;
     @Setter
     @Getter
@@ -104,6 +104,10 @@ public class CustomerOutflowService {
         List<CustomerInfo> customerInfos = smbDataClient.queryCustomerInfo();
         //获取P0 P1用户
         customerInfos = customerInfos.stream().filter(customerInfo -> "P0".equals(customerInfo.getClientPriorityLevel()) || "P1".equals(customerInfo.getClientPriorityLevel())).collect(Collectors.toList());
+        if (customerInfos.isEmpty()) {
+            log.info("预警数据为空，结束预警");
+            return;
+        }
         Map<String, List<CustomerInfo>> customerInfoGroup = customerInfos.stream().collect(Collectors.groupingBy(CustomerInfo::getSalesEmail));
 
         //获取P0 P1用户邮箱
@@ -144,7 +148,7 @@ public class CustomerOutflowService {
                             customerOrderInfos.add(customerOrderInfo);
                         }
                     }
-                    String jira = Joiner.on(" ").join(customerOrderInfos.stream().map(CustomerOrderInfo::getUrl).collect(Collectors.toList()));
+                    String jira = Joiner.on(" \n").join(customerOrderInfos.stream().map(CustomerOrderInfo::getUrl).collect(Collectors.toList()));
                     dingtalkClient.sendContent(ppUser.getUserid(), String.format(highRiskLevelContent, entry.getValue().size(), highRisk.size(), jira));
                 } else {
                     log.info("{} 未找到此人..2", entry.getKey());
@@ -159,10 +163,10 @@ public class CustomerOutflowService {
     //创建jira工单
     private CustomerOrderInfo createOrder(CustomerInfo customerInfo, PPUser ppUser) {
         try {
-            log.info("创建jira工单, clientId = {}, email = {}", customerInfo.getClientid(), ppUser.getEmail());
+            log.info("创建jira工单, clientId = {}, email = {}", customerInfo.getClientId(), ppUser.getEmail());
             MeterRegistryProvider.provider().counter(outflow, Tags.of(MeterTag.status, MeterTagValue.Status.start)).increment();
             CustomerWarnJira field = new CustomerWarnJira();
-            String summary = String.format(jira2vClientConfig.getSummary(), customerInfo.getClientPriorityLevel(), customerInfo.getClientid());
+            String summary = String.format(jira2vClientConfig.getSummary(), customerInfo.getClientPriorityLevel(), customerInfo.getClientId());
             field.setSummary(summary);
             field.setDescription(jira2vClientConfig.getDesc());
             field.setIssuetype(new Field.Name(jira2vClientConfig.getIssuetype()));
@@ -171,7 +175,7 @@ public class CustomerOutflowService {
 
             long orderId = UUIDUtils.nextId();
             field.setOrderId("" + orderId);
-            field.setClientId(customerInfo.getClientid());
+            field.setClientId(customerInfo.getClientId());
 
             field.setLevel(new Field.Value(StringUtils.isBlank(customerInfo.getClientPriorityLevel()) ? "-1" : customerInfo.getClientPriorityLevel()));
             field.setKaType(new Field.Value(StringUtils.isBlank(customerInfo.getKaType()) ? "-1" : customerInfo.getKaType()));
@@ -189,7 +193,7 @@ public class CustomerOutflowService {
             String url = jira2vClientConfig.getBaseUrl() + "/browse/" + issueResp.getKey();
             log.info("issueResp = {}, url = {}", PPConverter.toJsonStringIgnoreException(issueResp), url);
             CustomerOrderInfo customerOrderInfo = TransferUtils.newInstance(CustomerOrderInfo::new, d -> {
-                d.setClientId(customerInfo.getClientid());
+                d.setClientId(customerInfo.getClientId());
                 d.setIssueId(issueResp.getId());
                 d.setSalesEmail(customerInfo.getSalesEmail());
                 d.setProjectKey(jira2vClientConfig.getProject());
@@ -203,10 +207,10 @@ public class CustomerOutflowService {
             });
             customerOutflowDao.save(customerOrderInfo);
             MeterRegistryProvider.provider().counter(outflow, Tags.of(MeterTag.status, MeterTagValue.Status.success)).increment();
-            log.info("创建jira工单完成, clientId = {}, email = {}", customerInfo.getClientid(), ppUser.getEmail());
+            log.info("创建jira工单完成, clientId = {}, email = {}", customerInfo.getClientId(), ppUser.getEmail());
             return customerOrderInfo;
         } catch (Exception e) {
-            log.error("创建jira工单异常, clientId = {}, email = {}", customerInfo.getClientid(), ppUser.getEmail(), e);
+            log.error("创建jira工单异常, clientId = {}, email = {}", customerInfo.getClientId(), ppUser.getEmail(), e);
             MeterRegistryProvider.provider().counter(outflow, Tags.of(MeterTag.status, MeterTagValue.Status.fail)).increment();
             return null;
         }
@@ -232,7 +236,7 @@ public class CustomerOutflowService {
             for (Map.Entry<String, List<JiraInfo>> entry : jiraInfoMap.entrySet()) {
                 PPUser ppUser = ppUserMap.get(entry.getKey());
                 if (ppUser != null) {
-                    String jira = Joiner.on(" ").join(entry.getValue().stream().map(JiraInfo::getUrl).collect(Collectors.toList()));
+                    String jira = Joiner.on(" \n").join(entry.getValue().stream().map(JiraInfo::getUrl).collect(Collectors.toList()));
                     dingtalkClient.sendContent(ppUser.getUserid(), String.format(regularWarnContent, jira));
                 } else {
                     log.info("未找到相关运营人员，不通知, {}", entry.getKey());

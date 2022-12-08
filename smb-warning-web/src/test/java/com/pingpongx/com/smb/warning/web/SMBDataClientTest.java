@@ -5,21 +5,24 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.pingpongx.flowmore.cloud.base.commom.utils.PPConverter;
 import com.pingpongx.smb.open.sdk.core.client.DefaultSMBClient;
 import com.pingpongx.smb.warning.web.client.SMBDataClient;
+import com.pingpongx.smb.warning.web.module.CustomerInfo;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 
 public class SMBDataClientTest {
 
-    SMBDataClient smbDataClient = new SMBDataClient(new DefaultSMBClient("https://dev2-smb-inner-gateway.pingpongx.com", "f32793b52cc0263ca0e4ff7ad71ab005", "4e7f5f9f0e3ec18daa4d0ce4de944320"));
+    SMBDataClient smbDataClient = new SMBDataClient(new DefaultSMBClient("https://test2-smb-inner-gateway.pingpongx.com", "f32793b52cc0263ca0e4ff7ad71ab005", "4e7f5f9f0e3ec18daa4d0ce4de944320"));
 
     @Test
     public void test() {
-        smbDataClient.queryCustomerInfo();
+        List<CustomerInfo> customerInfos = smbDataClient.queryCustomerInfo();
+        System.out.println(PPConverter.toJsonStringIgnoreException(customerInfos));
     }
 
     @Test
-    public void test01(){
+    public void test01() {
         String message = "{\n" +
                 "    \"timestamp\": 1670404909530,\n" +
                 "    \"webhookEvent\": \"jira:issue_updated\",\n" +
@@ -353,7 +356,7 @@ public class SMBDataClientTest {
                 "        ]\n" +
                 "    }\n" +
                 "}";
-        Map<String,Object> jsonObject = PPConverter.toObject(message, new TypeReference<JSONObject>() {
+        Map<String, Object> jsonObject = PPConverter.toObject(message, new TypeReference<JSONObject>() {
         });
         System.out.println(jsonObject);
     }
