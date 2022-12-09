@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
@@ -44,12 +43,11 @@ public class CustomerOutflowServiceTest {
     @Mock
     private SMBDataClient smbDataClient;
 
-    @Spy
-    private DingtalkClient dingtalkClient = new DingtalkClient("https://api.dingtalk.com", "https://oapi.dingtalk.com", "dingnxspdqi3yf4cwzqp", "2QVTrXwizakEKliyvqr-k3Q8Ji5oWUKxFLRCB3zWDIqi3jrHzFh8JGXr83ZoqTOG");
+    @Mock
+    private DingtalkClient dingtalkClient; //= new DingtalkClient("https://api.dingtalk.com", "https://oapi.dingtalk.com", "dingnxspdqi3yf4cwzqp", "2QVTrXwizakEKliyvqr-k3Q8Ji5oWUKxFLRCB3zWDIqi3jrHzFh8JGXr83ZoqTOG");
 
-    @Spy
-    private Jira2vClient jira2vClient = new Jira2vClient("http://jira.pingpongx.com", "MTAwODgyMDk4MTY3OuZqSyEfQLeo/IFKtYhwSudgjme0");
-
+    @Mock
+    private Jira2vClient jira2vClient; //= new Jira2vClient("http://jira.pingpongx.com", "MTAwODgyMDk4MTY3OuZqSyEfQLeo/IFKtYhwSudgjme0");
 
     @Mock
     private Jira2vClientConfig jira2vClientConfig;
@@ -82,13 +80,26 @@ public class CustomerOutflowServiceTest {
 
     @Test
     public void test_preWarnOfOutflow() {
+        List<PPUser> ppUsers = Lists.newArrayList();
         PPUser ppUser = new PPUser();
-        ppUser.setDomainAccount("jianggm");
-        ppUser.setEmail("jianggm@pingpongx.com");
-        ppUser.setUserid("122912174322778049");
+        ppUser.setDomainAccount("a");
+        ppUser.setEmail("a@pingpongx.com");
+        ppUser.setUserid("1");
+        ppUsers.add(ppUser);
 
+        ppUser = new PPUser();
+        ppUser.setDomainAccount("b");
+        ppUser.setEmail("b@pingpongx.com");
+        ppUser.setUserid("2");
+        ppUsers.add(ppUser);
 
-        when(ppUserClient.queryUserInfo()).thenReturn(Lists.newArrayList(ppUser));
+        ppUser = new PPUser();
+        ppUser.setDomainAccount("c");
+        ppUser.setEmail("c@pingpongx.com");
+        ppUser.setUserid("3");
+        ppUsers.add(ppUser);
+
+        when(ppUserClient.queryUserInfo()).thenReturn(ppUsers);
 
         List<CustomerInfo> list = Lists.newArrayList();
         CustomerInfo customerInfo = new CustomerInfo();
@@ -97,9 +108,9 @@ public class CustomerOutflowServiceTest {
         customerInfo.setClientLostWorthStatus("中价值");
         customerInfo.setClientActiveStatus("低活");
         customerInfo.setClientActiveWorthStatus("低价值");
-        customerInfo.setClientPriorityLevel("P1");
+        customerInfo.setClientPriorityLevel("P2");
         customerInfo.setIfHighRisk(1);
-        customerInfo.setSalesEmail("jianggm@pingpongx.com");
+        customerInfo.setSalesEmail("a@pingpongx.com");
         customerInfo.setKaType("ka");
         customerInfo.setCategory("玩具、运动和爱好物品:乐器");
         customerInfo.setAvgInboundCnt3sm(10);
@@ -112,8 +123,8 @@ public class CustomerOutflowServiceTest {
         customerInfo.setClientActiveStatus("低活");
         customerInfo.setClientActiveWorthStatus("低价值");
         customerInfo.setClientPriorityLevel("P1");
-        customerInfo.setIfHighRisk(0);
-        customerInfo.setSalesEmail("jianggm@pingpongx.com");
+        customerInfo.setIfHighRisk(1);
+        customerInfo.setSalesEmail("b@pingpongx.com");
         customerInfo.setKaType("ka");
         customerInfo.setCategory("玩具、运动和爱好物品:乐器");
         customerInfo.setAvgInboundCnt3sm(10);
@@ -125,9 +136,9 @@ public class CustomerOutflowServiceTest {
         customerInfo.setClientLostWorthStatus("中价值");
         customerInfo.setClientActiveStatus("低活");
         customerInfo.setClientActiveWorthStatus("低价值");
-        customerInfo.setClientPriorityLevel("P2");
+        customerInfo.setClientPriorityLevel("P1");
         customerInfo.setIfHighRisk(0);
-        customerInfo.setSalesEmail("jianggm@pingpongx.com");
+        customerInfo.setSalesEmail("b@pingpongx.com");
         customerInfo.setKaType("ka");
         customerInfo.setCategory("玩具、运动和爱好物品:乐器");
         customerInfo.setAvgInboundCnt3sm(10);
@@ -141,40 +152,40 @@ public class CustomerOutflowServiceTest {
         customerInfo.setClientActiveWorthStatus("低价值");//中价值
         customerInfo.setClientPriorityLevel("P0");
         customerInfo.setIfHighRisk(0);
-        customerInfo.setSalesEmail("jianggm@pingpongx.com");
+        customerInfo.setSalesEmail("c@pingpongx.com");
         customerInfo.setKaType("ka");
         customerInfo.setCategory("玩具、运动和爱好物品:乐器");
         customerInfo.setAvgInboundCnt3sm(10);
         list.add(customerInfo);
         when(smbDataClient.queryCustomerInfo()).thenReturn(list);
 
-/*        when(dingtalkClient.sendContent(anyString(), anyString())).thenAnswer(invocationOnMock -> {
+        when(dingtalkClient.sendContent(anyString(), anyString())).thenAnswer(invocationOnMock -> {
             Object[] objects = invocationOnMock.getArguments();
             String userid = (String) objects[0];
             String content = (String) objects[1];
-            Assert.assertTrue("发送钉钉消息，userid异常:" + userid, "122912174322778022".equals(userid) || "122912174322778041".equals(userid) || "122912174322778042".equals(userid));
+            Assert.assertTrue("发送钉钉消息，userid异常:" + userid, "2".equals(userid) || "3".equals(userid) || "1".equals(userid));
             log.info("发送钉钉消息成功:{},{}", userid, content);
             return null;
-        });*/
+        });
 
-        /*when(jira2vClient.createIssue(any())).thenAnswer(invocationOnMock -> {
+        when(jira2vClient.createIssue(any())).thenAnswer(invocationOnMock -> {
             Object[] objects = invocationOnMock.getArguments();
             IssueReq issueReq = (IssueReq) objects[0];
-            Assert.assertEquals("assignee", "jianggm", issueReq.getFields().getAssignee().getName());
+            Assert.assertEquals("assignee" + issueReq.getFields().getAssignee().getName(), "b", issueReq.getFields().getAssignee().getName());
             log.info("发送jira消息成功:{}", PPConverter.toJsonStringIgnoreException(issueReq));
             IssueResp issueResp = new IssueResp();
             issueResp.setId("123");
             issueResp.setKey("RECALL-1111");
             issueResp.setSelf("http://RECALL");
             return new IssueResp();
-        });*/
+        });
         doNothing().when(customerOutflowDao).save(any());
         customerOutflowService.preWarnOfOutflow();
-/*        verify(dingtalkClient, times(3)).sendContent(any(), anyString());
-        verify(jira2vClient, times(2)).createIssue(any());
-        verify(customerOutflowDao, times(2)).save(any());
+        verify(dingtalkClient, times(3)).sendContent(any(), anyString());
+        verify(jira2vClient, times(1)).createIssue(any());
+        verify(customerOutflowDao, times(1)).save(any());
         verify(smbDataClient, times(1)).queryCustomerInfo();
-        verify(ppUserClient, times(1)).queryUserInfo();*/
+        verify(ppUserClient, times(1)).queryUserInfo();
     }
 
 
