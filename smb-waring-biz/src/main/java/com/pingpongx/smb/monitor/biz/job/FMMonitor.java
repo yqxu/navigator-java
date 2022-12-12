@@ -69,7 +69,7 @@ public class FMMonitor {
         try {
             playwright = Playwright.create();
             browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
-                .setHeadless(false)
+//                .setHeadless(false)
 //                .setDevtools(true)
                     .setSlowMo(1800));
             // 不同的context的配置，理论上可能是一样的，例如浏览器的尺寸
