@@ -49,15 +49,11 @@ public class FMMonitor {
     private LoginParam loginParam;
 
     @Autowired
-    private volatile HostParam hostParam;
-
-    public HostParam getHostParam() {
-        return hostParam;
-    }
+    private HostParam hostParam;
 
     @Scheduled(fixedDelay = 60000)
     public void monitorFM() {
-        log.debug("hostParam.getEnable():{}", hostParam.getEnable());
+        log.info("hostParam.getEnable():{}", hostParam.getEnable());
         if (hostParam.getEnable().equalsIgnoreCase(Boolean.FALSE.toString())) {
             return;
         }
@@ -73,7 +69,7 @@ public class FMMonitor {
         try {
             playwright = Playwright.create();
             browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
-//                .setHeadless(false)
+                .setHeadless(false)
 //                .setDevtools(true)
                     .setSlowMo(1800));
             // 不同的context的配置，理论上可能是一样的，例如浏览器的尺寸
@@ -140,7 +136,7 @@ public class FMMonitor {
             if (page != null) {
                 page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("/tmp/ui-monitor/" + getFormattedTime() + ".png")));
             }
-            log.error("monitorFM exception, message size: " + e.getMessage());
+            log.warn("monitorFM, message size: " + e.getMessage());
             // 发送钉钉告警
             // if (apiRequestContext != null) {
                 // sendWarnMessage(apiRequestContext , e.getMessage());
@@ -231,14 +227,14 @@ public class FMMonitor {
                             if (code != 50004) {
                                 sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
                             }
-                            log.error("api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
+                            log.warn("api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
                         }
                     }
                 }
             } catch (Throwable throwable) {
                 // 可能会因为服务端没有给响应信息而中断
                 if (!throwable.getMessage().contains("No resource with given identifier found")) {
-                    log.error("monitor url: {}, error:{}", response.request().url(), throwable.getMessage());
+                    log.warn("monitor url: {}, error:{}", response.request().url(), throwable.getMessage());
                 }
             }
         };
