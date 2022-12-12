@@ -49,11 +49,18 @@ public class FMMonitor {
     private LoginParam loginParam;
 
     @Autowired
-    private HostParam hostParam;
+    private volatile HostParam hostParam;
 
+    public HostParam getHostParam() {
+        return hostParam;
+    }
 
     @Scheduled(fixedDelay = 60000)
     public void monitorFM() {
+        log.debug("hostParam.getEnable():{}", hostParam.getEnable());
+        if (hostParam.getEnable().equalsIgnoreCase(Boolean.FALSE.toString())) {
+            return;
+        }
         log.info("开始时间：{}, 当前monitor的环境：{}", getFormattedTime(), hostParam.getMonitorEnv());
         Consumer<Response> listener = null;
         Playwright playwright = null;
@@ -128,7 +135,7 @@ public class FMMonitor {
             // 执行成功，将结果写入库表
             insertRecord("success", "na");
         } catch (Exception e) {
-            // 执行失败，截个图的，可以通过命令将文件复制出容器查看：curl -F 'x=@/tmp/ui-monitor/20221130101603.png' file.pingpongx.com/disk
+            // 执行失败，截个图的，可以通过命令将文件复制出容器查看：curl -F 'x=@/tmp/ui-monitor/20221209070003.png' file.pingpongx.com/disk
             // 打开地址：https://file.pingpongx.com/disk
             if (page != null) {
                 page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("/tmp/ui-monitor/" + getFormattedTime() + ".png")));
