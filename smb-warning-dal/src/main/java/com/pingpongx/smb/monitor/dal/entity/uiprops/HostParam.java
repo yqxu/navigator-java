@@ -11,4 +11,7 @@ public class HostParam {
     @Value("${uimonitor.env:local}")
     private String monitorEnv;
 
+    @Value("${uimonitor.enable:false}")
+    private String enable;
+
 }
