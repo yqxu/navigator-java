@@ -1,13 +1,16 @@
 package com.pingpongx.smb.warning.biz.rules.scene;
 
 import com.alibaba.fastjson.JSON;
+import com.pingpongx.smb.export.RuleConstant;
+import com.pingpongx.smb.export.globle.Engine;
+import com.pingpongx.smb.export.module.operation.RuleAnd;
+import com.pingpongx.smb.export.module.operation.RuleOr;
 import com.pingpongx.smb.warning.biz.alert.InhibitionFactory;
 import com.pingpongx.smb.warning.biz.alert.ThresholdAlertConf;
 import com.pingpongx.smb.warning.biz.alert.counter.CountContext;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
 import com.pingpongx.smb.warning.biz.alert.threshold.Inhibition;
 import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
-import com.pingpongx.smb.warning.biz.constant.Constant;
 import com.pingpongx.smb.warning.biz.rules.*;
 import com.pingpongx.smb.warning.biz.rules.scene.configure.And;
 import com.pingpongx.smb.warning.biz.rules.scene.configure.LeafRuleConf;
@@ -21,10 +24,12 @@ import java.util.List;
 @Component
 public class ConfiguredScene {
     @Autowired
-    RuleTrie ruleTrie;
-
+    Engine engine;
     @Autowired
     InhibitionFactory inhibitionFactory;
+
+    @Autowired
+    ConfiguredLeafRuleRepository ruleRepository;
 
     public void loadConfigStr(String confStr){
         List<Scene> scenes = JSON.parseArray(confStr, Scene.class);
@@ -34,9 +39,9 @@ public class ConfiguredScene {
         scenes.stream().forEach(scene -> {
             RuleOr rule = buildRule(scene.getRulesOf());
             CountContext countContext = new CountContext(scene);
-            ruleTrie.put(rule, countContext);
+            engine.put(rule, countContext);
             Inhibition<ThirdPartAlert> inhibition = inhibitionFactory.newInhibition(scene.getIdentity(),scene.getCountWith());
-            ruleTrie.put(rule,inhibition);
+            engine.put(rule,inhibition);
         });
     }
 
@@ -49,7 +54,12 @@ public class ConfiguredScene {
 
     RuleAnd buildRule(And and){
         RuleAnd ruleAnd = new RuleAnd();
-        and.getAndRules().stream().map(leafRuleConf -> ConfiguredLeafRule.resumeByConf(leafRuleConf)).forEach(r->ruleAnd.and(r));
+        and.getAndRules().stream()
+                .map(leafRuleConf -> {
+                    ConfiguredLeafRule rule = ruleRepository.resumeByConf(leafRuleConf);
+                    rule.setType(engine.metadataCenter.get(leafRuleConf.getType()));
+                    return rule;
+                }).forEach(r->ruleAnd.and(r));
         return ruleAnd;
     }
 
@@ -64,7 +74,7 @@ public class ConfiguredScene {
         rule.setAttr("content");
         rule.setType("SlsAlert");
         rule.setExpected("Test");
-        rule.setOperation(Constant.Operations.StrContains);
+        rule.setOperation(RuleConstant.Operations.StrContains);
         Scene scene = new Scene();
         scene.setCountWith(new ThresholdAlertConf(5, TimeUnit.Minutes,10,10));
         scene.setRulesOf(or);

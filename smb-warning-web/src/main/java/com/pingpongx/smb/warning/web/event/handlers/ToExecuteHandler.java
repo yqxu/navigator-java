@@ -9,7 +9,6 @@ import com.pingpongx.smb.warning.biz.alert.event.ToExecute;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
 import com.pingpongx.smb.warning.biz.depends.DingTalkClientFactory;
 import com.pingpongx.smb.warning.biz.depends.PPDingTalkClient;
-import com.pingpongx.smb.warning.biz.rules.RuleTrie;
 import com.pingpongx.smb.warning.web.parser.AlertParser;
 import com.pingpongx.smb.warning.web.parser.ParserFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +24,7 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class ToExecuteHandler implements ApplicationListener<ToExecute> {
-    @Autowired
-    RuleTrie ruleTrie;
+
     @Autowired
     ApplicationContext applicationContext;
     @Autowired
