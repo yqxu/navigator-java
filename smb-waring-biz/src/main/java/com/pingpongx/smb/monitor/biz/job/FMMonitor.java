@@ -71,7 +71,7 @@ public class FMMonitor {
             browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
 //                .setHeadless(false)
 //                .setDevtools(true)
-                    .setSlowMo(1800));
+                    .setSlowMo(2000));
             // 不同的context的配置，理论上可能是一样的，例如浏览器的尺寸
             context = browser.newContext(newContextOptions);
             page = context.newPage();
@@ -189,6 +189,8 @@ public class FMMonitor {
         TaskRecord record = new TaskRecord();
         record.setEnvironment(hostParam.getMonitorEnv());
         record.setBusinessLine(BusinessLine.FM.getBusinessLine());
+        // 在失败原因中截取64K的字串，避免插表报错
+        failReason = failReason.substring(0, 1024 * 64 - 1);
         record.setFailReason(failReason);
         record.setTaskResult(result);
         // log.info("record is : {}", JSON.toJSONString(record));
@@ -227,7 +229,7 @@ public class FMMonitor {
                             if (code != 50004) {
                                 sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
                             }
-                            log.warn("api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
+                            log.warn("api monitor error url:"+ response.request().url() + ",res:" + resText);
                         }
                     }
                 }
