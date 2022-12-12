@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PPUserClient {
 
-    @Value("${customer.churn.pre.warn.orgIds:696961230}")
+    @Value("${customer.churn.pre.warn.orgIds:655319364,751205249}")
     private List<Long> orgIds;
 
     private static final String cacheKey = "customer.churn.pre.warn.orgIds";

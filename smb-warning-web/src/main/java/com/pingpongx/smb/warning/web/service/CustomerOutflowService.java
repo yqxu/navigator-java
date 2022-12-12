@@ -1,5 +1,6 @@
 package com.pingpongx.smb.warning.web.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.pingpongx.flowmore.cloud.base.commom.constants.MeterTag;
@@ -91,11 +92,29 @@ public class CustomerOutflowService {
     @Value("${regularWarnContent:您还存在待跟进的⼯单，请及时跟进。\n %s}")
     private String regularWarnContent;
 
+    @Setter
+    @Getter
+    @Value("${warnUser:}")
+    private String warnUser;
+
+
+    public List<PPUser> getWarnUsers() {
+        if (StringUtils.isBlank(warnUser)) {
+            return Lists.newArrayList();
+        } else {
+            return PPConverter.toObject(warnUser, new TypeReference<List<PPUser>>() {
+            });
+        }
+    }
+
     /**
      * 流失预警
      */
     public void preWarnOfOutflow() {
-        List<PPUser> ppUsers = ppUserClient.queryUserInfo();
+        List<PPUser> ppUsers = getWarnUsers();
+        if (ppUsers.isEmpty()) {
+            ppUsers = ppUserClient.queryUserInfo();
+        }
         if (ppUsers.isEmpty()) {
             log.info("预警人为空，结束预警");
             return;
