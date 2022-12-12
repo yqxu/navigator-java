@@ -44,12 +44,12 @@
         <dependency>
             <groupId>com.pingpongx.flowmore.cloud</groupId>
             <artifactId>http-skd-client-dingtalk</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.pingpongx.flowmore.cloud</groupId>
             <artifactId>http-sdk-client-jira</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.pingpongx.mid</groupId>
