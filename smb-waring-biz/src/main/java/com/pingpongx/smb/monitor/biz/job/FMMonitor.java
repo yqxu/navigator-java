@@ -190,7 +190,8 @@ public class FMMonitor {
         record.setEnvironment(hostParam.getMonitorEnv());
         record.setBusinessLine(BusinessLine.FM.getBusinessLine());
         // 在失败原因中截取64K的字串，避免插表报错
-        failReason = failReason.substring(0, 1024 * 64 - 1);
+        int lastIndex = Math.min(failReason.length(), 1024 * 64 - 1);
+        failReason = failReason.substring(0, lastIndex);
         record.setFailReason(failReason);
         record.setTaskResult(result);
         // log.info("record is : {}", JSON.toJSONString(record));
