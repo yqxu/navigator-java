@@ -1,5 +1,6 @@
 package com.pingpongx.smb.warning.web.job;
 
+import com.pingpongx.flowmore.cloud.base.server.annotation.XTraceId;
 import com.pingpongx.job.core.biz.model.ReturnT;
 import com.pingpongx.job.core.handler.IJobHandler;
 import com.pingpongx.job.core.handler.annotation.JobHandler;
@@ -17,6 +18,7 @@ public class WarnCustomerOutflowRegularJob extends IJobHandler {
     private CustomerOutflowService customerOutflowService;
 
     @Override
+    @XTraceId
     public ReturnT<String> execute(String s) {
         try {
             log.info("客户流失预警巡检");
