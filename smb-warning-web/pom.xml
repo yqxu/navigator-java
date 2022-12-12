@@ -38,8 +38,8 @@
 
         <dependency>
             <groupId>com.pingpongx.smb</groupId>
-            <artifactId>smb-organization-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <artifactId>smb-auth-api</artifactId>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.pingpongx.flowmore.cloud</groupId>
