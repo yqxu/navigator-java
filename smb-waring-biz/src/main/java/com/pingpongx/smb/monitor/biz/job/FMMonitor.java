@@ -51,7 +51,7 @@ public class FMMonitor {
     @Autowired
     private HostParam hostParam;
 
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 180000)
     public void monitorFM() {
         log.info("hostParam.getEnable():{}", hostParam.getEnable());
         if (hostParam.getEnable().equalsIgnoreCase(Boolean.FALSE.toString())) {
@@ -72,7 +72,7 @@ public class FMMonitor {
 //                .setHeadless(false)
 //                .setDevtools(true)
                     .setSlowMo(2000));
-            // 不同的context的配置，理论上可能是一样的，例如浏览器的尺寸
+            // 不同的context的配置，理论上是一样的，例如浏览器的尺寸
             context = browser.newContext(newContextOptions);
             page = context.newPage();
             page.setDefaultTimeout(60000);
@@ -236,7 +236,10 @@ public class FMMonitor {
                 }
             } catch (Throwable throwable) {
                 // 可能会因为服务端没有给响应信息而中断
-                if (!throwable.getMessage().contains("No resource with given identifier found")) {
+                if (throwable.getMessage() == null) {
+                    log.warn("throwable.getMessage() is null");
+                }
+                if (throwable.getMessage() != null && !throwable.getMessage().contains("No resource with given identifier found")) {
                     log.warn("monitor url: {}, error:{}", response.request().url(), throwable.getMessage());
                 }
             }
@@ -251,6 +254,13 @@ public class FMMonitor {
 //                route.abort();
 //            else
 //                route.resume();
+//        });
+        // 解决容器环境中访问 https://flowmore.pingpongx.com/api/front/v2/auth/token 拿不到响应数据的问题
+//        page.route("**/*", route -> {
+//            // Override headers
+//            Map<String, String> headers = new HashMap<>(route.request().headers());
+//            headers.put("X-Forwarded-For", "47.96.196.247");
+//            route.resume(new Route.ResumeOptions().setHeaders(headers));
 //        });
         return listener;
     }
