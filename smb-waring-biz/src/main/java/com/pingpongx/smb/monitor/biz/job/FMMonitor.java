@@ -51,9 +51,12 @@ public class FMMonitor {
     @Autowired
     private HostParam hostParam;
 
-
     @Scheduled(fixedDelay = 60000)
     public void monitorFM() {
+        log.info("hostParam.getEnable():{}", hostParam.getEnable());
+        if (hostParam.getEnable().equalsIgnoreCase(Boolean.FALSE.toString())) {
+            return;
+        }
         log.info("开始时间：{}, 当前monitor的环境：{}", getFormattedTime(), hostParam.getMonitorEnv());
         Consumer<Response> listener = null;
         Playwright playwright = null;
@@ -68,7 +71,7 @@ public class FMMonitor {
             browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
 //                .setHeadless(false)
 //                .setDevtools(true)
-                    .setSlowMo(1800));
+                    .setSlowMo(2000));
             // 不同的context的配置，理论上可能是一样的，例如浏览器的尺寸
             context = browser.newContext(newContextOptions);
             page = context.newPage();
@@ -128,12 +131,12 @@ public class FMMonitor {
             // 执行成功，将结果写入库表
             insertRecord("success", "na");
         } catch (Exception e) {
-            // 执行失败，截个图的，可以通过命令将文件复制出容器查看：curl -F 'x=@/tmp/ui-monitor/20221130101603.png' file.pingpongx.com/disk
+            // 执行失败，截个图的，可以通过命令将文件复制出容器查看：curl -F 'x=@/tmp/ui-monitor/20221209070003.png' file.pingpongx.com/disk
             // 打开地址：https://file.pingpongx.com/disk
             if (page != null) {
                 page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("/tmp/ui-monitor/" + getFormattedTime() + ".png")));
             }
-            log.error("monitorFM exception, message size: " + e.getMessage());
+            log.warn("monitorFM, message size: " + e.getMessage());
             // 发送钉钉告警
             // if (apiRequestContext != null) {
                 // sendWarnMessage(apiRequestContext , e.getMessage());
@@ -186,6 +189,9 @@ public class FMMonitor {
         TaskRecord record = new TaskRecord();
         record.setEnvironment(hostParam.getMonitorEnv());
         record.setBusinessLine(BusinessLine.FM.getBusinessLine());
+        // 在失败原因中截取64K的字串，避免插表报错
+        int lastIndex = Math.min(failReason.length(), 1024 * 64 - 1);
+        failReason = failReason.substring(0, lastIndex);
         record.setFailReason(failReason);
         record.setTaskResult(result);
         // log.info("record is : {}", JSON.toJSONString(record));
@@ -224,14 +230,14 @@ public class FMMonitor {
                             if (code != 50004) {
                                 sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
                             }
-                            log.error("api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
+                            log.warn("api monitor error url:"+ response.request().url() + ",res:" + resText);
                         }
                     }
                 }
             } catch (Throwable throwable) {
                 // 可能会因为服务端没有给响应信息而中断
                 if (!throwable.getMessage().contains("No resource with given identifier found")) {
-                    log.error("monitor url: {}, error:{}", response.request().url(), throwable.getMessage());
+                    log.warn("monitor url: {}, error:{}", response.request().url(), throwable.getMessage());
                 }
             }
         };

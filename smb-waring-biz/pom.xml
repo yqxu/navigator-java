@@ -76,6 +76,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+
         <!--   UI自动化的依赖     -->
         <dependency>
             <groupId>com.microsoft.playwright</groupId>

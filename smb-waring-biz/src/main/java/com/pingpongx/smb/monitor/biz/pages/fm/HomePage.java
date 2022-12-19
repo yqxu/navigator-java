@@ -2,6 +2,7 @@ package com.pingpongx.smb.monitor.biz.pages.fm;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.options.AriaRole;
 import com.pingpongx.smb.monitor.dal.entity.constant.FMMainPages;
 import lombok.Data;
@@ -32,6 +33,9 @@ public class HomePage {
                 page.getByText("首页", new Page.GetByTextOptions().setExact(true)).click();
                 break;
             case "外贸收款":
+                if (page.getByText("接收验证码方式").isVisible()) {
+                    throw new PlaywrightException("当前存在接收验证码方式元素，可能是有人修改了登录密码，需手动处理");
+                }
                 page.locator("#payment-link").getByText("外贸收款").click();
                 break;
             case "外贸收款账户管理":
@@ -50,7 +54,7 @@ public class HomePage {
                 break;
             case "外贸收款提现":
                 boolean tiXianVisible = page.getByText("提现", new Page.GetByTextOptions().setExact(true)).isVisible();
-                log.debug("提现按钮可见：{}", tiXianVisible);
+                log.info("提现按钮可见：{}", tiXianVisible);
                 Locator.HoverOptions hoverOptions1 = new Locator.HoverOptions();
                 hoverOptions1.setNoWaitAfter(true);
                 page.getByText("提现", new Page.GetByTextOptions().setExact(true)).hover(hoverOptions1);
@@ -58,7 +62,9 @@ public class HomePage {
                 break;
             case "人民币账户提现":
                 page.getByText("提现", new Page.GetByTextOptions().setExact(true)).first().hover();
-                page.getByText("人民币账户提现").click();
+                if (page.getByText("人民币账户提现", new Page.GetByTextOptions().setExact(true)).isVisible()) {
+                    page.getByText("人民币账户提现", new Page.GetByTextOptions().setExact(true)).click();
+                }
                 break;
             case "发起付款":
                 page.getByText("付款", new Page.GetByTextOptions().setExact(true)).first().hover();
@@ -83,7 +89,10 @@ public class HomePage {
                 break;
             case "人民币账户明细":
                 page.getByText("交易查询", new Page.GetByTextOptions().setExact(true)).hover();
-                page.getByText("人民币账户明细").click();
+                // 人民币账户明细按钮，有时会不展示，需要前端协助修改
+                if (page.getByText("人民币账户明细").isVisible()) {
+                    page.getByText("人民币账户明细").click();
+                }
                 break;
             case "汇率风险":
                 page.getByText("外汇", new Page.GetByTextOptions().setExact(true)).hover();
