@@ -71,7 +71,7 @@ public class HomePage {
                 if (page.getByRole(AriaRole.TOOLTIP).getByText("供应商付款").isVisible()) {
                     page.getByRole(AriaRole.TOOLTIP).getByText("供应商付款").hover();
                 }
-                log.info("发起付款:{}", page.getByText("发起付款").count());
+                log.info("发起付款元素数量:{}", page.getByText("发起付款").count());
                 page.getByText("发起付款").last().click();
                 break;
             case "收款人管理":
@@ -89,6 +89,7 @@ public class HomePage {
                 break;
             case "人民币账户明细":
                 page.getByText("交易查询", new Page.GetByTextOptions().setExact(true)).hover();
+                log.info("人民币账户明细元素数量：{}", page.getByText("人民币账户明细").count());
                 // 人民币账户明细按钮，有时会不展示，需要前端协助修改
                 if (page.getByText("人民币账户明细").isVisible()) {
                     page.getByText("人民币账户明细").click();
