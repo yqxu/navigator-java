@@ -31,7 +31,7 @@ public class JiraInfoDao {
     public List<JiraInfo> query(String projectKey, String status, String priorityLevel, Date created) {
         QueryWrapper<JiraInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("projectKey", projectKey);
-        queryWrapper.eq("status", status);
+        queryWrapper.ne("status", status);
         queryWrapper.eq("priorityLevel", priorityLevel);
         queryWrapper.le("created", created);
         return jiraInfoRepository.list(queryWrapper);
