@@ -5,6 +5,7 @@ import com.pingpongx.business.dal.core.BaseDO;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * jira信息表
@@ -55,6 +56,8 @@ public class JiraInfo extends BaseDO implements Serializable {
      * status
      */
     private String status;
+
+    private Date doneTime;
 
     private static final long serialVersionUID = 1L;
 
