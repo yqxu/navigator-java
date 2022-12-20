@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -204,6 +205,7 @@ public class CustomerOutflowService {
             field.setActiveStatus(new Field.Value(StringUtils.isBlank(customerInfo.getClientActiveStatus()) ? "-1" : customerInfo.getClientActiveStatus()));
             field.setActiveTag(new Field.Value(StringUtils.isBlank(customerInfo.getClientActiveWorthStatus()) ? "-1" : customerInfo.getClientActiveWorthStatus()));
             field.setFollowUp(new Field.Name(ppUser.getDomainAccount()));
+            field.setAvgTradeNum(customerInfo.getAvgInboundCnt3sm() == null ? new BigDecimal("-1") : customerInfo.getAvgInboundCnt3sm());
 
             IssueReq issueReq = new IssueReq();
             issueReq.setFields(field);
