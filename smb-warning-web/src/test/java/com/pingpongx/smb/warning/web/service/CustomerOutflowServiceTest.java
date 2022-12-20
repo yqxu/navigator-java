@@ -25,6 +25,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -113,7 +114,7 @@ public class CustomerOutflowServiceTest {
         customerInfo.setSalesEmail("a@pingpongx.com");
         customerInfo.setKaType("ka");
         customerInfo.setCategory("玩具、运动和爱好物品:乐器");
-        customerInfo.setAvgInboundCnt3sm(10);
+        customerInfo.setAvgInboundCnt3sm(new BigDecimal("1.1"));
         list.add(customerInfo);
 
         customerInfo = new CustomerInfo();
@@ -127,7 +128,7 @@ public class CustomerOutflowServiceTest {
         customerInfo.setSalesEmail("b@pingpongx.com");
         customerInfo.setKaType("ka");
         customerInfo.setCategory("玩具、运动和爱好物品:乐器");
-        customerInfo.setAvgInboundCnt3sm(10);
+        customerInfo.setAvgInboundCnt3sm(new BigDecimal("1.1"));
         list.add(customerInfo);
 
         customerInfo = new CustomerInfo();
@@ -141,7 +142,7 @@ public class CustomerOutflowServiceTest {
         customerInfo.setSalesEmail("b@pingpongx.com");
         customerInfo.setKaType("ka");
         customerInfo.setCategory("玩具、运动和爱好物品:乐器");
-        customerInfo.setAvgInboundCnt3sm(10);
+        customerInfo.setAvgInboundCnt3sm(new BigDecimal("1.1"));
         list.add(customerInfo);
 
         customerInfo = new CustomerInfo();
@@ -155,7 +156,7 @@ public class CustomerOutflowServiceTest {
         customerInfo.setSalesEmail("c@pingpongx.com");
         customerInfo.setKaType("ka");
         customerInfo.setCategory("玩具、运动和爱好物品:乐器");
-        customerInfo.setAvgInboundCnt3sm(10);
+        customerInfo.setAvgInboundCnt3sm(new BigDecimal("1.1"));
         list.add(customerInfo);
         when(smbDataClient.queryCustomerInfo()).thenReturn(list);
 
