@@ -2,6 +2,7 @@ package com.pingpongx.smb.warning.web.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.pingpongx.flowmore.cloud.base.commom.utils.LocalDateUtils;
 import com.pingpongx.smb.warning.dal.dataobject.JiraInfo;
 import com.pingpongx.smb.warning.dal.repository.JiraInfoRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +26,16 @@ public class JiraInfoDao {
         updateWrapper.eq("projectKey", projectKey);
         JiraInfo jiraInfo = new JiraInfo();
         jiraInfo.setStatus(status);
+        if ("已完成".equals(status)) {
+            jiraInfo.setDoneTime(LocalDateUtils.newTime());
+        }
         jiraInfoRepository.update(jiraInfo, updateWrapper);
     }
 
     public List<JiraInfo> query(String projectKey, String status, String priorityLevel, Date created) {
         QueryWrapper<JiraInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("projectKey", projectKey);
-        queryWrapper.eq("status", status);
+        queryWrapper.ne("status", status);
         queryWrapper.eq("priorityLevel", priorityLevel);
         queryWrapper.le("created", created);
         return jiraInfoRepository.list(queryWrapper);

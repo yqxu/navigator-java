@@ -241,9 +241,9 @@ public class CustomerOutflowService {
     public void regularWarn() {
         ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneOffset.ofHours(8));
         zonedDateTime = zonedDateTime.minusDays(7);
-        List<JiraInfo> P0jiraInfos = jiraInfoDao.query(jira2vClientConfig.getProject(), "待解决", JiraInfo.PriorityLevel.P0.name(), LocalDateUtils.time(zonedDateTime));
+        List<JiraInfo> P0jiraInfos = jiraInfoDao.query(jira2vClientConfig.getProject(), "已完成", JiraInfo.PriorityLevel.P0.name(), LocalDateUtils.time(zonedDateTime));
         zonedDateTime = zonedDateTime.minusDays(7);
-        List<JiraInfo> P1jiraInfos = jiraInfoDao.query(jira2vClientConfig.getProject(), "待解决", JiraInfo.PriorityLevel.P1.name(), LocalDateUtils.time(zonedDateTime));
+        List<JiraInfo> P1jiraInfos = jiraInfoDao.query(jira2vClientConfig.getProject(), "已完成", JiraInfo.PriorityLevel.P1.name(), LocalDateUtils.time(zonedDateTime));
         List<JiraInfo> jiraInfos = Lists.newArrayList();
         jiraInfos.addAll(P0jiraInfos);
         jiraInfos.addAll(P1jiraInfos);
