@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 /***
  * 每个销售/运营 流失客户数
  * */
@@ -41,6 +43,6 @@ public class CustomerInfo {
     private String category;
 
     @JsonProperty("avg_inbound_cnt_3sm")
-    private Integer avgInboundCnt3sm;
+    private BigDecimal avgInboundCnt3sm;
 
 }

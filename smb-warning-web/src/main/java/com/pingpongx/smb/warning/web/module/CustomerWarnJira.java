@@ -5,6 +5,8 @@ import com.pingpongx.smb.cloud.model.Field;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 public class CustomerWarnJira extends Field {
@@ -46,7 +48,7 @@ public class CustomerWarnJira extends Field {
 
     //客户交易月均笔数
     @SerializedName("customfield_11234")
-    private Integer avgTradeNum = -1;
+    private BigDecimal avgTradeNum;
 
     //任务跟进人是必需的
     @SerializedName("customfield_11246")
