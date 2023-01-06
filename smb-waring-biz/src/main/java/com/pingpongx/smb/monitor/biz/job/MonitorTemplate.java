@@ -36,6 +36,9 @@ public abstract class MonitorTemplate {
     @Autowired
     private MonitorEnvParam monitorEnvParam;
 
+    @Autowired
+    private Playwright playwright;
+
     private String host;
     private String dingGroup;
 
@@ -57,7 +60,6 @@ public abstract class MonitorTemplate {
         }
         log.info("开始时间：{}, 当前monitor的环境：{}", getFormattedTime(), monitorEnvParam.getMonitorEnv());
         Consumer<Response> listener = null;
-        Playwright playwright = null;
         Browser browser = null;
         BrowserContext context = null;
         Page page = null;
@@ -65,8 +67,10 @@ public abstract class MonitorTemplate {
         Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions().setViewportSize(1440, 875);
 
         try {
-            playwright = Playwright.create();
             browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
+                    .setHandleSIGHUP(true)
+                    .setHandleSIGINT(true)
+                    .setHandleSIGTERM(true)
 //                .setHeadless(false)
 //                .setDevtools(true)
                     .setSlowMo(2200));
@@ -118,10 +122,6 @@ public abstract class MonitorTemplate {
                 browser.close();
                 browser = null;
             }
-            if (playwright != null) {
-                playwright.close();
-                playwright = null;
-            }
         }
 
     }
@@ -149,9 +149,8 @@ public abstract class MonitorTemplate {
         record.setEnvironment(monitorEnvParam.getMonitorEnv());
         record.setBusinessLine(BusinessLine.FM.getBusinessLine());
         // 在失败原因中截取字串，避免插表报错
-        int lastIndex = Math.min(failReason.length(), 65534);
-        failReason = failReason.substring(0, lastIndex);
-        record.setFailReason(failReason);
+        int lastIndex = Math.min(failReason.length(), 8191);
+        record.setFailReason(failReason.substring(0, lastIndex));
         record.setTaskResult(result);
         // log.info("record is : {}", JSON.toJSONString(record));
         taskRecordMapper.insert(record);
