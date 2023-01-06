@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
  */
 @Getter
 @Setter
-public class LoginParam {
+public class FMLoginParam {
 
 
     @Value("${uimonitor.fm.host:https://flowmore.pingpongx.com}")
