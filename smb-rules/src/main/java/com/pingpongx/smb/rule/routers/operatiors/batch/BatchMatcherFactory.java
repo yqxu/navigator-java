@@ -13,9 +13,10 @@ public class BatchMatcherFactory {
 
     public static Map<String, Supplier<BatchMatcher>> map = new ConcurrentHashMap<>();
     static {
-        map.put(RuleConstant.Operations.Equals,BatchStrEquals::newInstance);
+        map.put(RuleConstant.Operations.StrEquals,BatchStrEquals::newInstance);
+        map.put(RuleConstant.Operations.NumEquals,BatchStrEquals::newInstance);
         map.put(RuleConstant.Operations.StrContains,BatchStrContains::newInstance);
-        map.put(RuleConstant.Operations.NumBiggerThen, BatchNumBigerThen::newInstance);
+        map.put(RuleConstant.Operations.NumBiggerThen, BatchNumRange::newInstance);
     }
 
     public static BatchMatcher newBatchMatcher(String identify){

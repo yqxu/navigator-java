@@ -10,9 +10,9 @@ import java.lang.reflect.Type;
  * @param <D> 在D对象下，生效该Rule规则
  * @param <T> 规则描述了D对象下字段类型T相关的约束描述
  */
-public interface Rule<D,T> extends Comparable<Rule<D,T>> {
+public interface Rule<T> extends Comparable<Rule<T>> {
 
-    Class type();
+    String type();
     default Rule and(Rule rule){
         if (this instanceof RuleAnd){
             ((RuleAnd)this).and(rule);

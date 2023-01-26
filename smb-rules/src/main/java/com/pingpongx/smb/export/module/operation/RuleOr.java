@@ -28,7 +28,7 @@ public class RuleOr implements Rule {
 
 
     @Override
-    public Class type() {
+    public String type() {
         if (orRuleSet.size()<=0){
             return null;
         }

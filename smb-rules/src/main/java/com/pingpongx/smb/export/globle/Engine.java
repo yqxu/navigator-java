@@ -27,7 +27,7 @@ public class Engine {
 
     public ToMatchTypeCenter metadataCenter = new ToMatchTypeCenter();
 
-    public Map<Class,RuleTrie> ruleTries = new ConcurrentHashMap<>();
+    public Map<String,RuleTrie> ruleTries = new ConcurrentHashMap<>();
 
 
     public static Rule newAnd(Rule rule, Rule rule2){
@@ -49,7 +49,7 @@ public class Engine {
     }
 
 
-    public MatchResult match(Class clazz,Object data){
+    public MatchResult match(String clazz,Object data){
         RuleTrie ruleTrie = ruleTries.get(clazz);
         if (ruleTrie == null){
             MatchResult ret = new MatchResult();
