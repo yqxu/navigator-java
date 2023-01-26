@@ -6,7 +6,7 @@ import com.pingpongx.smb.export.module.operation.RuleOr;
 import com.pingpongx.smb.export.module.persistance.And;
 import com.pingpongx.smb.export.module.persistance.LeafRuleConf;
 import com.pingpongx.smb.export.module.persistance.Or;
-import com.pingpongx.smb.rule.routers.operatiors.OperationFactory;
+import com.pingpongx.smb.rule.routers.operatiors.Factories;
 
 public class Codec {
     public static RuleOr buildRule(Or or){
@@ -32,7 +32,7 @@ public class Codec {
         rule.setAttr(conf.getAttr());
         rule.setExpected(conf.getExpected());
         rule.setType(conf.getType());
-        rule.setOperation(OperationFactory.getInstance(conf.getOperation(),rule.getAttr(),rule.getType()));
+        rule.setOperation(Factories.Operation.getInstance(conf.getOperation(),rule.getAttr(),rule.getType()));
         rule.setNot(conf.isNot());
         return rule;
     }

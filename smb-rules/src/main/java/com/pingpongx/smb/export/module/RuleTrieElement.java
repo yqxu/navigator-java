@@ -1,63 +1,53 @@
 package com.pingpongx.smb.export.module;
 
-import com.pingpongx.smb.common.IdentityPath;
-import com.pingpongx.smb.common.Node;
-import com.pingpongx.smb.common.Trie;
-import com.pingpongx.smb.export.globle.Engine;
-import com.pingpongx.smb.export.module.operation.RuleAnd;
-import com.pingpongx.smb.export.module.operation.RuleLeaf;
-import com.pingpongx.smb.export.module.operation.RuleOr;
 import com.pingpongx.smb.export.spi.RuleHandler;
-import com.pingpongx.smb.rule.routers.operatiors.batch.BatchMatcher;
-import com.pingpongx.smb.rule.routers.operatiors.batch.BatchMatcherFactory;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class RuleTrieElement {
-   private static volatile long currentIndex=0l;
+    private static volatile long currentIndex = 0l;
+    Long id;
+    TreeSet<MatchOperation> childOperations = new TreeSet<>();
+    Set<RuleHandler> handlers = new HashSet<>();
 
-   public static RuleTrieElement build(){
-      RuleTrieElement ret = new RuleTrieElement();
-      ret.id = currentIndex++;
-      return ret;
-   }
+    public static RuleTrieElement build() {
+        RuleTrieElement ret = new RuleTrieElement();
+        ret.id = currentIndex++;
+        return ret;
+    }
 
-   Long id;
-   TreeSet<MatchOperation> childOperations = new TreeSet<>();
-   Set<RuleHandler> handlers = new HashSet<>();
+    public static long getCurrentIndex() {
+        return currentIndex;
+    }
 
-   public static long getCurrentIndex() {
-      return currentIndex;
-   }
+    public static void setCurrentIndex(long currentIndex) {
+        RuleTrieElement.currentIndex = currentIndex;
+    }
 
-   public static void setCurrentIndex(long currentIndex) {
-      RuleTrieElement.currentIndex = currentIndex;
-   }
+    public Long getId() {
+        return id;
+    }
 
-   public Long getId() {
-      return id;
-   }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-   public void setId(Long id) {
-      this.id = id;
-   }
+    public TreeSet<MatchOperation> getChildOperations() {
+        return childOperations;
+    }
 
-   public TreeSet<MatchOperation> getChildOperations() {
-      return childOperations;
-   }
+    public void setChildOperations(TreeSet<MatchOperation> childOperations) {
+        this.childOperations = childOperations;
+    }
 
-   public void setChildOperations(TreeSet<MatchOperation> childOperations) {
-      this.childOperations = childOperations;
-   }
+    public Set<RuleHandler> getHandlers() {
+        return handlers;
+    }
 
-   public Set<RuleHandler> getHandlers() {
-      return handlers;
-   }
-
-   public void setHandlers(Set<RuleHandler> handlers) {
-      this.handlers = handlers;
-   }
+    public void setHandlers(Set<RuleHandler> handlers) {
+        this.handlers = handlers;
+    }
 
 }
