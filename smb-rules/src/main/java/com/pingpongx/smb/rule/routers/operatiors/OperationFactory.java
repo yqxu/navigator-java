@@ -12,12 +12,12 @@ import java.util.function.Supplier;
 public class OperationFactory {
     public static Map<String, Supplier<MatchOperation>> factories = new ConcurrentHashMap<>();
     static {
-        factories.put(RuleConstant.Operations.Equals,()-> StrEquals.getInstance());
+        factories.put(RuleConstant.Operations.StrEquals,()-> StrEquals.getInstance());
         factories.put(RuleConstant.Operations.StrContains,()->StringContains.getInstance());
     }
-    public static MatchOperation getInstance(String name,String attr,Class obj){
+    public static MatchOperation getInstance(String name,String attr,String obj){
         try{
-            return Optional.ofNullable(factories.get(name)).map(Supplier::get).map(op->op.obj(obj.getSimpleName()).attr(attr)).orElse(null);
+            return Optional.ofNullable(factories.get(name)).map(Supplier::get).map(op->op.obj(obj).attr(attr)).orElse(null);
         }catch (Exception e){
             System.out.println(name+","+obj+","+attr);
         }

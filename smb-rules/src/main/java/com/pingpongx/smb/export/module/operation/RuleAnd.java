@@ -26,7 +26,7 @@ public class RuleAnd implements Rule {
     }
 
     @Override
-    public Class type() {
+    public String type() {
         if (andRuleList.size()<=0){
             return null;
         }

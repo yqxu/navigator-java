@@ -4,12 +4,12 @@ import com.pingpongx.smb.export.RuleConstant;
 import com.pingpongx.smb.export.module.MatchOperation;
 
 
-public class StrEquals implements MatchOperation<String> {
+public class NumEquals implements MatchOperation<Number> {
 
     String obj;
     String attr;
-    public static StrEquals getInstance(){
-        return new StrEquals();
+    public static NumEquals getInstance(){
+        return new NumEquals();
     }
     public static MatchOperation getInstance(String obj,String attr){
         return getInstance().attr(attr).obj(obj);
@@ -17,7 +17,7 @@ public class StrEquals implements MatchOperation<String> {
 
     @Override
     public String getIdentify() {
-        return RuleConstant.Operations.StrEquals;
+        return RuleConstant.Operations.NumEquals;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class StrEquals implements MatchOperation<String> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        StrEquals strEquals = (StrEquals) o;
+        NumEquals strEquals = (NumEquals) o;
 
         if (obj != null ? !obj.equals(strEquals.obj) : strEquals.obj != null) return false;
         return attr != null ? attr.equals(strEquals.attr) : strEquals.attr == null;

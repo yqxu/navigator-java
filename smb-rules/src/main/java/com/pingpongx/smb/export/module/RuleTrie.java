@@ -100,7 +100,7 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement>{
         for (int i=0;i<ids.size();i++){
             Node<RuleLeaf, RuleTrieElement> n = current.get(ids.get(i));
             RuleLeaf r = n.getIdentify();
-            MatchOperation op =  ((RuleLeaf<?, ?>) r).operatorType();
+            MatchOperation op =  ((RuleLeaf< ?>) r).operatorType();
             Node<String,BatchMatcher>  matcherNode = engine.batchMatcherMapper.matchers(op);
             BatchMatcher matcher = matcherNode.getData();
             if (matcher==null){

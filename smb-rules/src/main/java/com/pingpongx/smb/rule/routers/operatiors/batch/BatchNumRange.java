@@ -1,26 +1,29 @@
 package com.pingpongx.smb.rule.routers.operatiors.batch;
 
 import com.pingpongx.smb.common.Node;
+import com.pingpongx.smb.export.RuleConstant;
 import com.pingpongx.smb.export.module.MatchOperation;
 import com.pingpongx.smb.export.module.RuleTrieElement;
 import com.pingpongx.smb.export.module.operation.RuleLeaf;
 import com.pingpongx.smb.rule.routers.operatiors.StrEquals;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 //TODO : 未完成开发将用于计费引擎，已完成引擎重构
-public class BatchNumBigerThen implements BatchMatcher<Number> {
-
+public class BatchNumRange implements BatchMatcher<Number> {
+//    Map<RuleConstant.Operations>
+    ArrayList<Number> less = new ArrayList<>();
+    ArrayList<Number> lessAndEquals = new ArrayList<>();
+    ArrayList<Number> bigger = new ArrayList<>();
+    ArrayList<Number> biggerAndEquals = new ArrayList<>();
     Map<String, MatchedSet> ruleMap = new ConcurrentHashMap<>();
 
     Set<Node<RuleLeaf, RuleTrieElement>> notSet = new HashSet<>();
 
     public void putOnly(String str,Node<RuleLeaf, RuleTrieElement> node,boolean isNot){
+
         if (isNot){
             notSet.add(node);
         }
@@ -52,7 +55,10 @@ public class BatchNumBigerThen implements BatchMatcher<Number> {
     }
 
     @Override
-    public void putRule(RuleLeaf<?, Number> rule, Node<RuleLeaf, RuleTrieElement> node) {
+    public void putRule(RuleLeaf< Number> rule, Node<RuleLeaf, RuleTrieElement> node) {
+//        if(rule.operatorType()){
+//
+//        }
         Number exp = rule.expected();
 //        putOnly(exp,node,rule.isNot());
     }
@@ -63,7 +69,7 @@ public class BatchNumBigerThen implements BatchMatcher<Number> {
     }
 
     public static BatchMatcher<Number> newInstance() {
-        BatchNumBigerThen strContains = new BatchNumBigerThen();
+        BatchNumRange strContains = new BatchNumRange();
         return strContains;
     }
 
@@ -72,7 +78,7 @@ public class BatchNumBigerThen implements BatchMatcher<Number> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BatchNumBigerThen that = (BatchNumBigerThen) o;
+        BatchNumRange that = (BatchNumRange) o;
 
         return getIdentify() != null ? getIdentify().equals(that.getIdentify()) : that.getIdentify() == null;
     }

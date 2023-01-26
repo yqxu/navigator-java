@@ -19,6 +19,6 @@ public interface BatchMatcher<T> extends Comparable<BatchMatcher<T>>, Identified
         return this.supportedOperation().sortBy() - o.supportedOperation().sortBy();
     }
 
-    void putRule(RuleLeaf<?,T> rule, Node<RuleLeaf, RuleTrieElement> node);
+    void putRule(RuleLeaf<T> rule, Node<RuleLeaf, RuleTrieElement> node);
 
 }
