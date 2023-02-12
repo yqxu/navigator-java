@@ -10,6 +10,8 @@ import com.pingpongx.smb.warning.biz.alert.event.ToExecute;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
 import com.pingpongx.smb.warning.biz.depends.DingTalkClientFactory;
 import com.pingpongx.smb.warning.biz.depends.PPDingTalkClient;
+import com.pingpongx.smb.warning.dal.dataobject.BusinessAlertsApp;
+import com.pingpongx.smb.warning.dal.repository.BusinessAlertsAppRepository;
 import com.pingpongx.smb.warning.web.env.EnvUtil;
 import com.pingpongx.smb.warning.web.parser.AlertParser;
 import com.pingpongx.smb.warning.web.parser.ParserFactory;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -41,6 +44,9 @@ public class ToExecuteHandler implements ApplicationListener<ToExecute> {
     @Autowired
     EnvUtil envUtil;
 
+    @Autowired
+    BusinessAlertsAppRepository appRepository;
+
     @Override
     public void onApplicationEvent(ToExecute event) {
         if (envUtil.isDev()){
@@ -50,7 +56,16 @@ public class ToExecuteHandler implements ApplicationListener<ToExecute> {
 
         //DingDing 通知
         ThirdPartAlert alert = event.getAlert();
-        PPDingTalkClient client = dingTalkClientFactory.getByDepart(alert.depart());
+        String appName = alert.throwAppName();
+        PPDingTalkClient client = null;
+        Optional<BusinessAlertsApp> app = appRepository.lambdaQuery().eq(BusinessAlertsApp::getAppName,appName).list().stream().findFirst();
+        if (app.isPresent()){
+            String classify = app.get().getClassify();
+            client = dingTalkClientFactory.getByDepart(classify);
+        }
+        if ( client == null){
+            client = dingTalkClientFactory.getByDepart(alert.depart());
+        }
         AlertParser parser = parserFactory.departOf(alert.depart());
         String msg = parser.toDingTalkMsg(alert);
         DingDingReceiverDTO receiverDTO = businessAlertService.findDingDingReceivers(alert.throwAppName());
