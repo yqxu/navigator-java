@@ -49,10 +49,10 @@ public class ToExecuteHandler implements ApplicationListener<ToExecute> {
 
     @Override
     public void onApplicationEvent(ToExecute event) {
-        if (envUtil.isDev()){
-            log.info("Dev未抑制告警：\n"+JSON.toJSONString(event));
-            return;
-        }
+//        if (envUtil.isDev()){
+//            log.info("Dev未抑制告警：\n"+JSON.toJSONString(event));
+//            return;
+//        }
 
         //DingDing 通知
         ThirdPartAlert alert = event.getAlert();
@@ -78,6 +78,10 @@ public class ToExecuteHandler implements ApplicationListener<ToExecute> {
         if (phones.size() == 0){
             log.error(event.getAlert().throwAppName()+" 未设置对应负责人列表。");
         }else {
+            if (envUtil.isDev()){
+                log.info("Dev未抑制告警：\n"+JSON.toJSONString(event));
+                return;
+            }
             //Jira 工单
             JiraGenerateRequest req = parser.generateJiraRequest(alert);
             businessAlertService.generateJira(req);
