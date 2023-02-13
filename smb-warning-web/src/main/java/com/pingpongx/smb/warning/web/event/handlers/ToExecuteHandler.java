@@ -49,10 +49,10 @@ public class ToExecuteHandler implements ApplicationListener<ToExecute> {
 
     @Override
     public void onApplicationEvent(ToExecute event) {
-//        if (envUtil.isDev()){
-//            log.info("Dev未抑制告警：\n"+JSON.toJSONString(event));
-//            return;
-//        }
+        if (envUtil.isDev()){
+            log.info("Dev未抑制告警：\n"+JSON.toJSONString(event));
+            return;
+        }
 
         //DingDing 通知
         ThirdPartAlert alert = event.getAlert();
@@ -74,17 +74,17 @@ public class ToExecuteHandler implements ApplicationListener<ToExecute> {
             return;
         }
         List<String> phones = receiverDTO.getReceivers().stream().filter(Objects::nonNull).map(DingDReceiverDTO::getPhone).collect(Collectors.toList());
-        client.sendMarkDown("您有来自线上的预警待处理",msg,phones);
+        if (!envUtil.isDev()){
+            client.sendMarkDown("您有来自线上的预警待处理",msg,phones);
+        }
         if (phones.size() == 0){
             log.error(event.getAlert().throwAppName()+" 未设置对应负责人列表。");
         }else {
-            if (envUtil.isDev()){
-                log.info("Dev未抑制告警：\n"+JSON.toJSONString(event));
-                return;
+            if (!envUtil.isDev()){
+                //Jira 工单
+                JiraGenerateRequest req = parser.generateJiraRequest(alert);
+                businessAlertService.generateJira(req);
             }
-            //Jira 工单
-            JiraGenerateRequest req = parser.generateJiraRequest(alert);
-            businessAlertService.generateJira(req);
         }
     }
 }

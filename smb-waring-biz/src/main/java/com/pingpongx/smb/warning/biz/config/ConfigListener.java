@@ -26,6 +26,7 @@ public class ConfigListener implements com.pingpongx.config.client.listener.Conf
     @PostConstruct
     void init(){
         ConfigListenerFactory.addListener("configured.scene",this);
+        ConfigListenerFactory.addListener("dingtalk.notify.urls",this);
     }
 
     @Override
@@ -37,9 +38,8 @@ public class ConfigListener implements com.pingpongx.config.client.listener.Conf
         if (key.equals("dingtalk.notify.urls")){
             JSONObject json = JSON.parseObject(value);
             json.entrySet().stream().forEach(stringObjectEntry -> {
-                ConfiguredDingTalkClient client = new ConfiguredDingTalkClient();
-                client.setDepart(key);
-                client.setUrl(value);
+                ConfiguredDingTalkClient client = new ConfiguredDingTalkClient(stringObjectEntry.getValue().toString());
+                client.setDepart(stringObjectEntry.getKey());
                 factory.put(client);
             });
         }
