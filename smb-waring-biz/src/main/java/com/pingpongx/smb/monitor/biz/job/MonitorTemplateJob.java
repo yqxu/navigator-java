@@ -78,8 +78,8 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                     .setHandleSIGHUP(true)
                     .setHandleSIGINT(true)
                     .setHandleSIGTERM(true)
-                    .setHeadless(false)
-                    .setDevtools(true)
+                    .setHeadless(true)
+                    .setDevtools(false)
                     .setSlowMo(2200));
             // 不同的context的配置，理论上是一样的，例如浏览器的尺寸
             context = browser.newContext(newContextOptions);
