@@ -29,4 +29,8 @@ public class DingTalkClientFactory {
     public PPDingTalkClient getByAppName(String appName){
         return appNameMap.get(appName);
     }
+
+    public void put(ConfiguredDingTalkClient client){
+        departMap.put(client.getDepart(),client);
+    }
 }
