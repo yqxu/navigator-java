@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONPath;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.RequestOptions;
 import com.microsoft.playwright.options.Timing;
+import com.pingpongx.job.core.biz.model.ReturnT;
+import com.pingpongx.job.core.handler.IJobHandler;
 import com.pingpongx.smb.monitor.dal.entity.constant.BusinessLine;
 import com.pingpongx.smb.monitor.dal.entity.constant.MonitorEnv;
 import com.pingpongx.smb.monitor.dal.entity.dataobj.ApiDetail;
@@ -12,8 +14,6 @@ import com.pingpongx.smb.monitor.dal.entity.uiprops.MonitorEnvParam;
 import com.pingpongx.smb.monitor.dal.mapper.ApiDetailMapper;
 import com.pingpongx.smb.monitor.dal.mapper.TaskRecordMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 import static com.pingpongx.smb.monitor.biz.util.TimeUtils.getFormattedTime;
 
 @Slf4j
-public abstract class MonitorTemplate {
+public abstract class MonitorTemplateJob extends IJobHandler {
 
     @Resource
     private TaskRecordMapper taskRecordMapper;
@@ -33,14 +33,15 @@ public abstract class MonitorTemplate {
     @Resource
     private ApiDetailMapper apiDetailMapper;
 
-    @Autowired
+    @Resource
     private MonitorEnvParam monitorEnvParam;
 
-    @Autowired
+    @Resource
     private Playwright playwright;
 
     private String host;
     private String dingGroup;
+    private String business;
 
     public void setDingGroup(String dingGroup) {
         this.dingGroup = dingGroup;
@@ -50,15 +51,21 @@ public abstract class MonitorTemplate {
         this.host = host;
     }
 
+    public void setBusiness(String business) {
+        this.business = business;
+    }
+
+    public abstract void initEnv();
+
     public abstract void actions(Page page);
 
-    @Scheduled(fixedDelay = 180000)
-    public void monitor() {
+    public ReturnT<String> monitor() {
         log.info("hostParam.getEnable():{}", monitorEnvParam.getEnable());
         if (monitorEnvParam.getEnable().equalsIgnoreCase(Boolean.FALSE.toString())) {
-            return;
+            return new ReturnT<>( "监控开关未打开");
         }
-        log.info("开始时间：{}, 当前monitor的环境：{}", getFormattedTime(), monitorEnvParam.getMonitorEnv());
+        initEnv();
+        log.info("开始时间：{}，当前monitor的环境：{}，当前业务线：{}", getFormattedTime(), monitorEnvParam.getMonitorEnv(), business);
         Consumer<Response> listener = null;
         Browser browser = null;
         BrowserContext context = null;
@@ -71,7 +78,7 @@ public abstract class MonitorTemplate {
                     .setHandleSIGHUP(true)
                     .setHandleSIGINT(true)
                     .setHandleSIGTERM(true)
-//                .setHeadless(false)
+                    .setHeadless(false)
 //                .setDevtools(true)
                     .setSlowMo(2200));
             // 不同的context的配置，理论上是一样的，例如浏览器的尺寸
@@ -87,6 +94,7 @@ public abstract class MonitorTemplate {
 
             // 执行成功，将结果写入库表
             insertRecord("success", "na");
+            return ReturnT.SUCCESS;
         } catch (Exception e) {
             // 执行失败，截个图的，可以通过命令将文件复制出容器查看：curl -F 'x=@/tmp/ui-monitor/20221209070003.png' file.pingpongx.com/disk
             // 打开地址：https://file.pingpongx.com/disk
@@ -100,6 +108,7 @@ public abstract class MonitorTemplate {
             // }
             // 执行失败，写入库表
             insertRecord("failed", e.getMessage());
+            return ReturnT.FAIL;
         } finally {
             if (listener != null) {
                 page.offResponse(listener);
@@ -224,4 +233,10 @@ public abstract class MonitorTemplate {
         return listener;
     }
 
+    @Override
+    public ReturnT<String> execute(String param) throws Exception {
+        log.info("param is: {}",param);
+
+        return monitor();
+    }
 }

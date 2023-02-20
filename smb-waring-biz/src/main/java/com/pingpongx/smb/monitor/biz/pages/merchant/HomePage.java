@@ -161,39 +161,39 @@ public class HomePage {
 
     public void pageSearch() {
         pageSwitch("店铺管理");
-//        pageSwitch("店铺迁移");
-//        pageSwitch("店铺托管");
-//        pageSwitch("店铺解绑");
-//
-//        pageSwitch("平台收款明细");
-//        pageSwitch("人民币账户明细");
-//
-//        pageSwitch("供应商付款");
-//        pageSwitch("供应商付款管理");
-//        pageSwitch("供应商管理");
-//        pageSwitch("邮箱付款");
-//        pageSwitch("服务商付款");
-//        pageSwitch("退税服务");
-//        pageSwitch("VAT缴税");
-//        pageSwitch("VAT退税");
-//
-//        pageSwitch("开店通");
-//        pageSwitch("合作收款");
-//        pageSwitch("保险信息服务");
-//        pageSwitch("诚e赊");
-//        pageSwitch("对账助手");
-//
-//        profileSwitch("我的账号");
-//        profileSwitch("实名认证");
-//        profileSwitch("提现账户");
-//        profileSwitch("持有人管理");
-//        profileSwitch("我的智+");
-//        profileSwitch("我的优惠券");
-//        profileSwitch("订单管理");
-//        profileSwitch("子账号管理");
-//
-//        inviteRecommend("邀好友享福利");
-//        inviteRecommend("服务商推荐有礼");
+        pageSwitch("店铺迁移");
+        pageSwitch("店铺托管");
+        pageSwitch("店铺解绑");
+
+        pageSwitch("平台收款明细");
+        pageSwitch("人民币账户明细");
+
+        pageSwitch("供应商付款");
+        pageSwitch("供应商付款管理");
+        pageSwitch("供应商管理");
+        pageSwitch("邮箱付款");
+        pageSwitch("服务商付款");
+        pageSwitch("退税服务");
+        pageSwitch("VAT缴税");
+        pageSwitch("VAT退税");
+
+        pageSwitch("开店通");
+        pageSwitch("合作收款");
+        pageSwitch("保险信息服务");
+        pageSwitch("对账助手");
+        pageSwitch("诚e赊");
+
+        profileSwitch("我的账号");
+        profileSwitch("实名认证");
+        profileSwitch("提现账户");
+        profileSwitch("持有人管理");
+        profileSwitch("我的智+");
+        profileSwitch("我的优惠券");
+        profileSwitch("订单管理");
+        profileSwitch("子账号管理");
+
+        inviteRecommend("邀好友享福利");
+        inviteRecommend("服务商推荐有礼");
 
     }
 

@@ -2,30 +2,35 @@ package com.pingpongx.smb.monitor.biz.job;
 
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.WaitUntilState;
+import com.pingpongx.job.core.handler.annotation.JobHandler;
 import com.pingpongx.smb.monitor.biz.pages.fm.CNYWalletPage;
 import com.pingpongx.smb.monitor.biz.pages.fm.HomePage;
 import com.pingpongx.smb.monitor.biz.pages.fm.LoginPage;
-import com.pingpongx.smb.monitor.dal.entity.constant.FMMainPages;
 import com.pingpongx.smb.monitor.dal.entity.uiprops.FMLoginParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 
 @Slf4j
 @Component
-@EnableScheduling
-public class FMMonitor extends MonitorTemplate {
+@JobHandler
+public class FMMonitor extends MonitorTemplateJob {
 
-    @Autowired
+    @Resource
     private FMLoginParam fmLoginParam;
 
     @Override
-    public void actions(Page page) {
+    public void initEnv() {
         super.setHost(fmLoginParam.getMonitorFmHost());
         super.setDingGroup("FLOWMORE");
+        super.setBusiness(this.getClass().getSimpleName());
+    }
 
+    @Override
+    public void actions(Page page) {
         LoginPage loginPage = new LoginPage();
         loginPage.setPage(page);
         loginPage.setLoginUrl(fmLoginParam.getFmLoginUrl());
@@ -35,20 +40,7 @@ public class FMMonitor extends MonitorTemplate {
 
         HomePage homePage = new HomePage();
         homePage.setPage(page);
-        homePage.switchPage(FMMainPages.WAI_MAO_SHOU_KUAN);
-        homePage.switchPage(FMMainPages.WAI_MAO_SHOU_KUAN_ZHANG_HU_GUAN_LI);
-        homePage.switchPage(FMMainPages.ZI_JING_HUI_JI);
-        homePage.switchPage(FMMainPages.HE_TONG_DING_DANG);
-        homePage.switchPage(FMMainPages.ZHANG_DAN_SHOU_KUAN);
-        homePage.switchPage(FMMainPages.WAI_MAO_SHOU_KUAN_TI_XIAN);
-        homePage.switchPage(FMMainPages.REN_MING_BI_ZHANG_HU_TI_XIAN);
-        homePage.switchPage(FMMainPages.FA_QI_FU_KUAN);
-        homePage.switchPage(FMMainPages.SHOU_KUAN_REN_GUAN_LI);
-        homePage.switchPage(FMMainPages.WAI_MAO_SHOU_KUAN_MING_XI);
-        homePage.switchPage(FMMainPages.REN_MING_BI_ZHANG_HU_MING_XI);
-        homePage.switchPage(FMMainPages.HUI_LV_FENG_XIAN);
-        homePage.switchPage(FMMainPages.SHOU_YE);
-        homePage.switchPage(FMMainPages.WALLET_DETAIL);
+        homePage.pageSearch();
 
         CNYWalletPage cnyWalletPage = new CNYWalletPage();
         cnyWalletPage.setPage(page);

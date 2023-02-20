@@ -21,7 +21,7 @@ public class MerchantLoginParam {
     @Value("${uimonitor.merchant.login.password:qwe123}")
     private String merchantLoginPassword;
 
-    @Value("${uimonitor.merchant.login.url:https://us.pingpongx.com/entrance/signin}")
+    @Value("${uimonitor.merchant.login.url:https://ro-us.pingpongx.com/entrance/signin}")
     private String merchantLoginUrl;
 
 }

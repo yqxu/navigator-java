@@ -17,7 +17,7 @@ public class LoginPage {
     private String loginUrl;
     private String loginUsername;
     private String loginPassword;
-    private int index;
+
 
     public LoginPage() {
 
@@ -30,12 +30,7 @@ public class LoginPage {
 
         page.getByText("邮箱登录").click();
         page.getByPlaceholder("输入您的登录邮箱").click();
-        String[] strings = new String[]{"wangqq@pingpongx.com", "wangqq5@pingpongx.com", "ding.yin.g@163.com", "lihx1@pingpongx.com"};
-
-//        page.getByPlaceholder("输入您的登录邮箱").fill(loginUsername);
-        index = index % strings.length;
-        log.info("login index: {}", index);
-        page.getByPlaceholder("输入您的登录邮箱").fill(strings[index]);
+        page.getByPlaceholder("输入您的登录邮箱").fill(loginUsername);
         page.getByPlaceholder("登录密码").click();
         page.getByPlaceholder("登录密码").fill(loginPassword);
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("立即登录")).click();
