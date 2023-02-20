@@ -43,6 +43,17 @@ public class LoginPage {
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("登录")).click();
         page.waitForLoadState(LoadState.DOMCONTENTLOADED);
 
+        // 福贸登录完成后会对用户进行菜单变更引导，但是这个没有做在后端，前端会在每次打开浏览器时进行引导，如果清除了缓存的话
+        log.info("fm login finished");
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("确定")).click();
+        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("关闭")).click();
+
+        // 对福贸登录后可能出现的弹窗进行关闭
+        if (page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).isVisible()) {
+            page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).locator("i").click();
+        }
+        log.info("fm login finished and menu check finished");
+
     }
 
     public void logout() {
