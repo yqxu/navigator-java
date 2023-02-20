@@ -1,5 +1,6 @@
 package com.pingpongx.smb.monitor.biz.job;
 
+import com.alibaba.fastjson.JSON;
 import com.microsoft.playwright.Page;
 import com.pingpongx.job.core.handler.annotation.JobHandler;
 import com.pingpongx.smb.monitor.biz.pages.merchant.HomePage;
@@ -27,6 +28,8 @@ public class MerchantMonitor extends MonitorTemplateJob {
 
     @Override
     public void actions(Page page) {
+        log.info("MerchantMonitor 参数信息：{}", JSON.toJSONString(merchantLoginParam));
+
         LoginPage loginPage = new LoginPage();
         loginPage.setPage(page);
         loginPage.setLoginUrl(merchantLoginParam.getMerchantLoginUrl());

@@ -1,5 +1,6 @@
 package com.pingpongx.smb.monitor.biz.job;
 
+import com.alibaba.fastjson.JSON;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.WaitUntilState;
 import com.pingpongx.job.core.handler.annotation.JobHandler;
@@ -8,7 +9,6 @@ import com.pingpongx.smb.monitor.biz.pages.fm.HomePage;
 import com.pingpongx.smb.monitor.biz.pages.fm.LoginPage;
 import com.pingpongx.smb.monitor.dal.entity.uiprops.FMLoginParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -31,6 +31,8 @@ public class FMMonitor extends MonitorTemplateJob {
 
     @Override
     public void actions(Page page) {
+        log.info("FMMonitor 参数信息：{}", JSON.toJSONString(fmLoginParam));
+
         LoginPage loginPage = new LoginPage();
         loginPage.setPage(page);
         loginPage.setLoginUrl(fmLoginParam.getFmLoginUrl());
