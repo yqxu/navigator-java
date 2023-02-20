@@ -1,7 +1,9 @@
 package com.pingpongx.smb.monitor.biz.config;
 
-import com.pingpongx.smb.monitor.dal.entity.uiprops.HostParam;
-import com.pingpongx.smb.monitor.dal.entity.uiprops.LoginParam;
+import com.microsoft.playwright.Playwright;
+import com.pingpongx.smb.monitor.dal.entity.uiprops.FMLoginParam;
+import com.pingpongx.smb.monitor.dal.entity.uiprops.MerchantLoginParam;
+import com.pingpongx.smb.monitor.dal.entity.uiprops.MonitorEnvParam;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,12 +11,22 @@ import org.springframework.context.annotation.Configuration;
 public class UiMonitorConfig {
 
     @Bean
-    public LoginParam loginParam() {
-        return new LoginParam();
+    public FMLoginParam fmLoginParam() {
+        return new FMLoginParam();
     }
 
     @Bean
-    public HostParam hostParam() {
-        return new HostParam();
+    public MonitorEnvParam monitorEnvParam() {
+        return new MonitorEnvParam();
+    }
+
+    @Bean
+    public MerchantLoginParam merchantLoginParam() {
+        return new MerchantLoginParam();
+    }
+
+    @Bean
+    public Playwright playwright() {
+        return Playwright.create();
     }
 }
