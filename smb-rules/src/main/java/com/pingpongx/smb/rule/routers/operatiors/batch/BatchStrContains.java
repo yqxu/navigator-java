@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BatchStrContains implements BatchMatcher<String>{
+    //AC自动机
     ACTrie<Character, MatchedSet> trie = new ACTrie<>();
 
     Set<Node<RuleLeaf, RuleTrieElement>> notSet = new HashSet<>();
@@ -68,7 +69,7 @@ public class BatchStrContains implements BatchMatcher<String>{
     }
 
     @Override
-    public void putRule(RuleLeaf<?, String> rule, Node<RuleLeaf, RuleTrieElement> node) {
+    public void putRule(RuleLeaf< String> rule, Node<RuleLeaf, RuleTrieElement> node) {
         String exp = rule.expected();
         //TODO:Init 完成节点做一次reindex
         putAndReIndex(exp,node,rule.isNot());

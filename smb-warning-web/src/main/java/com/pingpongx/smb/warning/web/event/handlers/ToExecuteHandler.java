@@ -1,6 +1,7 @@
 package com.pingpongx.smb.warning.web.event.handlers;
 
 
+import com.alibaba.fastjson.JSON;
 import com.pingpongx.smb.warning.api.dto.DingDReceiverDTO;
 import com.pingpongx.smb.warning.api.dto.DingDingReceiverDTO;
 import com.pingpongx.smb.warning.api.request.JiraGenerateRequest;
@@ -9,6 +10,7 @@ import com.pingpongx.smb.warning.biz.alert.event.ToExecute;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
 import com.pingpongx.smb.warning.biz.depends.DingTalkClientFactory;
 import com.pingpongx.smb.warning.biz.depends.PPDingTalkClient;
+import com.pingpongx.smb.warning.web.env.EnvUtil;
 import com.pingpongx.smb.warning.web.parser.AlertParser;
 import com.pingpongx.smb.warning.web.parser.ParserFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +38,16 @@ public class ToExecuteHandler implements ApplicationListener<ToExecute> {
     @Autowired
     BusinessAlertService businessAlertService;
 
+    @Autowired
+    EnvUtil envUtil;
+
     @Override
     public void onApplicationEvent(ToExecute event) {
+        if (envUtil.isDev()){
+            log.info("Dev未抑制告警：\n"+JSON.toJSONString(event));
+            return;
+        }
+
         //DingDing 通知
         ThirdPartAlert alert = event.getAlert();
         PPDingTalkClient client = dingTalkClientFactory.getByDepart(alert.depart());

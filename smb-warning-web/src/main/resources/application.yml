@@ -83,3 +83,11 @@ dubbo:
     #    去除默认异常,使用B2B生成的异常过滤器
     filter: -exception
   logByCode: true
+
+job:
+  executor:
+    app-name: ${ppx.name}
+    logRetentionDays: ${job.fm.executor.log-retention-days}
+  accessToken: ${job.fm.access-token}
+  admin:
+    addresses: ${job.fm.admin.addresses}

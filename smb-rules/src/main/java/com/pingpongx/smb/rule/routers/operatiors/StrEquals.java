@@ -2,9 +2,6 @@ package com.pingpongx.smb.rule.routers.operatiors;
 
 import com.pingpongx.smb.export.RuleConstant;
 import com.pingpongx.smb.export.module.MatchOperation;
-import com.pingpongx.smb.rule.routers.operatiors.batch.BatchMatcher;
-
-import java.util.Set;
 
 
 public class StrEquals implements MatchOperation<String> {
@@ -20,7 +17,7 @@ public class StrEquals implements MatchOperation<String> {
 
     @Override
     public String getIdentify() {
-        return RuleConstant.Operations.Equals;
+        return RuleConstant.Operations.StrEquals;
     }
 
     @Override

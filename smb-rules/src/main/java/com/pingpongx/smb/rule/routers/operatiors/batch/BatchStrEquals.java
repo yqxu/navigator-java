@@ -15,69 +15,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-public class BatchStrEquals implements BatchMatcher<String> {
-
-    Map<String, MatchedSet> ruleMap = new ConcurrentHashMap<>();
-
-    Set<Node<RuleLeaf, RuleTrieElement>> notSet = new HashSet<>();
-
-    public void putOnly(String str,Node<RuleLeaf, RuleTrieElement> node,boolean isNot){
-        if (isNot){
-            notSet.add(node);
-        }
-        MatchedSet ret = ruleMap.get(str);
-        if (ret == null){
-            ret = new MatchedSet();
-            ruleMap.put(str,ret);
-        }
-        ret.add(node,isNot);
-    }
-
-    /****
-     * 批量匹配字符串 为StringContains提供批量O（n）支撑
-     * @param input 对象的待匹配属性，因为操作符的限制只能是string
-     * @return 用了contains 规则的rule 的 identify 集合
-     */
-    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(String input,Set<Node<RuleLeaf, RuleTrieElement>> repeat){
-        if (input == null){
-            return notSet.stream().collect(Collectors.toSet());
-        }
-        MatchedSet matchedSet = Optional.ofNullable(ruleMap.get(input)).orElse(new MatchedSet());
-        return matchedSet.getResult(repeat,notSet);
-    }
-
+public class BatchStrEquals extends BatchEquals<String> {
     @Override
     public MatchOperation supportedOperation() {
         return StrEquals.getInstance();
     }
 
-    @Override
-    public void putRule(RuleLeaf<?,String> rule, Node<RuleLeaf, RuleTrieElement> node) {
-        String exp = rule.expected();
-        putOnly(exp,node,rule.isNot());
-    }
-    @Override
-    public String getIdentify() {
-        return (String) supportedOperation().getIdentify();
-    }
-
     public static BatchMatcher<String> newInstance() {
         BatchStrEquals strContains = new BatchStrEquals();
         return strContains;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        BatchStrEquals that = (BatchStrEquals) o;
-
-        return getIdentify() != null ? getIdentify().equals(that.getIdentify()) : that.getIdentify() == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return getIdentify() != null ? getIdentify().hashCode() : 0;
     }
 }

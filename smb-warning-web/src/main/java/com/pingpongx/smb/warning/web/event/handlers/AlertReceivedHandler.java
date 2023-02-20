@@ -32,7 +32,7 @@ public class AlertReceivedHandler implements ApplicationListener<AlertReceived> 
     @Override
     public void onApplicationEvent(AlertReceived event) {
         ThirdPartAlert alert = event.getAlert();
-        MatchResult result = ruleEngine.match(alert.getClass(),alert);
+        MatchResult result = ruleEngine.match(alert.getClass().getName(),alert);
         if (result.getMatchedData().size()==0){
             ToExecute toExecute = new ToExecute(applicationContext,alert);
             applicationContext.publishEvent(toExecute);

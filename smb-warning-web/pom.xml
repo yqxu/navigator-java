@@ -25,12 +25,36 @@
             <artifactId>smb-waring-biz</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.pingpongx.smb</groupId>
+            <artifactId>smb-api-sdk</artifactId>
+            <version>1.0.8-SNAPSHOT</version>
+        </dependency>
       <dependency>
         <groupId>com.pingpongx.smb</groupId>
         <artifactId>smb-warning-dependency</artifactId>
         <version>1.0.0-SNAPSHOT</version>
       </dependency>
+
+        <dependency>
+            <groupId>com.pingpongx.smb</groupId>
+            <artifactId>smb-auth-api</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.pingpongx.flowmore.cloud</groupId>
+            <artifactId>http-skd-client-dingtalk</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.pingpongx.flowmore.cloud</groupId>
+            <artifactId>http-sdk-client-jira</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.pingpongx.mid</groupId>
+            <artifactId>job-spring-boot-starter</artifactId>
+        </dependency>
 
     </dependencies>
 
