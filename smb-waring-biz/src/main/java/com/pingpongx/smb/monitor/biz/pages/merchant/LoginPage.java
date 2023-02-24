@@ -4,11 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.PlaywrightException;
-import com.microsoft.playwright.options.AriaRole;
-import com.microsoft.playwright.options.WaitForSelectorState;
-import com.microsoft.playwright.options.WaitUntilState;
+import com.microsoft.playwright.options.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.pingpongx.smb.monitor.biz.util.PlayWrightUtils.waitElementExist;
 
 @Data
 @Slf4j
@@ -28,7 +31,19 @@ public class LoginPage {
         Page.NavigateOptions options = new Page.NavigateOptions();
         options.setWaitUntil(WaitUntilState.DOMCONTENTLOADED);
         page.navigate(loginUrl, options);
-        log.info("merchant cookies:{}", JSON.toJSONString(page.context().cookies()));
+        // 如果当前打开的是us区的页面，目前发生在容器环境中，通过修改cookie中vuepack的值的方式，强制刷到cn区
+        if (waitElementExist(page.getByText("Email"), 5000)) {
+            List<Cookie> newCookies = new ArrayList<>(page.context().cookies());
+            for (Cookie cookie : newCookies) {
+                if (cookie.name.equals("vuepack")) {
+                    cookie.value="%7B%22language%22%3A%22zh-CN%22%7D";
+                }
+            }
+            page.context().clearCookies();
+            page.context().addCookies(newCookies);
+            page.reload();
+            // log.info("merchant cookies:{}", JSON.toJSONString(page.context().cookies()));
+        }
 
         page.getByText("邮箱登录").click();
         page.getByPlaceholder("输入您的登录邮箱").click();
