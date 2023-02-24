@@ -30,7 +30,7 @@ public class FMMonitor extends MonitorTemplateJob {
     }
 
     @Override
-    public void actions(Page page) {
+    public void login(Page page) {
         log.info("FMMonitor 参数信息：{}", JSON.toJSONString(fmLoginParam));
 
         LoginPage loginPage = new LoginPage();
@@ -39,7 +39,10 @@ public class FMMonitor extends MonitorTemplateJob {
         loginPage.setLoginUsername(fmLoginParam.getFmLoginUserName());
         loginPage.setLoginPassword(fmLoginParam.getFmLoginPassword());
         loginPage.login();
+    }
 
+    @Override
+    public void actions(Page page) {
         HomePage homePage = new HomePage();
         homePage.setPage(page);
         homePage.pageSearch();
@@ -66,6 +69,11 @@ public class FMMonitor extends MonitorTemplateJob {
         homePage.personalInfo("子账号管理");
         homePage.personalInfo("待办事项");
 
+    }
+
+    @Override
+    public void logout(Page page) {
+        LoginPage loginPage = new LoginPage();
         loginPage.logout();
     }
 }

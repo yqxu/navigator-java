@@ -6,6 +6,7 @@ import com.microsoft.playwright.options.RequestOptions;
 import com.microsoft.playwright.options.Timing;
 import com.pingpongx.job.core.biz.model.ReturnT;
 import com.pingpongx.job.core.handler.IJobHandler;
+import com.pingpongx.smb.monitor.biz.exception.LoginException;
 import com.pingpongx.smb.monitor.dal.entity.constant.BusinessLine;
 import com.pingpongx.smb.monitor.dal.entity.constant.MonitorEnv;
 import com.pingpongx.smb.monitor.dal.entity.dataobj.ApiDetail;
@@ -57,7 +58,11 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 
     public abstract void initEnv();
 
+    public abstract void login(Page page);
+
     public abstract void actions(Page page);
+
+    public abstract void logout(Page page);
 
     public ReturnT<String> monitor() {
         log.info("hostParam.getEnable():{}", monitorEnvParam.getEnable());
@@ -92,7 +97,17 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 
             listener = monitorPageRequest(apiRequestContext, page);
 
+            try {
+                login(page);
+            } catch (Exception t) {
+                t.printStackTrace();
+                log.info(t.getMessage());
+                throw new LoginException();
+            }
+
             actions(page);
+
+            logout(page);
 
             // 执行成功，将结果写入库表
             insertRecord("success", "na");
@@ -104,10 +119,10 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                 page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("/tmp/ui-monitor/" + getFormattedTime() + ".png")));
             }
             log.warn("monitor, message size: " + e.getMessage());
-            // 发送钉钉告警
-            // if (apiRequestContext != null) {
-            // sendWarnMessage(apiRequestContext , e.getMessage());
-            // }
+            // 如果是登录失败，才发送钉钉告警
+            if (apiRequestContext != null && e instanceof LoginException) {
+                sendWarnMessage(apiRequestContext , e.getMessage());
+            }
             // 执行失败，写入库表
             insertRecord("failed", e.getMessage());
             return ReturnT.FAIL;
@@ -138,7 +153,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
     }
 
     /**
-     * 调用开发的接口发送钉钉告警
+     * 调用开发的接口发送钉钉告警，只会判断是生产环境才发告警
      * @param message
      */
     public void sendWarnMessage(APIRequestContext apiRequestContext, String message) {

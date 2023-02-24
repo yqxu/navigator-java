@@ -7,6 +7,8 @@ import com.microsoft.playwright.options.WaitUntilState;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.pingpongx.smb.monitor.biz.util.PlayWrightUtils.waitElementExist;
+
 
 /**
  * 登录页
@@ -45,11 +47,15 @@ public class LoginPage {
 
         // 福贸登录完成后会对用户进行菜单变更引导，但是这个没有做在后端，前端会在每次打开浏览器时进行引导，如果清除了缓存的话
         log.info("fm login finished");
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("确定")).click();
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("关闭")).click();
 
+        if (waitElementExist(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("确定")), 10000)) {
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("确定")).click();
+        }
+        if (waitElementExist(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("关闭")), 5000)) {
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("关闭")).click();
+        }
         // 对福贸登录后可能出现的弹窗进行关闭
-        if (page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).isVisible()) {
+        if (waitElementExist(page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")), 5000)) {
             page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).locator("i").click();
         }
         log.info("fm login finished and menu check finished");

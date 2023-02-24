@@ -27,7 +27,7 @@ public class MerchantMonitor extends MonitorTemplateJob {
     }
 
     @Override
-    public void actions(Page page) {
+    public void login(Page page) {
         log.info("MerchantMonitor 参数信息：{}", JSON.toJSONString(merchantLoginParam));
 
         LoginPage loginPage = new LoginPage();
@@ -37,13 +37,19 @@ public class MerchantMonitor extends MonitorTemplateJob {
         loginPage.setLoginPassword(merchantLoginParam.getMerchantLoginPassword());
 
         loginPage.login();
+    }
 
+    @Override
+    public void actions(Page page) {
         HomePage homePage = new HomePage();
         homePage.setPage(page);
         homePage.pageSearch();
+    }
 
+    @Override
+    public void logout(Page page) {
+        LoginPage loginPage = new LoginPage();
         loginPage.logout();
-
     }
 
 }
