@@ -1,5 +1,6 @@
 package com.pingpongx.smb.monitor.biz.pages.merchant;
 
+import com.alibaba.fastjson.JSON;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.PlaywrightException;
@@ -27,6 +28,7 @@ public class LoginPage {
         Page.NavigateOptions options = new Page.NavigateOptions();
         options.setWaitUntil(WaitUntilState.DOMCONTENTLOADED);
         page.navigate(loginUrl, options);
+        log.info("merchant cookies:{}", JSON.toJSONString(page.context().cookies()));
 
         page.getByText("邮箱登录").click();
         page.getByPlaceholder("输入您的登录邮箱").click();
