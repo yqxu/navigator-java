@@ -205,7 +205,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
     private Consumer<Response> monitorPageRequest(APIRequestContext apiRequestContext, Page page) {
         Consumer<Response> listener = response -> {
             try {
-                if (response.request().url().contains(host) && response.request().url().contains("api")) {
+                if (response.request().url().contains(host) && !response.request().url().endsWith("png") && response.request().url().contains("api")) {
                     String resText = response.text();
                     if (StringUtils.hasLength(resText)) {
                         int code = JSONPath.read(resText, "$.code", Integer.class);
