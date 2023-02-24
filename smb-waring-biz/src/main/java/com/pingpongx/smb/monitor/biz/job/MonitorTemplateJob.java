@@ -43,6 +43,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
     private String host;
     private String dingGroup;
     private String business;
+    private Page page;
 
     public void setDingGroup(String dingGroup) {
         this.dingGroup = dingGroup;
@@ -56,13 +57,17 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         this.business = business;
     }
 
+    public Page getPage() {
+        return this.page;
+    }
+
     public abstract void initEnv();
 
-    public abstract void login(Page page);
+    public abstract void login();
 
-    public abstract void actions(Page page);
+    public abstract void actions();
 
-    public abstract void logout(Page page);
+    public abstract void logout();
 
     public ReturnT<String> monitor() {
         log.info("hostParam.getEnable():{}", monitorEnvParam.getEnable());
@@ -74,7 +79,6 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         Consumer<Response> listener = null;
         Browser browser = null;
         BrowserContext context = null;
-        Page page = null;
         APIRequestContext apiRequestContext = null;
         Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions().setViewportSize(1440, 875);
 
@@ -98,22 +102,22 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             listener = monitorPageRequest(apiRequestContext, page);
 
             try {
-                login(page);
+                login();
             } catch (Exception t) {
                 t.printStackTrace();
                 log.info(t.getMessage());
                 throw new LoginException();
             }
 
-            actions(page);
+            actions();
 
-            logout(page);
+            logout();
 
             // 执行成功，将结果写入库表
             insertRecord("success", "na");
             return ReturnT.SUCCESS;
         } catch (Exception e) {
-            // 执行失败，截个图的，可以通过命令将文件复制出容器查看：curl -F 'x=@/tmp/ui-monitor/20221209070003.png' file.pingpongx.com/disk
+            // 执行失败，截个图的，可以通过命令将文件复制出容器查看：curl -F 'x=@/tmp/ui-monitor/20230224024050.png' file.pingpongx.com/disk
             // 打开地址：https://file.pingpongx.com/disk
             if (page != null) {
                 page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("/tmp/ui-monitor/" + getFormattedTime() + ".png")));

@@ -1,10 +1,9 @@
 package com.pingpongx.smb.monitor.biz.pages.merchant;
 
-import com.alibaba.fastjson.JSON;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.options.*;
+import com.pingpongx.smb.monitor.biz.exception.LoginException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,7 +31,7 @@ public class LoginPage {
         options.setWaitUntil(WaitUntilState.DOMCONTENTLOADED);
         page.navigate(loginUrl, options);
         // 如果当前打开的是us区的页面，目前发生在容器环境中，通过修改cookie中vuepack的值的方式，强制刷到cn区
-        if (waitElementExist(page.getByText("Email"), 5000)) {
+        if (waitElementExist(page.getByText("Email"), 800)) {
             List<Cookie> newCookies = new ArrayList<>(page.context().cookies());
             for (Cookie cookie : newCookies) {
                 if (cookie.name.equals("vuepack")) {
@@ -59,7 +58,7 @@ public class LoginPage {
         int selectorCount = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("首页")).count();
         log.info("主站首页：{}", selectorCount);
         if (!(selectorCount > 0)) {
-            throw new PlaywrightException("可能没登录成功");
+            throw new LoginException();
         }
     }
 
