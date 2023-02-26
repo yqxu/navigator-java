@@ -1,6 +1,0 @@
-ppx:
-  name: smb-warning
-  environment: @ppx.environment@
-  config:
-    publicGroups: mysql, redis, job, flowmore-base, middleware
-    overrideLocal: false

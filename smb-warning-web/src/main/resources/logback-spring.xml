@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- 默认配置, 无特殊需求无需更改 -->
-<configuration>
-    <include resource="com/pingpongx/flowmore/cloud/base/server/log/defaults.xml" />
-    <include resource="com/pingpongx/flowmore/cloud/base/server/log/base.xml"/>
-</configuration>
