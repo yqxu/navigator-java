@@ -51,14 +51,13 @@ public class LoginPage {
         page.getByPlaceholder("登录密码").fill(loginPassword);
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("立即登录")).click();
         // 等待登录完成
-        Locator.WaitForOptions waitForOptions = new Locator.WaitForOptions();
-        waitForOptions.setState(WaitForSelectorState.VISIBLE);
-        waitForOptions.setTimeout(30 * 1000);
-        page.getByText("首页").waitFor(waitForOptions);
-        int selectorCount = page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("首页")).count();
-        log.info("主站首页：{}", selectorCount);
-        if (!(selectorCount > 0)) {
-            throw new LoginException();
+        waitElementExist(page.getByText("首页"), 600);
+        // 解决首页温馨提示弹2次的问题
+        if (waitElementExist(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")), 400)) {
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")).click();
+        }
+        if (waitElementExist(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")), 400)) {
+            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")).click();
         }
     }
 

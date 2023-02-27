@@ -37,9 +37,6 @@ public abstract class MonitorTemplateJob extends IJobHandler {
     @Resource
     private MonitorEnvParam monitorEnvParam;
 
-    @Resource
-    private Playwright playwright;
-
     private String host;
     private String dingGroup;
     private String business;
@@ -76,6 +73,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         }
         initEnv();
         log.info("开始时间：{}，当前monitor的环境：{}，当前业务线：{}", getFormattedTime(), monitorEnvParam.getMonitorEnv(), business);
+        Playwright playwright = null;
         Consumer<Response> listener = null;
         Browser browser = null;
         BrowserContext context = null;
@@ -83,6 +81,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions().setViewportSize(1440, 875);
 
         try {
+            playwright = Playwright.create();
             browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
                     .setHandleSIGHUP(true)
                     .setHandleSIGINT(true)
@@ -131,7 +130,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             insertRecord("failed", e.getMessage());
             return ReturnT.FAIL;
         } finally {
-            if (listener != null) {
+            if (page != null && listener != null) {
                 page.offResponse(listener);
             }
             Page.CloseOptions closeOptions = new Page.CloseOptions();
@@ -151,6 +150,9 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             if (browser != null) {
                 browser.close();
                 browser = null;
+            }
+            if (playwright != null) {
+                playwright.close();
             }
         }
 
@@ -235,6 +237,18 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         };
         page.onResponse(listener);
 
+        // 对页面上可能的弹窗进行处理，例如温馨提示什么的
+//        Consumer<Page> pageConsumer = pageC -> {
+//            if (waitElementExist(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")), 400)) {
+//                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")).click();
+//            }
+//        };
+//        page.onPopup(pageConsumer);
+//
+//        Consumer<Dialog> dialogConsumer = dialog -> {
+//            log.debug("dialog message:{}", dialog.message());
+//        };
+//        page.onDialog(dialogConsumer);
 
         // 忽略图片请求
 //        page.route("**/*.{png,jpg,jpeg}", Route::abort);
