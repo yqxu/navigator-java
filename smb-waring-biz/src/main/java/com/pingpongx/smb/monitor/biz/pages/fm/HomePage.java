@@ -4,7 +4,6 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.options.AriaRole;
-import com.pingpongx.smb.monitor.dal.entity.constant.FMMainPages;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,8 +23,8 @@ public class HomePage {
     /**
      * 首页 菜单切换，确保当前是在福贸首页
      */
-    public void switchPage(FMMainPages pageName) {
-        switch (pageName.getPageName()) {
+    public void switchPage(String pageName) {
+        switch (pageName) {
             case "人民币账户详情":
                 page.locator("#cny-wallet-module").getByText("详情").click();
                 break;
@@ -36,17 +35,30 @@ public class HomePage {
                 if (page.getByText("接收验证码方式").isVisible()) {
                     throw new PlaywrightException("当前存在接收验证码方式元素，可能是有人修改了登录密码，需手动处理");
                 }
-                page.locator("#payment-link").getByText("外贸收款").click();
+                page.locator("#payment-link").getByText("外贸收款").first().click();
                 break;
-            case "外贸收款账户管理":
-                page.locator("#receive-link").getByText("收款账户").hover();
-                page.getByText("外贸收款账户管理").click();
+            case "收款账户管理":
+                if (!page.getByText("外贸收款账户管理", new Page.GetByTextOptions().setExact(true)).isVisible()) {
+                    page.getByText("外贸收款", new Page.GetByTextOptions().setExact(true)).first().hover();
+                }
+                page.getByText("收款账户管理").click();
                 break;
             case "资金轨迹":
-                page.locator("#receive-link").getByText("收款账户").hover();
+                if (!page.getByText("资金轨迹", new Page.GetByTextOptions().setExact(true)).isVisible()) {
+                    page.getByText("外贸收款", new Page.GetByTextOptions().setExact(true)).first().hover();
+                }
                 page.getByText("资金轨迹").click();
                 break;
+            case "收款跟踪":
+                if (!page.getByText("收款跟踪", new Page.GetByTextOptions().setExact(true)).isVisible()) {
+                    page.getByText("外贸收款", new Page.GetByTextOptions().setExact(true)).first().hover();
+                }
+                page.getByText("收款跟踪").click();
+                break;
             case "合同订单":
+                if (!page.getByText("合同订单", new Page.GetByTextOptions().setExact(true)).isVisible()) {
+                    page.getByText("外贸收款", new Page.GetByTextOptions().setExact(true)).first().hover();
+                }
                 page.getByText("合同订单").click();
                 break;
             case "账单收款":
@@ -66,33 +78,27 @@ public class HomePage {
                     page.getByText("人民币账户提现", new Page.GetByTextOptions().setExact(true)).click();
                 }
                 break;
-            case "发起付款":
+            case "供应商付款":
                 page.getByText("付款", new Page.GetByTextOptions().setExact(true)).first().hover();
-                if (page.getByRole(AriaRole.TOOLTIP).getByText("供应商付款").isVisible()) {
-                    page.getByRole(AriaRole.TOOLTIP).getByText("供应商付款").hover();
-                }
-                log.info("发起付款元素数量:{}", page.getByText("发起付款").count());
-                page.getByText("发起付款").last().click();
+                page.getByText("供应商付款").last().click();
                 break;
             case "收款人管理":
                 page.getByText("付款", new Page.GetByTextOptions().setExact(true)).hover();
-                if (page.getByRole(AriaRole.TOOLTIP).getByText("供应商付款").isVisible()) {
-                    page.getByRole(AriaRole.TOOLTIP).getByText("供应商付款").hover();
-                }
                 page.getByText("收款人管理").last().click();
                 break;
+            case "退税服务商付款":
+                page.getByText("付款", new Page.GetByTextOptions().setExact(true)).hover();
+                page.getByText("退税服务商付款").last().click();
+                break;
             case "外贸收款明细":
-                boolean jiaoYiChaXunVisible = page.getByText("交易查询", new Page.GetByTextOptions().setExact(true)).isVisible();
-                log.debug("交易查询按钮可见：{}", jiaoYiChaXunVisible);
-                page.getByText("交易查询", new Page.GetByTextOptions().setExact(true)).hover();
+                page.getByText("外贸收款", new Page.GetByTextOptions().setExact(true)).first().hover();
                 page.getByText("外贸收款明细").click();
                 break;
             case "人民币账户明细":
                 page.getByText("交易查询", new Page.GetByTextOptions().setExact(true)).hover();
-                log.info("人民币账户明细元素数量：{}", page.getByText("人民币账户明细").count());
                 // 人民币账户明细按钮，有时会不展示，需要前端协助修改
-                if (page.getByText("人民币账户明细").isVisible()) {
-                    page.getByText("人民币账户明细").click();
+                if (page.getByText("人民币账户交易查询").isVisible()) {
+                    page.getByText("人民币账户交易查询").click();
                 }
                 break;
             case "汇率风险":
@@ -101,6 +107,35 @@ public class HomePage {
                 break;
         }
 
+    }
+
+    /**
+     * 页面遍历
+     */
+    public void pageSearch() {
+        switchPage("外贸收款明细");
+        switchPage("合同订单");
+        switchPage("收款账户管理");
+        switchPage("资金轨迹");
+        switchPage("收款跟踪");
+
+        switchPage("账单收款");
+
+        switchPage("外贸收款提现");
+        switchPage("人民币账户提现");
+
+        switchPage("供应商付款");
+        switchPage("收款人管理");
+        switchPage("退税服务商付款");
+
+        switchPage("外贸收款交易查询");
+        switchPage("人民币账户交易查询");
+
+        switchPage("汇率风险");
+
+        switchPage("首页");
+
+        switchPage("人民币账户详情");
     }
 
     /**
