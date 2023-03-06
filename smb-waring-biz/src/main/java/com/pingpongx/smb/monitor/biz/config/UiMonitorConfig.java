@@ -25,8 +25,4 @@ public class UiMonitorConfig {
         return new MerchantLoginParam();
     }
 
-    @Bean
-    public Playwright playwright() {
-        return Playwright.create();
-    }
 }

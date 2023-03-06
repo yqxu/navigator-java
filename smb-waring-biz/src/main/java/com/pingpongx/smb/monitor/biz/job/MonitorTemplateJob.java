@@ -6,6 +6,7 @@ import com.microsoft.playwright.options.RequestOptions;
 import com.microsoft.playwright.options.Timing;
 import com.pingpongx.job.core.biz.model.ReturnT;
 import com.pingpongx.job.core.handler.IJobHandler;
+import com.pingpongx.smb.monitor.biz.exception.LoginException;
 import com.pingpongx.smb.monitor.dal.entity.constant.BusinessLine;
 import com.pingpongx.smb.monitor.dal.entity.constant.MonitorEnv;
 import com.pingpongx.smb.monitor.dal.entity.dataobj.ApiDetail;
@@ -36,12 +37,10 @@ public abstract class MonitorTemplateJob extends IJobHandler {
     @Resource
     private MonitorEnvParam monitorEnvParam;
 
-    @Resource
-    private Playwright playwright;
-
     private String host;
     private String dingGroup;
     private String business;
+    private Page page;
 
     public void setDingGroup(String dingGroup) {
         this.dingGroup = dingGroup;
@@ -55,9 +54,17 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         this.business = business;
     }
 
+    public Page getPage() {
+        return this.page;
+    }
+
     public abstract void initEnv();
 
-    public abstract void actions(Page page);
+    public abstract void login();
+
+    public abstract void actions();
+
+    public abstract void logout();
 
     public ReturnT<String> monitor() {
         log.info("hostParam.getEnable():{}", monitorEnvParam.getEnable());
@@ -66,14 +73,15 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         }
         initEnv();
         log.info("开始时间：{}，当前monitor的环境：{}，当前业务线：{}", getFormattedTime(), monitorEnvParam.getMonitorEnv(), business);
+        Playwright playwright = null;
         Consumer<Response> listener = null;
         Browser browser = null;
         BrowserContext context = null;
-        Page page = null;
         APIRequestContext apiRequestContext = null;
         Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions().setViewportSize(1440, 875);
 
         try {
+            playwright = Playwright.create();
             browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
                     .setHandleSIGHUP(true)
                     .setHandleSIGINT(true)
@@ -92,27 +100,37 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 
             listener = monitorPageRequest(apiRequestContext, page);
 
-            actions(page);
+            try {
+                login();
+            } catch (Exception t) {
+                t.printStackTrace();
+                log.info(t.getMessage());
+                throw new LoginException();
+            }
+
+            actions();
+
+            logout();
 
             // 执行成功，将结果写入库表
             insertRecord("success", "na");
             return ReturnT.SUCCESS;
         } catch (Exception e) {
-            // 执行失败，截个图的，可以通过命令将文件复制出容器查看：curl -F 'x=@/tmp/ui-monitor/20221209070003.png' file.pingpongx.com/disk
+            // 执行失败，截个图的，可以通过命令将文件复制出容器查看：curl -F 'x=@/tmp/ui-monitor/20230224024050.png' file.pingpongx.com/disk
             // 打开地址：https://file.pingpongx.com/disk
             if (page != null) {
                 page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("/tmp/ui-monitor/" + getFormattedTime() + ".png")));
             }
             log.warn("monitor, message size: " + e.getMessage());
-            // 发送钉钉告警
-            // if (apiRequestContext != null) {
-            // sendWarnMessage(apiRequestContext , e.getMessage());
-            // }
+            // 如果是登录失败，才发送钉钉告警
+            if (apiRequestContext != null && e instanceof LoginException) {
+                sendWarnMessage(apiRequestContext , e.getMessage());
+            }
             // 执行失败，写入库表
             insertRecord("failed", e.getMessage());
             return ReturnT.FAIL;
         } finally {
-            if (listener != null) {
+            if (page != null && listener != null) {
                 page.offResponse(listener);
             }
             Page.CloseOptions closeOptions = new Page.CloseOptions();
@@ -133,12 +151,15 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                 browser.close();
                 browser = null;
             }
+            if (playwright != null) {
+                playwright.close();
+            }
         }
 
     }
 
     /**
-     * 调用开发的接口发送钉钉告警
+     * 调用开发的接口发送钉钉告警，只会判断是生产环境才发告警
      * @param message
      */
     public void sendWarnMessage(APIRequestContext apiRequestContext, String message) {
@@ -186,7 +207,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
     private Consumer<Response> monitorPageRequest(APIRequestContext apiRequestContext, Page page) {
         Consumer<Response> listener = response -> {
             try {
-                if (response.request().url().contains(host) && response.request().url().contains("api")) {
+                if (response.request().url().contains(host) && !response.request().url().endsWith("png") && response.request().url().contains("api")) {
                     String resText = response.text();
                     if (StringUtils.hasLength(resText)) {
                         int code = JSONPath.read(resText, "$.code", Integer.class);
@@ -216,6 +237,18 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         };
         page.onResponse(listener);
 
+        // 对页面上可能的弹窗进行处理，例如温馨提示什么的
+//        Consumer<Page> pageConsumer = pageC -> {
+//            if (waitElementExist(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")), 400)) {
+//                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")).click();
+//            }
+//        };
+//        page.onPopup(pageConsumer);
+//
+//        Consumer<Dialog> dialogConsumer = dialog -> {
+//            log.debug("dialog message:{}", dialog.message());
+//        };
+//        page.onDialog(dialogConsumer);
 
         // 忽略图片请求
 //        page.route("**/*.{png,jpg,jpeg}", Route::abort);
