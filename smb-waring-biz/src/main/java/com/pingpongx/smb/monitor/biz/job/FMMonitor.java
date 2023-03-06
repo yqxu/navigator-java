@@ -1,5 +1,6 @@
 package com.pingpongx.smb.monitor.biz.job;
 
+import com.alibaba.fastjson.JSON;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.WaitUntilState;
 import com.pingpongx.job.core.handler.annotation.JobHandler;
@@ -8,7 +9,6 @@ import com.pingpongx.smb.monitor.biz.pages.fm.HomePage;
 import com.pingpongx.smb.monitor.biz.pages.fm.LoginPage;
 import com.pingpongx.smb.monitor.dal.entity.uiprops.FMLoginParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -30,15 +30,21 @@ public class FMMonitor extends MonitorTemplateJob {
     }
 
     @Override
-    public void actions(Page page) {
+    public void login() {
+        log.info("FMMonitor 参数信息：{}", JSON.toJSONString(fmLoginParam));
+
         LoginPage loginPage = new LoginPage();
-        loginPage.setPage(page);
+        loginPage.setPage(super.getPage());
         loginPage.setLoginUrl(fmLoginParam.getFmLoginUrl());
         loginPage.setLoginUsername(fmLoginParam.getFmLoginUserName());
         loginPage.setLoginPassword(fmLoginParam.getFmLoginPassword());
         loginPage.login();
+    }
 
+    @Override
+    public void actions() {
         HomePage homePage = new HomePage();
+        Page page = super.getPage();
         homePage.setPage(page);
         homePage.pageSearch();
 
@@ -64,6 +70,12 @@ public class FMMonitor extends MonitorTemplateJob {
         homePage.personalInfo("子账号管理");
         homePage.personalInfo("待办事项");
 
+    }
+
+    @Override
+    public void logout() {
+        LoginPage loginPage = new LoginPage();
+        loginPage.setPage(super.getPage());
         loginPage.logout();
     }
 }

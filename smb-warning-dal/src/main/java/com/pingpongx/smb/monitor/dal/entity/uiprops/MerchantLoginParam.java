@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 public class MerchantLoginParam {
 
 
-    @Value("${uimonitor.merchant.host:https://us.pingpongx.com}")
+    @Value("${uimonitor.merchant.host:https://ro-us.pingpongx.com}")
     private String monitorMerchantHost;
 
     @Value("${uimonitor.merchant.login.username:wangqq@pingpongx.com}")
