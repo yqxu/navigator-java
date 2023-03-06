@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static com.pingpongx.smb.monitor.biz.util.PlayWrightUtils.initUtil;
 import static com.pingpongx.smb.monitor.biz.util.TimeUtils.getFormattedTime;
 
 @Slf4j
@@ -271,6 +272,8 @@ public abstract class MonitorTemplateJob extends IJobHandler {
     @Override
     public ReturnT<String> execute(String param) throws Exception {
         log.info("param is: {}",param);
+
+        initUtil();
 
         return monitor();
     }
