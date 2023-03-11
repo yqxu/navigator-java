@@ -1,11 +1,13 @@
 package com.pingpongx.smb.store;
 
 import com.pingpongx.smb.export.module.ConfiguredLeafRule;
+import com.pingpongx.smb.export.module.Rule;
 import com.pingpongx.smb.export.module.operation.RuleAnd;
 import com.pingpongx.smb.export.module.operation.RuleOr;
 import com.pingpongx.smb.export.module.persistance.And;
 import com.pingpongx.smb.export.module.persistance.LeafRuleConf;
 import com.pingpongx.smb.export.module.persistance.Or;
+import com.pingpongx.smb.export.module.persistance.RuleDto;
 import com.pingpongx.smb.rule.routers.operatiors.Factories;
 
 public class Codec {
@@ -16,12 +18,22 @@ public class Codec {
         return ruleOr;
     }
 
+    public static Rule buildRule(RuleDto ruleDto){
+        if (ruleDto instanceof And){
+            return buildRule((And)ruleDto);
+        }
+        if (ruleDto instanceof Or){
+            return buildRule((Or)ruleDto);
+        }
+        return toLeafRule((LeafRuleConf) ruleDto);
+    }
+
     public static RuleAnd buildRule(And and){
         RuleAnd ruleAnd = new RuleAnd();
         and.getAndRules().stream()
                 .map(leafRuleConf -> {
-                    ConfiguredLeafRule rule = toLeafRule(leafRuleConf);
-                    rule.setType(leafRuleConf.getType());
+                    ConfiguredLeafRule rule = toLeafRule((LeafRuleConf) leafRuleConf);
+                    rule.setType(((LeafRuleConf)leafRuleConf).getType());
                     return rule;
                 }).forEach(r->ruleAnd.and(r));
         return ruleAnd;

@@ -2,6 +2,7 @@ package com.pingpongx.smb.export.module;
 
 import com.pingpongx.smb.export.module.operation.RuleAnd;
 import com.pingpongx.smb.export.module.operation.RuleOr;
+import com.pingpongx.smb.export.module.persistance.RuleDto;
 
 import java.lang.reflect.Type;
 
@@ -36,6 +37,5 @@ public interface Rule<T> extends Comparable<Rule<T>> {
         }
         return RuleOr.newOr(this);
     }
-
-
+    RuleDto toDto();
 }

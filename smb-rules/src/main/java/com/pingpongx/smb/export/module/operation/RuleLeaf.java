@@ -1,8 +1,11 @@
 package com.pingpongx.smb.export.module.operation;
 
+import com.pingpongx.smb.export.module.ConfiguredLeafRule;
 import com.pingpongx.smb.export.module.Identified;
 import com.pingpongx.smb.export.module.MatchOperation;
 import com.pingpongx.smb.export.module.Rule;
+import com.pingpongx.smb.export.module.persistance.LeafRuleConf;
+import com.pingpongx.smb.export.module.persistance.RuleDto;
 
 public abstract class RuleLeaf<T> implements Rule<T>, Identified<String> {
     public abstract String dependsObject();
@@ -53,4 +56,15 @@ public abstract class RuleLeaf<T> implements Rule<T>, Identified<String> {
         }
         return this.getIdentify().equals(((RuleLeaf< ?>) obj).getIdentify());
     }
+
+    public RuleDto toDto(){
+        LeafRuleConf leafRule = new LeafRuleConf();
+        leafRule.setOperation(this.operatorType().getIdentify().toString());
+        leafRule.setExpected(this.expected().toString());
+        leafRule.setAttr(this.dependsAttr());
+        leafRule.setNot(this.isNot());
+        leafRule.setType(this.type());
+        return leafRule;
+    }
+
 }

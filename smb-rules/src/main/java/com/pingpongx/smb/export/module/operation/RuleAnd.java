@@ -2,8 +2,11 @@ package com.pingpongx.smb.export.module.operation;
 
 
 import com.pingpongx.smb.export.module.Rule;
+import com.pingpongx.smb.export.module.persistance.And;
+import com.pingpongx.smb.export.module.persistance.RuleDto;
 
 import java.util.PriorityQueue;
+import java.util.stream.Collectors;
 
 
 public class RuleAnd implements Rule {
@@ -13,6 +16,14 @@ public class RuleAnd implements Rule {
     public RuleOr expansion(){
         return andRuleList.stream().map(r->r.expansion()).reduce((or1,or2)->or1.and(or2)).get();
     }
+
+    @Override
+    public RuleDto toDto() {
+        And and = new And();
+        and.setAndRules(andRuleList.stream().map(rule -> rule.toDto()).collect(Collectors.toList()));
+        return and;
+    }
+
     public static Rule newAnd(Rule rule){
         if (rule instanceof RuleAnd){
             return rule;

@@ -1,9 +1,11 @@
 package com.pingpongx.smb.export.module.persistance;
 
+import com.alibaba.fastjson2.annotation.JSONType;
+
 import java.io.Serializable;
 
-
-public class LeafRuleConf implements Serializable {
+@JSONType(typeName = "LeafRuleConf")
+public class LeafRuleConf extends RuleDto {
     String type;
     String attr;
     String operation;

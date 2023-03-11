@@ -75,4 +75,6 @@ public class ConfiguredLeafRule extends RuleLeaf<String> {
     public String type() {
         return type;
     }
+
+
 }

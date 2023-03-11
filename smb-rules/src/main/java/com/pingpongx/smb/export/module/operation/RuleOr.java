@@ -1,6 +1,9 @@
 package com.pingpongx.smb.export.module.operation;
 
 import com.pingpongx.smb.export.module.Rule;
+import com.pingpongx.smb.export.module.persistance.And;
+import com.pingpongx.smb.export.module.persistance.Or;
+import com.pingpongx.smb.export.module.persistance.RuleDto;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +17,13 @@ public class RuleOr implements Rule {
     public RuleOr expansion(){
         orRuleSet = orRuleSet.stream().map(r->r.expansion()).flatMap(or->or.orRuleSet.stream()).collect(Collectors.toSet());
         return this;
+    }
+
+    @Override
+    public RuleDto toDto() {
+        Or or = new Or();
+        or.setOrRules(orRuleSet.stream().map(rule -> rule.toDto()).collect(Collectors.toList()));
+        return or;
     }
 
     @Override

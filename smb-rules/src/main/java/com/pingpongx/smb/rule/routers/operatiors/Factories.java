@@ -17,10 +17,10 @@ public class Factories {
     public static class Operation{
         public static Map<String, Supplier<MatchOperation>> factories = new ConcurrentHashMap<>();
         static {
-            factories.put(RuleConstant.Operations.StrEquals,()-> StrEquals.getInstance());
-            factories.put(RuleConstant.Operations.StrContains,()->StringContains.getInstance());
-            factories.put(RuleConstant.Operations.NumEquals,()->NumEquals.getInstance());
-            factories.put(RuleConstant.Operations.NumBiggerThen, ()->NumBiggerThen.getInstance());
+            factories.put(RuleConstant.Operations.StrEquals.getSimpleName(),()-> StrEquals.getInstance());
+            factories.put(RuleConstant.Operations.StrContains.getSimpleName(),()->StringContains.getInstance());
+            factories.put(RuleConstant.Operations.NumEquals.getSimpleName(),()->NumEquals.getInstance());
+            factories.put(RuleConstant.Operations.NumBiggerThen.getSimpleName(), ()->NumBiggerThen.getInstance());
         }
         public static MatchOperation getInstance(String name,String attr,String obj){
             try{
@@ -35,10 +35,10 @@ public class Factories {
     public static class Matcher{
         public static Map<String, Supplier<BatchMatcher>> map = new ConcurrentHashMap<>();
         static {
-            map.put(RuleConstant.Operations.StrEquals, BatchStrEquals::newInstance);
-            map.put(RuleConstant.Operations.NumEquals,BatchStrEquals::newInstance);
-            map.put(RuleConstant.Operations.StrContains, BatchStrContains::newInstance);
-            map.put(RuleConstant.Operations.NumBiggerThen, BatchNumRange::newInstance);
+            map.put(RuleConstant.Operations.StrEquals.getSimpleName(), BatchStrEquals::newInstance);
+            map.put(RuleConstant.Operations.NumEquals.getSimpleName(),BatchStrEquals::newInstance);
+            map.put(RuleConstant.Operations.StrContains.getSimpleName(), BatchStrContains::newInstance);
+            map.put(RuleConstant.Operations.NumBiggerThen.getSimpleName(), BatchNumRange::newInstance);
         }
 
         public static BatchMatcher newBatchMatcher(String identify){

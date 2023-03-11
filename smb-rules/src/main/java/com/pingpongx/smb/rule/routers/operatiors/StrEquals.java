@@ -17,7 +17,7 @@ public class StrEquals implements MatchOperation<String> {
 
     @Override
     public String getIdentify() {
-        return RuleConstant.Operations.StrEquals;
+        return RuleConstant.Operations.StrEquals.getSimpleName();
     }
 
     @Override

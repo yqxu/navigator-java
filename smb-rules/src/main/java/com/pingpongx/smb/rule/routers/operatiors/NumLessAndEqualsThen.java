@@ -16,7 +16,7 @@ public class NumLessAndEqualsThen implements MatchOperation<Number> {
 
     @Override
     public String getIdentify() {
-        return RuleConstant.Operations.NumBiggerThen;
+        return RuleConstant.Operations.NumLessAndEqualsThen.getSimpleName();
     }
 
     @Override

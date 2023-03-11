@@ -39,7 +39,7 @@ public class ConfiguredScene {
         rule.setAttr("content");
         rule.setType("SlsAlert");
         rule.setExpected("Test");
-        rule.setOperation(RuleConstant.Operations.StrContains);
+        rule.setOperation(RuleConstant.Operations.StrContains.getSimpleName());
         Scene scene = new Scene();
         scene.setCountWith(new ThresholdAlertConf(5, TimeUnit.Minutes, 10, 10));
         scene.setRulesOf(or);
