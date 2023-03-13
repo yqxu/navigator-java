@@ -31,11 +31,8 @@ public class Codec {
     public static RuleAnd buildRule(And and){
         RuleAnd ruleAnd = new RuleAnd();
         and.getAndRules().stream()
-                .map(leafRuleConf -> {
-                    ConfiguredLeafRule rule = toLeafRule((LeafRuleConf) leafRuleConf);
-                    rule.setType(((LeafRuleConf)leafRuleConf).getType());
-                    return rule;
-                }).forEach(r->ruleAnd.and(r));
+                .map(r -> buildRule(r))
+                .forEach(r->ruleAnd.or(r));
         return ruleAnd;
     }
 
