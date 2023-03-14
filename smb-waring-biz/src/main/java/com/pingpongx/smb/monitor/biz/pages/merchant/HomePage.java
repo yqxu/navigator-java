@@ -6,6 +6,8 @@ import com.microsoft.playwright.options.AriaRole;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import static com.pingpongx.smb.monitor.biz.util.PlayWrightUtils.waitElementExist;
+
 @Data
 @Slf4j
 public class HomePage {
@@ -141,6 +143,7 @@ public class HomePage {
                 }
                 page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("对账助手")).click();
                 page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("返回PingPong")).click();
+                waitElementExist(page.getByText("首页"), 400);
                 break;
         }
     }

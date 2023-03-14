@@ -1,9 +1,7 @@
 package com.pingpongx.smb.monitor.biz.pages.merchant;
 
-import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.*;
-import com.pingpongx.smb.monitor.biz.exception.LoginException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
