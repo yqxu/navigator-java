@@ -3,7 +3,6 @@ package com.pingpongx.smb.monitor.biz.pages.fm;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.PlaywrightException;
-import com.microsoft.playwright.options.AriaRole;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,11 +48,11 @@ public class HomePage {
                 }
                 page.getByText("资金轨迹").click();
                 break;
-            case "收款跟踪":
-                if (!page.getByText("收款跟踪", new Page.GetByTextOptions().setExact(true)).isVisible()) {
+            case "银行卡收款":
+                if (!page.getByText("银行卡收款", new Page.GetByTextOptions().setExact(true)).isVisible()) {
                     page.getByText("外贸收款", new Page.GetByTextOptions().setExact(true)).first().hover();
                 }
-                page.getByText("收款跟踪").click();
+                page.getByText("银行卡收款").click();
                 break;
             case "合同订单":
                 if (!page.getByText("合同订单", new Page.GetByTextOptions().setExact(true)).isVisible()) {
@@ -90,6 +89,10 @@ public class HomePage {
                 page.getByText("付款", new Page.GetByTextOptions().setExact(true)).hover();
                 page.getByText("退税服务商付款").last().click();
                 break;
+            case "服务商付款":
+                page.getByText("付款", new Page.GetByTextOptions().setExact(true)).hover();
+                page.getByText("服务商付款").last().click();
+                break;
             case "外贸收款明细":
                 page.getByText("外贸收款", new Page.GetByTextOptions().setExact(true)).first().hover();
                 page.getByText("外贸收款明细").click();
@@ -117,7 +120,7 @@ public class HomePage {
         switchPage("合同订单");
         switchPage("收款账户管理");
         switchPage("资金轨迹");
-        switchPage("收款跟踪");
+        switchPage("银行卡收款");
 
         switchPage("账单收款");
 
@@ -127,6 +130,7 @@ public class HomePage {
         switchPage("供应商付款");
         switchPage("收款人管理");
         switchPage("退税服务商付款");
+        switchPage("服务商付款");
 
         switchPage("外贸收款交易查询");
         switchPage("人民币账户交易查询");
