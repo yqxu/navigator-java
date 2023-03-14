@@ -1,5 +1,6 @@
 package com.pingpongx.smb.monitor.biz.job;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONPath;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.RequestOptions;
@@ -117,7 +118,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             insertRecord("success", "na");
             return ReturnT.SUCCESS;
         } catch (Exception e) {
-            // 执行失败，截个图的，可以通过命令将文件复制出容器查看：curl -F 'x=@/tmp/ui-monitor/20230224024050.png' file.pingpongx.com/disk
+            // 执行失败，截个图的，可以通过命令将文件复制出容器查看：curl -F 'x=@/tmp/ui-monitor/20230313201442.png' file.pingpongx.com/disk
             // 打开地址：https://file.pingpongx.com/disk
             if (page != null) {
                 page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("/tmp/ui-monitor/" + getFormattedTime() + ".png")));
@@ -125,7 +126,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             log.warn("monitor, message size: " + e.getMessage());
             // 如果是登录失败，才发送钉钉告警
             if (apiRequestContext != null && e instanceof LoginException) {
-                sendWarnMessage(apiRequestContext , e.getMessage());
+                sendWarnMessage(apiRequestContext, e.getMessage());
             }
             // 执行失败，写入库表
             insertRecord("failed", e.getMessage());
@@ -173,6 +174,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 
         // 如果当前是生产环境，发告警出来
         if (monitorEnvParam.getMonitorEnv().equals(MonitorEnv.PROD.getMonitorEnv())) {
+            log.info("error happened and data is:{}", JSON.toJSONString(data));
             apiRequestContext.post("https://smb-warning.pingpongx.com/v2/alert/" + dingGroup, RequestOptions.create().setData(data));
         }
     }
@@ -217,12 +219,13 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                         // 后续可能需要考虑code的判断条件，比如如果服务端错误，是5开头这种，
                         // 20404 40401 主站的code 码
                         if (code != 0 && code != 401 && code != 20404 && code != 40401) {
+                            log.info("monitorPageRequest error, url:{}, code:{}", response.request().url(), code);
                             saveResponseDetail(response, code);
                             // 发送告警，50004是服务端超时错误，暂时不发告警
                             if (code != 50004) {
                                 sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
                             }
-                            log.warn("api monitor error url:"+ response.request().url() + ",res:" + resText);
+                            log.warn("api monitor error url:{}, code: {}, res:{} ", response.request().url(), code, resText);
                         }
                     }
                 }
