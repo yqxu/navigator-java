@@ -166,20 +166,19 @@ public abstract class MonitorTemplateJob extends IJobHandler {
      */
     public void sendWarnMessage(APIRequestContext apiRequestContext, String message) {
         Map<String, String> data = new HashMap<>();
-        data.put("appName", "ui-monitor");
+        data.put("appName", "smb-warning");
         data.put("className", this.getClass().getSimpleName());
-//        data.put("content", message);
-        data.put("content", "容器内测试验证，忽略本次告警");
+        data.put("content", message);
         data.put("hostName", host);
         data.put("time", getFormattedTime());
 
         // 如果当前是生产环境，发告警出来
-        // if (monitorEnvParam.getMonitorEnv().equals(MonitorEnv.PROD.getMonitorEnv())) {
+        if (monitorEnvParam.getMonitorEnv().equals(MonitorEnv.PROD.getMonitorEnv())) {
             log.info("error happened and data is:{}", JSON.toJSONString(data));
             // 在容器中执行下面的post方法时，容器中没有https，应访问http
             APIResponse postDingMsgRes = apiRequestContext.post("http://smb-warning.pingpongx.com/v2/alert/" + dingGroup, RequestOptions.create().setData(data));
             log.info("调用钉钉告警结果：{}", postDingMsgRes.text());
-        // }
+        }
     }
 
     private void insertRecord(String result, String failReason) {
