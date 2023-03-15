@@ -3,8 +3,11 @@ package com.pingpongx.smb.monitor.biz.pages.fm;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.PlaywrightException;
+import com.microsoft.playwright.options.AriaRole;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+
+import static com.pingpongx.smb.monitor.biz.util.PlayWrightUtils.waitElementExist;
 
 /**
  * 首页
@@ -29,6 +32,10 @@ public class HomePage {
                 break;
             case "首页":
                 page.getByText("首页", new Page.GetByTextOptions().setExact(true)).click();
+                // 处理首页中可能出现的问卷弹窗
+                if (waitElementExist(page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).locator("i"), 600)) {
+                    page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).locator("i").click();
+                }
                 break;
             case "外贸收款":
                 if (page.getByText("接收验证码方式").isVisible()) {
@@ -85,9 +92,9 @@ public class HomePage {
                 page.getByText("付款", new Page.GetByTextOptions().setExact(true)).hover();
                 page.getByText("收款人管理").last().click();
                 break;
-            case "退税服务商付款":
+            case "退税服务":
                 page.getByText("付款", new Page.GetByTextOptions().setExact(true)).hover();
-                page.getByText("退税服务商付款").last().click();
+                page.getByText("退税服务").last().click();
                 break;
             case "服务商付款":
                 page.getByText("付款", new Page.GetByTextOptions().setExact(true)).hover();
@@ -129,7 +136,7 @@ public class HomePage {
 
         switchPage("供应商付款");
         switchPage("收款人管理");
-        switchPage("退税服务商付款");
+        switchPage("退税服务");
         switchPage("服务商付款");
 
         switchPage("外贸收款交易查询");
