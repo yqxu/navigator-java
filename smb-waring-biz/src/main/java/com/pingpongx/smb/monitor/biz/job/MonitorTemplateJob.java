@@ -80,7 +80,10 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         Browser browser = null;
         BrowserContext context = null;
         APIRequestContext apiRequestContext = null;
-        Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions().setViewportSize(1440, 875);
+        Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions()
+                // 因为福贸的业务有向导弹窗，弹出来比较恶心，而且是前端记忆的，所以在启动浏览器时把这个填入localStorage里面
+                .setStorageState("{\"origins\":[{\"origin\":\"https://flowmore.pingpongx.com\",\"localStorage\":[{\"name\":\"guideStep\",\"value\":\"{\\\"haveKyc\\\":true,\\\"vaGuide\\\":true,\\\"vaUseGuide\\\":true,\\\"firstInbound\\\":false,\\\"inboundGuide1\\\":false,\\\"inboundGuide2\\\":false,\\\"inboundGuide3\\\":false}\"},{\"name\":\"LockExchangeGuide\",\"value\":\"1\"}]}]}")
+                .setViewportSize(1440, 875);
 
         try {
             playwright = Playwright.create();
@@ -126,7 +129,8 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             log.warn("monitor, message size: " + e.getMessage());
             // 如果是登录失败，才发送钉钉告警
             if (apiRequestContext != null && e instanceof LoginException) {
-                sendWarnMessage(apiRequestContext, e.getMessage());
+                // sendWarnMessage(apiRequestContext, e.getMessage());
+                log.error("{}监控：{}", this.business, e.getMessage());
             }
             // 执行失败，写入库表
             insertRecord("failed", e.getMessage());
@@ -225,7 +229,8 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                             saveResponseDetail(response, code);
                             // 发送告警，50004是服务端超时错误，暂时不发告警
                             if (code != 50004) {
-                                sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
+                                // sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
+                                log.error("{}监控, url:{}, res:{}", this.business, response.request().url(), resText);
                             }
                             log.warn("api monitor error url:{}, code: {}, res:{} ", response.request().url(), code, resText);
                         }
