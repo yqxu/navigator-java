@@ -80,7 +80,10 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         Browser browser = null;
         BrowserContext context = null;
         APIRequestContext apiRequestContext = null;
-        Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions().setViewportSize(1440, 875);
+        Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions()
+                // 因为福贸的业务有向导弹窗，弹出来比较恶心，而且是前端记忆的，所以在启动浏览器时把这个填入localStorage里面
+                .setStorageState("{\"origins\":[{\"origin\":\"https://flowmore.pingpongx.com\",\"localStorage\":[{\"name\":\"guideStep\",\"value\":\"{\\\"haveKyc\\\":true,\\\"vaGuide\\\":true,\\\"vaUseGuide\\\":true,\\\"firstInbound\\\":false,\\\"inboundGuide1\\\":false,\\\"inboundGuide2\\\":false,\\\"inboundGuide3\\\":false}\"},{\"name\":\"LockExchangeGuide\",\"value\":\"1\"}]}]}")
+                .setViewportSize(1440, 875);
 
         try {
             playwright = Playwright.create();
@@ -126,7 +129,8 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             log.warn("monitor, message size: " + e.getMessage());
             // 如果是登录失败，才发送钉钉告警
             if (apiRequestContext != null && e instanceof LoginException) {
-                sendWarnMessage(apiRequestContext, e.getMessage());
+                // sendWarnMessage(apiRequestContext, e.getMessage());
+                log.error("{}监控：{}", this.business, e.getMessage());
             }
             // 执行失败，写入库表
             insertRecord("failed", e.getMessage());
@@ -166,7 +170,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
      */
     public void sendWarnMessage(APIRequestContext apiRequestContext, String message) {
         Map<String, String> data = new HashMap<>();
-        data.put("appName", "ui-monitor");
+        data.put("appName", "smb-warning");
         data.put("className", this.getClass().getSimpleName());
         data.put("content", message);
         data.put("hostName", host);
@@ -175,7 +179,9 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         // 如果当前是生产环境，发告警出来
         if (monitorEnvParam.getMonitorEnv().equals(MonitorEnv.PROD.getMonitorEnv())) {
             log.info("error happened and data is:{}", JSON.toJSONString(data));
-            apiRequestContext.post("https://smb-warning.pingpongx.com/v2/alert/" + dingGroup, RequestOptions.create().setData(data));
+            // 在容器中执行下面的post方法时，容器中没有https，应访问http
+            APIResponse postDingMsgRes = apiRequestContext.post("http://smb-warning.pingpongx.com/v2/alert/" + dingGroup, RequestOptions.create().setData(data));
+            log.info("调用钉钉告警结果：{}", postDingMsgRes.text());
         }
     }
 
@@ -223,7 +229,8 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                             saveResponseDetail(response, code);
                             // 发送告警，50004是服务端超时错误，暂时不发告警
                             if (code != 50004) {
-                                sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
+                                // sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
+                                log.error("{}监控, url:{}, res:{}", this.business, response.request().url(), resText);
                             }
                             log.warn("api monitor error url:{}, code: {}, res:{} ", response.request().url(), code, resText);
                         }
