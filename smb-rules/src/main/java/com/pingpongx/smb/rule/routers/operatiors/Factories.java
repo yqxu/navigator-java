@@ -2,10 +2,7 @@ package com.pingpongx.smb.rule.routers.operatiors;
 
 import com.pingpongx.smb.export.RuleConstant;
 import com.pingpongx.smb.export.module.MatchOperation;
-import com.pingpongx.smb.rule.routers.operatiors.batch.BatchMatcher;
-import com.pingpongx.smb.rule.routers.operatiors.batch.BatchNumRange;
-import com.pingpongx.smb.rule.routers.operatiors.batch.BatchStrContains;
-import com.pingpongx.smb.rule.routers.operatiors.batch.BatchStrEquals;
+import com.pingpongx.smb.rule.routers.operatiors.batch.*;
 
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +16,7 @@ public class Factories {
         static {
             factories.put(RuleConstant.Operations.StrEquals.getSimpleName(),()-> StrEquals.getInstance());
             factories.put(RuleConstant.Operations.StrContains.getSimpleName(),()->StringContains.getInstance());
+            factories.put(RuleConstant.Operations.StrNotBlank.getSimpleName(),()->StrNotBlank.getInstance());
             factories.put(RuleConstant.Operations.NumEquals.getSimpleName(),()->NumEquals.getInstance());
             factories.put(RuleConstant.Operations.NumBiggerThen.getSimpleName(), ()->NumBiggerThen.getInstance());
         }
@@ -37,6 +35,7 @@ public class Factories {
         static {
             map.put(RuleConstant.Operations.StrEquals.getSimpleName(), BatchStrEquals::newInstance);
             map.put(RuleConstant.Operations.NumEquals.getSimpleName(),BatchStrEquals::newInstance);
+            map.put(RuleConstant.Operations.StrNotBlank.getSimpleName(), BatchStrNotBlank::newInstance);
             map.put(RuleConstant.Operations.StrContains.getSimpleName(), BatchStrContains::newInstance);
             map.put(RuleConstant.Operations.NumBiggerThen.getSimpleName(), BatchNumRange::newInstance);
         }

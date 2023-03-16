@@ -6,6 +6,7 @@ public class RuleConstant {
     public static enum Operations{
         StrContains(StringContains.class.getSimpleName()),
         StrEquals(StrEquals.class.getSimpleName()),
+        StrNotBlank(StrNotBlank.class.getSimpleName()),
         NumEquals(NumEquals.class.getSimpleName()),
         NumBiggerThen(NumBiggerThen.class.getSimpleName()),
         NumBiggerAndEqualsThen(NumBiggerAndEqualsThen.class.getSimpleName()),
