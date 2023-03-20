@@ -46,4 +46,14 @@ public class Codec {
         rule.setNot(conf.isNot());
         return rule;
     }
+
+    public LeafRuleConf toConf(ConfiguredRule rule){
+        LeafRuleConf conf = new LeafRuleConf();
+        conf.setOperation(rule.getOperation().toString());
+        conf.setExpected(rule.getExpected());
+        conf.setAttr(rule.getAttr());
+        conf.setNot(rule.isNot());
+        conf.setType(rule.getType());
+        return conf;
+    }
 }
