@@ -17,14 +17,14 @@ public class BatchStrNotBlank extends BatchNotEmpty<String> {
         return StrNotBlank.getInstance();
     }
 
-    public static BatchMatcher<String> newInstance() {
+    public static SameTypeMatcher<String> newInstance() {
         BatchStrNotBlank strContains = new BatchStrNotBlank();
         return strContains;
     }
 
     @Override
-    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(String input, Set<Node<RuleLeaf, RuleTrieElement>> repeat) {
-        if (input==null||input.isEmpty()) {
+    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object input, Set<Node<RuleLeaf, RuleTrieElement>> repeat) {
+        if (input==null||input.toString().isEmpty()) {
             return emptySet.stream().collect(Collectors.toSet());
         } else {
             return notEmptySet.stream().collect(Collectors.toSet());

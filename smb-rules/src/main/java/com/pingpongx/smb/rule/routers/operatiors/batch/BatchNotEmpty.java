@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-public abstract class BatchNotEmpty<ValType> implements BatchMatcher<ValType> {
+public abstract class BatchNotEmpty<ValType> implements SameTypeMatcher<ValType> {
 
     Set<Node<RuleLeaf, RuleTrieElement>> emptySet = new HashSet<>();
     Set<Node<RuleLeaf, RuleTrieElement>> notEmptySet = new HashSet<>();
@@ -28,7 +28,7 @@ public abstract class BatchNotEmpty<ValType> implements BatchMatcher<ValType> {
      * @param input 对象的待匹配属性，因为操作符的限制只能是string
      * @return 用了contains 规则的rule 的 identify 集合
      */
-    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(ValType input, Set<Node<RuleLeaf, RuleTrieElement>> repeat) {
+    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object input, Set<Node<RuleLeaf, RuleTrieElement>> repeat) {
         if (input == null) {
             return emptySet.stream().collect(Collectors.toSet());
         } else {

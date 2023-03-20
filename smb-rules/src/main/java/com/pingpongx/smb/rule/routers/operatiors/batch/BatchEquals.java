@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 
-public abstract class BatchEquals<ValType> implements BatchMatcher<ValType> {
+public abstract class BatchEquals<ValType> implements SameTypeMatcher<ValType> {
 
     Map<ValType, MatchedSet> ruleMap = new ConcurrentHashMap<>();
 
@@ -35,7 +35,7 @@ public abstract class BatchEquals<ValType> implements BatchMatcher<ValType> {
      * @param input 对象的待匹配属性，因为操作符的限制只能是string
      * @return 用了contains 规则的rule 的 identify 集合
      */
-    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(ValType input, Set<Node<RuleLeaf, RuleTrieElement>> repeat) {
+    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object input, Set<Node<RuleLeaf, RuleTrieElement>> repeat) {
         if (input == null) {
             return notSet.stream().collect(Collectors.toSet());
         }

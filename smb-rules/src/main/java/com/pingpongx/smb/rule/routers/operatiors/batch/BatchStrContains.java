@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class BatchStrContains implements BatchMatcher<String>{
+public class BatchStrContains implements SameTypeMatcher<String>{
     //AC自动机
     ACTrie<Character, MatchedSet> trie = new ACTrie<>();
 
@@ -69,13 +69,13 @@ public class BatchStrContains implements BatchMatcher<String>{
     }
 
     @Override
-    public void putRule(RuleLeaf< String> rule, Node<RuleLeaf, RuleTrieElement> node) {
+    public void putRule(RuleLeaf<String> rule, Node<RuleLeaf, RuleTrieElement> node) {
         String exp = rule.expected();
         //TODO:Init 完成节点做一次reindex
         putAndReIndex(exp,node,rule.isNot());
     }
 
-    public static BatchMatcher<String> newInstance() {
+    public static SameTypeMatcher<String> newInstance() {
         BatchStrContains strContains = new BatchStrContains();
         return strContains;
     }

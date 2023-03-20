@@ -21,7 +21,7 @@ public class BatchStrEquals extends BatchEquals<String> {
         return StrEquals.getInstance();
     }
 
-    public static BatchMatcher<String> newInstance() {
+    public static SameTypeMatcher<String> newInstance() {
         BatchStrEquals strContains = new BatchStrEquals();
         return strContains;
     }

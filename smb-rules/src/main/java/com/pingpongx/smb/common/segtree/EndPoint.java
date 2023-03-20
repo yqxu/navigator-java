@@ -1,14 +1,18 @@
 package com.pingpongx.smb.common.segtree;
 
-public class EndPoint implements Comparable<EndPoint>{
-    Number val;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
+public class EndPoint implements Comparable<EndPoint>,Cloneable{
+    BigDecimal val;
     Limit limit;
 
-    public Number getVal() {
+    public BigDecimal getVal() {
         return val;
     }
 
-    public void setVal(Number val) {
+    public void setVal(BigDecimal val) {
         this.val = val;
     }
 
@@ -38,9 +42,29 @@ public class EndPoint implements Comparable<EndPoint>{
         return result;
     }
 
+
+    private static Map<Limit,Integer> compareVal = new HashMap<>();
+
     @Override
     public int compareTo(EndPoint o) {
-        //TODO:
-        return 0;
+        int ret = this.val.compareTo(o.val);
+        if (ret!=0){
+            return ret;
+        }
+        return this.limit.compareTo(o.limit);
+    }
+
+    public EndPoint reversal(){
+        EndPoint ret = new EndPoint();
+        ret.setVal(this.val);
+        ret.setLimit(this.limit.reversal());
+        return ret;
+    }
+
+    public static EndPoint of(BigDecimal val,Limit limit){
+        EndPoint point = new EndPoint();
+        point.setVal(val);
+        point.setLimit(limit);
+        return point;
     }
 }

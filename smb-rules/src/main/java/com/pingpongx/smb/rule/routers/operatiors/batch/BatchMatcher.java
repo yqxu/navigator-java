@@ -9,16 +9,16 @@ import com.pingpongx.smb.export.module.MatchOperation;
 
 import java.util.Set;
 
-public interface BatchMatcher<T> extends Comparable<BatchMatcher<T>>, Identified<String> {
-    Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(T input,Set<Node<RuleLeaf, RuleTrieElement>> repeat);
+public interface BatchMatcher<T,ConfT> extends Comparable<BatchMatcher<T,ConfT>>, Identified<String> {
+    Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object input,Set<Node<RuleLeaf, RuleTrieElement>> repeat);
 
     MatchOperation supportedOperation();
 
     @Override
-    default int compareTo(BatchMatcher<T> o) {
+    default int compareTo(BatchMatcher<T,ConfT> o) {
         return this.supportedOperation().sortBy() - o.supportedOperation().sortBy();
     }
 
-    void putRule(RuleLeaf<T> rule, Node<RuleLeaf, RuleTrieElement> node);
+    void putRule(RuleLeaf<ConfT> rule, Node<RuleLeaf, RuleTrieElement> node);
 
 }
