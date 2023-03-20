@@ -1,6 +1,5 @@
 package com.pingpongx.smb.export.module.operation;
 
-import com.pingpongx.smb.export.module.ConfiguredLeafRule;
 import com.pingpongx.smb.export.module.Identified;
 import com.pingpongx.smb.export.module.MatchOperation;
 import com.pingpongx.smb.export.module.Rule;

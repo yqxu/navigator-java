@@ -1,6 +1,6 @@
 package com.pingpongx.smb.warning.biz.rules.temp;
 
-import com.pingpongx.smb.export.module.ConfiguredLeafRule;
+import com.pingpongx.smb.export.module.ConfiguredStrRule;
 import com.pingpongx.smb.rule.routers.operatiors.StringContains;
 import com.pingpongx.smb.warning.biz.alert.model.SlsAlert;
 import org.springframework.stereotype.Component;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-public class TempRule1 extends ConfiguredLeafRule {
+public class TempRule1 extends ConfiguredStrRule {
     private static String except = "com.pingpongx.business.account.biz.payout.PayoutTemplate.payoutRefund(PayoutTemplate.java:165)";
 
     @PostConstruct

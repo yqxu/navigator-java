@@ -4,9 +4,9 @@ import com.pingpongx.smb.export.RuleConstant;
 import com.pingpongx.smb.export.module.MatchOperation;
 
 
-public class NumLessThen implements MatchOperation<Number> {
-    public static NumLessThen getInstance(){
-        return new NumLessThen();
+public class NumRangeIn implements MatchOperation<Number> {
+    public static NumRangeIn getInstance(){
+        return new NumRangeIn();
     }
     public static MatchOperation getInstance(String obj,String attr){
         return getInstance().attr(attr).obj(obj);
@@ -16,7 +16,7 @@ public class NumLessThen implements MatchOperation<Number> {
 
     @Override
     public String getIdentify() {
-        return RuleConstant.Operations.NumLessThen.getSimpleName();
+        return RuleConstant.Operations.NumberRangeIn.getSimpleName();
     }
 
     @Override
@@ -51,7 +51,7 @@ public class NumLessThen implements MatchOperation<Number> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        NumLessThen that = (NumLessThen) o;
+        NumRangeIn that = (NumRangeIn) o;
 
         if (attr != null ? !attr.equals(that.attr) : that.attr != null) return false;
         return obj != null ? obj.equals(that.obj) : that.obj == null;

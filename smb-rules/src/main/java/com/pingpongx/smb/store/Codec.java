@@ -1,6 +1,7 @@
 package com.pingpongx.smb.store;
 
-import com.pingpongx.smb.export.module.ConfiguredLeafRule;
+import com.pingpongx.smb.export.module.ConfiguredRule;
+import com.pingpongx.smb.export.module.ConfiguredStrRule;
 import com.pingpongx.smb.export.module.Rule;
 import com.pingpongx.smb.export.module.operation.RuleAnd;
 import com.pingpongx.smb.export.module.operation.RuleOr;
@@ -36,8 +37,8 @@ public class Codec {
         return ruleAnd;
     }
 
-    public static ConfiguredLeafRule toLeafRule(LeafRuleConf conf){
-        ConfiguredLeafRule rule = new ConfiguredLeafRule();
+    public static <T>  ConfiguredRule<T> toLeafRule(LeafRuleConf conf){
+        ConfiguredRule rule = Factories.ConfiguredClass.instance(conf.getOperation());
         rule.setAttr(conf.getAttr());
         rule.setExpected(conf.getExpected());
         rule.setType(conf.getType());

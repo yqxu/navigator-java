@@ -1,6 +1,9 @@
 package com.pingpongx.smb.rule.routers.operatiors;
 
 import com.pingpongx.smb.export.RuleConstant;
+import com.pingpongx.smb.export.module.ConfiguredRangeRule;
+import com.pingpongx.smb.export.module.ConfiguredRule;
+import com.pingpongx.smb.export.module.ConfiguredStrRule;
 import com.pingpongx.smb.export.module.MatchOperation;
 import com.pingpongx.smb.rule.routers.operatiors.batch.*;
 
@@ -11,6 +14,7 @@ import java.util.function.Supplier;
 
 
 public class Factories {
+
     public static class Operation{
         public static Map<String, Supplier<MatchOperation>> factories = new ConcurrentHashMap<>();
         static {
@@ -18,7 +22,7 @@ public class Factories {
             factories.put(RuleConstant.Operations.StrContains.getSimpleName(),()->StringContains.getInstance());
             factories.put(RuleConstant.Operations.StrNotBlank.getSimpleName(),()->StrNotBlank.getInstance());
             factories.put(RuleConstant.Operations.NumEquals.getSimpleName(),()->NumEquals.getInstance());
-            factories.put(RuleConstant.Operations.NumBiggerThen.getSimpleName(), ()->NumBiggerThen.getInstance());
+            factories.put(RuleConstant.Operations.NumberRangeIn.getSimpleName(), ()->NumRangeIn.getInstance());
         }
         public static MatchOperation getInstance(String name,String attr,String obj){
             try{
@@ -37,10 +41,25 @@ public class Factories {
             map.put(RuleConstant.Operations.NumEquals.getSimpleName(),BatchStrEquals::newInstance);
             map.put(RuleConstant.Operations.StrNotBlank.getSimpleName(), BatchStrNotBlank::newInstance);
             map.put(RuleConstant.Operations.StrContains.getSimpleName(), BatchStrContains::newInstance);
-            map.put(RuleConstant.Operations.NumBiggerThen.getSimpleName(), BatchNumRange::newInstance);
+            map.put(RuleConstant.Operations.NumberRangeIn.getSimpleName(), BatchNumRange::newInstance);
         }
 
         public static BatchMatcher newBatchMatcher(String identify){
+            return Optional.ofNullable(map.get(identify)).map(Supplier::get).orElse(null);
+        }
+    }
+
+    public static class ConfiguredClass{
+        public static Map<String, Supplier<ConfiguredRule>> map = new ConcurrentHashMap<>();
+        static {
+            map.put(RuleConstant.Operations.StrEquals.getSimpleName(), ConfiguredStrRule::new);
+            map.put(RuleConstant.Operations.NumEquals.getSimpleName(),ConfiguredStrRule::new);
+            map.put(RuleConstant.Operations.StrNotBlank.getSimpleName(), ConfiguredStrRule::new);
+            map.put(RuleConstant.Operations.StrContains.getSimpleName(), ConfiguredStrRule::new);
+            map.put(RuleConstant.Operations.NumberRangeIn.getSimpleName(), ConfiguredRangeRule::new);
+        }
+
+        public static ConfiguredRule instance(String identify){
             return Optional.ofNullable(map.get(identify)).map(Supplier::get).orElse(null);
         }
     }

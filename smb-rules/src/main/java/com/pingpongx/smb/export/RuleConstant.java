@@ -8,10 +8,8 @@ public class RuleConstant {
         StrEquals(StrEquals.class.getSimpleName()),
         StrNotBlank(StrNotBlank.class.getSimpleName()),
         NumEquals(NumEquals.class.getSimpleName()),
-        NumBiggerThen(NumBiggerThen.class.getSimpleName()),
-        NumBiggerAndEqualsThen(NumBiggerAndEqualsThen.class.getSimpleName()),
-        NumLessThen(NumLessThen.class.getSimpleName()),
-        NumLessAndEqualsThen(NumLessAndEqualsThen.class.getSimpleName());
+        NumberRangeIn(Number.class.getSimpleName()),
+        ;
 
         String simpleName;
 
