@@ -50,11 +50,11 @@ public class BatchStrContains implements SameTypeMatcher<String>{
      * @param input 对象的待匹配属性，因为操作符的限制只能是string
      * @return 用了contains 规则的rule 的 identify 集合
      */
-    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(String input,Set<Node<RuleLeaf, RuleTrieElement>> repeat){
+    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object input,Set<Node<RuleLeaf, RuleTrieElement>> repeat){
         if (input == null){
             return notSet.stream().collect(Collectors.toSet());
         }
-        IdentityPath<Character> path = IdentityPath.of(input.toCharArray());
+        IdentityPath<Character> path = IdentityPath.of(input.toString().toCharArray());
         MatchedSet matchedSet = trie.walk(path).stream().map(Node::getData).map(FSMNode::getData).filter(Objects::nonNull).reduce((set1, set2)->{
             set1.getMatchedNotRule().addAll(set2.getMatchedNotRule());
             set1.getMatchedRule().addAll(set2.getMatchedRule());
