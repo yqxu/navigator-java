@@ -133,7 +133,6 @@ public class SegTreeNode<ValType> {
     }
 
     public ValType calculateLazy(){
-        this.value.getClass();
         lazy.forEach(e->this.value = e.getOperation().doMerge(e.getValue(),value));
         return this.value;
     }

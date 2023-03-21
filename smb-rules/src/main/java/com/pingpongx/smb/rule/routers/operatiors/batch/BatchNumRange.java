@@ -61,6 +61,15 @@ public class BatchNumRange implements BatchMatcher<BigDecimal,Range> {
             rangeList.add(aRange);
         }
         rangeList.forEach(r->ranges.executeOperation(r, Stream.of(node).collect(Collectors.toSet()),(newOne,oldOne)->{
+            if (newOne==null&&oldOne==null){
+                return new HashSet<>();
+            }
+            if (newOne==null){
+                return oldOne;
+            }
+            if (oldOne==null){
+                return newOne;
+            }
             oldOne.addAll(newOne);
             return oldOne;
         }));
