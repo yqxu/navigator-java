@@ -4,6 +4,7 @@ import com.pingpongx.smb.export.module.ConfiguredRule;
 import com.pingpongx.smb.export.module.ConfiguredStrRule;
 import com.pingpongx.smb.export.module.Rule;
 import com.pingpongx.smb.export.module.operation.RuleAnd;
+import com.pingpongx.smb.export.module.operation.RuleLeaf;
 import com.pingpongx.smb.export.module.operation.RuleOr;
 import com.pingpongx.smb.export.module.persistance.And;
 import com.pingpongx.smb.export.module.persistance.LeafRuleConf;
@@ -47,13 +48,7 @@ public class Codec {
         return rule;
     }
 
-    public LeafRuleConf toConf(ConfiguredRule rule){
-        LeafRuleConf conf = new LeafRuleConf();
-        conf.setOperation(rule.getOperation().toString());
-        conf.setExpected(rule.getExpected());
-        conf.setAttr(rule.getAttr());
-        conf.setNot(rule.isNot());
-        conf.setType(rule.getType());
-        return conf;
+    public RuleDto toConf(Rule rule){
+        return rule.toDto();
     }
 }
