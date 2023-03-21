@@ -11,11 +11,11 @@ public class Segment implements Cloneable {
     public static Segment of(EndPoint start, EndPoint end) {
         Segment segment = new Segment();
         if (start.compareTo(end) > 0) {
-            segment.setStart(start);
-            segment.setEnd(end);
-        } else {
             segment.setStart(end);
             segment.setEnd(start);
+        } else {
+            segment.setStart(start);
+            segment.setEnd(end);
         }
         return segment;
     }
