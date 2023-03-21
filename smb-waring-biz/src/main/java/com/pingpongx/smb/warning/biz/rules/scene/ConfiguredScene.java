@@ -3,10 +3,13 @@ package com.pingpongx.smb.warning.biz.rules.scene;
 import com.alibaba.fastjson.JSON;
 import com.pingpongx.smb.export.RuleConstant;
 import com.pingpongx.smb.export.globle.Engine;
+import com.pingpongx.smb.export.module.Rule;
 import com.pingpongx.smb.export.module.operation.RuleOr;
 import com.pingpongx.smb.export.module.persistance.And;
 import com.pingpongx.smb.export.module.persistance.LeafRuleConf;
 import com.pingpongx.smb.export.module.persistance.Or;
+import com.pingpongx.smb.export.module.persistance.RuleDto;
+import com.pingpongx.smb.rule.routers.operatiors.Factories;
 import com.pingpongx.smb.store.Codec;
 import com.pingpongx.smb.warning.biz.alert.InhibitionFactory;
 import com.pingpongx.smb.warning.biz.alert.ThresholdAlertConf;
@@ -20,6 +23,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class ConfiguredScene {
@@ -48,12 +53,27 @@ public class ConfiguredScene {
     }
 
     public void loadConfigStr(String confStr) {
+        Scene scenet = new Scene();
+        Or or = new Or();
+        And and = new And();
+        LeafRuleConf conf = new LeafRuleConf();
+        conf.setType("type");
+        conf.setNot(false);
+        conf.setExpected("32423");
+        conf.setOperation("NumberRangeIn");
+        conf.setAttr("attr");
+        and.setAndRules(Stream.of(conf).collect(Collectors.toList()));
+        or.setOrRules(Stream.of(and).collect(Collectors.toList()));
+        scenet.setRulesOf(or);
+        String strTest = JSON.toJSONString(or);
+        JSON.parseObject(strTest,RuleDto.class);
+
         List<Scene> scenes = JSON.parseArray(confStr, Scene.class);
         if (scenes == null) {
             return;
         }
         scenes.stream().forEach(scene -> {
-            RuleOr rule = Codec.buildRule(scene.getRulesOf());
+            Rule rule = Codec.buildRule(scene.getRulesOf());
             CountContext countContext = new CountContext(scene);
             engine.put(rule, countContext);
             Inhibition<ThirdPartAlert> inhibition = inhibitionFactory.newInhibition(scene.getIdentity(), scene.getCountWith());

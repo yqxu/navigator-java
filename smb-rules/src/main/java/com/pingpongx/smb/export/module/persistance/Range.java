@@ -5,9 +5,10 @@ import com.alibaba.fastjson2.annotation.JSONType;
 import com.pingpongx.smb.common.segtree.EndPoint;
 import com.pingpongx.smb.common.segtree.Limit;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
-public class Range {
+public class Range implements Serializable {
     public static BigDecimal MAX=new BigDecimal(Long.MAX_VALUE);
     public static BigDecimal MIN=new BigDecimal(Long.MIN_VALUE);
 
@@ -40,5 +41,19 @@ public class Range {
 
     public void setRangeEnd(String rangeEnd) {
         this.rangeEnd = rangeEnd;
+    }
+
+    @Override
+    public String toString() {
+        if (this.rangeType.equals(RangeType.LCRC)){
+            return "["+rangeStart+","+rangeEnd+"]";
+        }
+        if (this.rangeType.equals(RangeType.LCRO)){
+            return "["+rangeStart+","+rangeEnd+")";
+        }
+        if (this.rangeType.equals(RangeType.LORC)){
+            return "("+rangeStart+","+rangeEnd+"]";
+        }
+        return "("+rangeStart+","+rangeEnd+")";
     }
 }

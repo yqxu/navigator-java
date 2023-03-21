@@ -7,8 +7,9 @@ import com.pingpongx.smb.export.module.Rule;
 import java.io.Serializable;
 import java.util.List;
 
-@JSONType(typeName = "Or")
+@JSONType(typeName = "Or",typeKey = "ruleType")
 public class Or extends RuleDto {
+    String ruleType = "Or";
     List<RuleDto> orRules;
 
     public List<RuleDto> getOrRules() {

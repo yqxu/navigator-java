@@ -5,8 +5,9 @@ import com.alibaba.fastjson2.annotation.JSONType;
 import java.io.Serializable;
 import java.util.List;
 
-@JSONType(typeName = "And")
+@JSONType(typeName = "And",typeKey = "ruleType")
 public class And extends RuleDto {
+    String ruleType = "And";
     List<RuleDto> andRules;
 
     public List<RuleDto> getAndRules() {

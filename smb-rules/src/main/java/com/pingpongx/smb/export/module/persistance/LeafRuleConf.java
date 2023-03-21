@@ -4,8 +4,9 @@ import com.alibaba.fastjson2.annotation.JSONType;
 
 import java.io.Serializable;
 
-@JSONType(typeName = "LeafRuleConf")
+@JSONType(typeName = "Leaf",typeKey = "ruleType")
 public class LeafRuleConf extends RuleDto {
+    String ruleType = "Leaf";
     String type;
     String attr;
     String operation;
