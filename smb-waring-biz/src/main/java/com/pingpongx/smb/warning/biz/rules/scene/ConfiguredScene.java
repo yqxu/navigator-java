@@ -1,6 +1,6 @@
 package com.pingpongx.smb.warning.biz.rules.scene;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.pingpongx.smb.export.RuleConstant;
 import com.pingpongx.smb.export.globle.Engine;
 import com.pingpongx.smb.export.module.Rule;

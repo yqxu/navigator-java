@@ -30,8 +30,8 @@ public class Segment implements Cloneable {
         start.setLimit(Limit.RIGHT_EQUAL);
 
         EndPoint end = new EndPoint();
-        start.setVal(new BigDecimal(Long.MAX_VALUE));
-        start.setLimit(Limit.LEFT_EQUAL);
+        end.setVal(new BigDecimal(Long.MAX_VALUE));
+        end.setLimit(Limit.LEFT_EQUAL);
 
         return Segment.of(start, end);
     }

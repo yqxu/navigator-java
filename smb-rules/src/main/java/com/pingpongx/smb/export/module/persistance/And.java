@@ -17,4 +17,12 @@ public class And extends RuleDto {
     public void setAndRules(List<RuleDto> andRules) {
         this.andRules = andRules;
     }
+
+    public String getRuleType() {
+        return ruleType;
+    }
+
+    public void setRuleType(String ruleType) {
+        this.ruleType = ruleType;
+    }
 }

@@ -19,4 +19,12 @@ public class Or extends RuleDto {
     public void setOrRules(List<RuleDto> orRules) {
         this.orRules = orRules;
     }
+
+    public String getRuleType() {
+        return ruleType;
+    }
+
+    public void setRuleType(String ruleType) {
+        this.ruleType = ruleType;
+    }
 }

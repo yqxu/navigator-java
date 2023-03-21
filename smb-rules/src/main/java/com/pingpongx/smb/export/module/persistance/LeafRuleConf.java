@@ -52,4 +52,12 @@ public class LeafRuleConf extends RuleDto {
     public void setNot(boolean not) {
         this.not = not;
     }
+
+    public String getRuleType() {
+        return ruleType;
+    }
+
+    public void setRuleType(String ruleType) {
+        this.ruleType = ruleType;
+    }
 }
