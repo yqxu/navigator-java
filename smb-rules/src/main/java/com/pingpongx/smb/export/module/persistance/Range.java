@@ -19,9 +19,15 @@ public class Range implements Serializable {
     String rangeStart;
     String rangeEnd;
 
-    public RangeType getRangeType() {
-        return RangeType.valueOf(rangeType);
+    public String getRangeType() {
+        return rangeType;
     }
+
+    public RangeType rangeTypeEnum() {
+        return  RangeType.valueOf(rangeType);
+    }
+
+
 
     public void setRangeType(String rangeType) {
         this.rangeType = rangeType;

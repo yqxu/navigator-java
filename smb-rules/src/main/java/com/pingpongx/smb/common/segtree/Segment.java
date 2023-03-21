@@ -37,8 +37,8 @@ public class Segment implements Cloneable {
     }
 
     public static Segment fromRange(Range range) {
-        EndPoint start = EndPoint.of(new BigDecimal(range.getRangeStart()), range.getRangeType().getStartLimitType());
-        EndPoint end = EndPoint.of(new BigDecimal(range.getRangeEnd()), range.getRangeType().getEndLimitType());
+        EndPoint start = EndPoint.of(new BigDecimal(range.getRangeStart()), range.rangeTypeEnum().getStartLimitType());
+        EndPoint end = EndPoint.of(new BigDecimal(range.getRangeEnd()), range.rangeTypeEnum().getEndLimitType());
         return Segment.of(start, end);
     }
 
