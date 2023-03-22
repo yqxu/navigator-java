@@ -8,6 +8,7 @@ import com.pingpongx.smb.export.module.MatchOperation;
 import com.pingpongx.smb.export.module.RuleTrieElement;
 import com.pingpongx.smb.export.module.operation.RuleLeaf;
 import com.pingpongx.smb.export.module.persistance.Range;
+import com.pingpongx.smb.rule.routers.operatiors.NumRangeIn;
 import com.pingpongx.smb.rule.routers.operatiors.StrEquals;
 
 import java.math.BigDecimal;
@@ -45,7 +46,7 @@ public class BatchNumRange implements BatchMatcher<BigDecimal,Range> {
 
     @Override
     public MatchOperation supportedOperation() {
-        return StrEquals.getInstance();
+        return NumRangeIn.getInstance();
     }
 
     @Override
