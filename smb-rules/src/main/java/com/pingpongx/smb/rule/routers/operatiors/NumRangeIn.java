@@ -21,7 +21,7 @@ public class NumRangeIn implements MatchOperation<Number> {
 
     @Override
     public int sortBy() {
-        return 100;
+        return 101;
     }
 
     @Override

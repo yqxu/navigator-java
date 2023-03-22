@@ -8,7 +8,7 @@ public class RuleConstant {
         StrEquals(StrEquals.class.getSimpleName()),
         StrNotBlank(StrNotBlank.class.getSimpleName()),
         NumEquals(NumEquals.class.getSimpleName()),
-        NumberRangeIn(Number.class.getSimpleName()),
+        NumberRangeIn(NumRangeIn.class.getSimpleName()),
         ;
 
         String simpleName;

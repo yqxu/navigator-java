@@ -22,7 +22,7 @@ public class StrEquals implements MatchOperation<String> {
 
     @Override
     public int sortBy() {
-        return 0;
+        return 1;
     }
 
     @Override
