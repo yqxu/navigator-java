@@ -3,10 +3,8 @@ package com.pingpongx.smb.export.module.persistance;
 import com.alibaba.fastjson2.annotation.JSONType;
 
 import java.io.Serializable;
-
 @JSONType(typeName = "Leaf",typeKey = "ruleType")
 public class LeafRuleConf extends RuleDto {
-    String ruleType = "Leaf";
     String type;
     String attr;
     String operation;
@@ -53,11 +51,4 @@ public class LeafRuleConf extends RuleDto {
         this.not = not;
     }
 
-    public String getRuleType() {
-        return ruleType;
-    }
-
-    public void setRuleType(String ruleType) {
-        this.ruleType = ruleType;
-    }
 }

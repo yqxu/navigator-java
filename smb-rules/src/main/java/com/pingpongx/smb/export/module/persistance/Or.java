@@ -6,10 +6,9 @@ import com.pingpongx.smb.export.module.Rule;
 
 import java.io.Serializable;
 import java.util.List;
-
 @JSONType(typeName = "Or",typeKey = "ruleType")
 public class Or extends RuleDto {
-    String ruleType = "Or";
+
     List<RuleDto> orRules;
 
     public List<RuleDto> getOrRules() {
@@ -20,11 +19,4 @@ public class Or extends RuleDto {
         this.orRules = orRules;
     }
 
-    public String getRuleType() {
-        return ruleType;
-    }
-
-    public void setRuleType(String ruleType) {
-        this.ruleType = ruleType;
-    }
 }

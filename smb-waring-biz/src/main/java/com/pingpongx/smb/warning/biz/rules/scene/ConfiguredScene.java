@@ -1,6 +1,7 @@
 package com.pingpongx.smb.warning.biz.rules.scene;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter;
 import com.pingpongx.smb.export.RuleConstant;
 import com.pingpongx.smb.export.globle.Engine;
 import com.pingpongx.smb.export.module.Rule;
@@ -65,7 +66,7 @@ public class ConfiguredScene {
         and.setAndRules(Stream.of(conf).collect(Collectors.toList()));
         or.setOrRules(Stream.of(and).collect(Collectors.toList()));
         scenet.setRulesOf(or);
-        String strTest = JSON.toJSONString(or);
+        String strTest = JSON.toJSONString(or, JSONWriter.Feature.WriteClassName);
         JSON.parseObject(strTest,RuleDto.class);
 
         List<Scene> scenes = JSON.parseArray(confStr, Scene.class);
