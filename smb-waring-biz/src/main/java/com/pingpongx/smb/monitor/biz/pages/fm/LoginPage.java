@@ -51,7 +51,7 @@ public class LoginPage {
         log.info("fm login finished");
 
         // 对福贸登录后可能出现的弹窗进行关闭
-        if (waitElementExist(page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")), 5000)) {
+        if (waitElementExist(page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")), 600)) {
             page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).locator("i").click();
         }
         log.info("fm login finished and menu check finished");

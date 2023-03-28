@@ -49,12 +49,12 @@ public class LoginPage {
         page.getByPlaceholder("登录密码").fill(loginPassword);
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("立即登录")).click();
         // 等待登录完成
-        waitElementExist(page.getByText("首页"), 800);
+        waitElementExist(page.getByText("首页"), 1000);
         // 解决首页温馨提示弹2次的问题
-        if (waitElementExist(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")), 600)) {
+        if (waitElementExist(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")), 800)) {
             page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")).click();
         }
-        if (waitElementExist(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")), 600)) {
+        if (waitElementExist(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")), 800)) {
             page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")).click();
         }
     }
