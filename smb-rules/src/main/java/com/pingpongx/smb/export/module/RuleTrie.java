@@ -70,7 +70,6 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
         or.getOrRuleSet().stream().forEach(r -> putOnly(r, handler));
         return this;
     }
-
     private RuleTrie putAnd(RuleAnd and, RuleHandler handler) {
         List<RuleLeaf> ids = and.getAndRuleList().stream().map(r -> ((RuleLeaf) r)).collect(Collectors.toList());
         IdentityPath<RuleLeaf> path = IdentityPath.of(ids);

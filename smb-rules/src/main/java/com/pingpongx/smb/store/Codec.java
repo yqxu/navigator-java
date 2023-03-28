@@ -39,6 +39,9 @@ public class Codec {
     }
 
     public static <T>  ConfiguredRule<T> toLeafRule(LeafRuleConf conf){
+        if(conf == null){
+            return null;
+        }
         ConfiguredRule rule = Factories.ConfiguredClass.instance(conf.getOperation());
         rule.setAttr(conf.getAttr());
         rule.setExpected(conf.getExpected());
