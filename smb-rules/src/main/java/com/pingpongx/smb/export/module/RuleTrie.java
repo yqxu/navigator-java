@@ -97,6 +97,7 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
             BatchMatcher matcher = matcherNode.getData();
             if (matcher == null) {
                 matcher = Factories.Matcher.newBatchMatcher((String) op.getIdentify());
+                matcher.supportedOperation(op);
                 matcherNode.setData(matcher);
             }
             matcher.putRule(r, n);

@@ -12,10 +12,6 @@ import java.util.stream.Collectors;
 
 
 public class BatchStrNotBlank extends BatchNotEmpty<String> {
-    @Override
-    public MatchOperation supportedOperation() {
-        return StrNotBlank.getInstance();
-    }
 
     public static SameTypeMatcher<String> newInstance() {
         BatchStrNotBlank strContains = new BatchStrNotBlank();

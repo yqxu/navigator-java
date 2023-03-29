@@ -1,6 +1,7 @@
 package com.pingpongx.smb.rule.routers.operatiors.batch;
 
 import com.pingpongx.smb.common.Node;
+import com.pingpongx.smb.export.module.MatchOperation;
 import com.pingpongx.smb.export.module.RuleTrieElement;
 import com.pingpongx.smb.export.module.operation.RuleLeaf;
 
@@ -13,6 +14,7 @@ public abstract class BatchNotEmpty<ValType> implements SameTypeMatcher<ValType>
 
     Set<Node<RuleLeaf, RuleTrieElement>> emptySet = new HashSet<>();
     Set<Node<RuleLeaf, RuleTrieElement>> notEmptySet = new HashSet<>();
+    protected MatchOperation operation;
 
     public void putOnly(Node<RuleLeaf, RuleTrieElement> node, boolean isNot) {
         if (isNot) {
@@ -59,5 +61,14 @@ public abstract class BatchNotEmpty<ValType> implements SameTypeMatcher<ValType>
     @Override
     public int hashCode() {
         return getIdentify() != null ? getIdentify().hashCode() : 0;
+    }
+
+    @Override
+    public MatchOperation supportedOperation() {
+        return this.operation;
+    }
+    @Override
+    public void supportedOperation(MatchOperation operation) {
+        this.operation = operation;
     }
 }

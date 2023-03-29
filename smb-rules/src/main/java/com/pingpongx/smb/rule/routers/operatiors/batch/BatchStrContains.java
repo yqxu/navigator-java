@@ -21,6 +21,7 @@ public class BatchStrContains implements SameTypeMatcher<String>{
     ACTrie<Character, MatchedSet> trie = new ACTrie<>();
 
     Set<Node<RuleLeaf, RuleTrieElement>> notSet = new HashSet<>();
+    private MatchOperation operation;
 
     public void putAndReIndex(String str,Node<RuleLeaf, RuleTrieElement> node,boolean isNot){
         putOnly(str,node,isNot);
@@ -65,9 +66,12 @@ public class BatchStrContains implements SameTypeMatcher<String>{
 
     @Override
     public MatchOperation supportedOperation() {
-        return StringContains.getInstance();
+        return this.operation;
     }
-
+    @Override
+    public void supportedOperation(MatchOperation operation) {
+        this.operation = operation;
+    }
     @Override
     public void putRule(RuleLeaf<String> rule, Node<RuleLeaf, RuleTrieElement> node) {
         String exp = rule.expected();

@@ -23,7 +23,7 @@ public class BatchNumRange implements BatchMatcher<BigDecimal,Range> {
     SegTree<Set<Node<RuleLeaf, RuleTrieElement>>> ranges = new SegTree<>();
     Set<Node<RuleLeaf, RuleTrieElement>> nullMatchedSet = new HashSet<>();
 
-
+    MatchOperation operation;
 //
 
     /****
@@ -46,7 +46,12 @@ public class BatchNumRange implements BatchMatcher<BigDecimal,Range> {
 
     @Override
     public MatchOperation supportedOperation() {
-        return NumRangeIn.getInstance();
+        return this.operation;
+    }
+
+    @Override
+    public void supportedOperation(MatchOperation operation) {
+        this.operation = operation;
     }
 
     @Override

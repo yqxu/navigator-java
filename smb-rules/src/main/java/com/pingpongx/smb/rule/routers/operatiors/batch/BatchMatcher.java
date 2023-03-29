@@ -13,6 +13,7 @@ public interface BatchMatcher<T,ConfT> extends Comparable<BatchMatcher<T,ConfT>>
     Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object input,Set<Node<RuleLeaf, RuleTrieElement>> repeat);
 
     MatchOperation supportedOperation();
+    void supportedOperation(MatchOperation operation);
 
     @Override
     default int compareTo(BatchMatcher<T,ConfT> o) {

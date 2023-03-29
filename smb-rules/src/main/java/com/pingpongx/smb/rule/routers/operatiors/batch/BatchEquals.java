@@ -1,8 +1,10 @@
 package com.pingpongx.smb.rule.routers.operatiors.batch;
 
 import com.pingpongx.smb.common.Node;
+import com.pingpongx.smb.export.module.MatchOperation;
 import com.pingpongx.smb.export.module.RuleTrieElement;
 import com.pingpongx.smb.export.module.operation.RuleLeaf;
+import com.pingpongx.smb.rule.routers.operatiors.StrEquals;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -13,7 +15,7 @@ import java.util.stream.Collectors;
 
 
 public abstract class BatchEquals<ValType> implements SameTypeMatcher<ValType> {
-
+    private MatchOperation operation;
     Map<ValType, MatchedSet> ruleMap = new ConcurrentHashMap<>();
 
     Set<Node<RuleLeaf, RuleTrieElement>> notSet = new HashSet<>();
@@ -67,5 +69,14 @@ public abstract class BatchEquals<ValType> implements SameTypeMatcher<ValType> {
     @Override
     public int hashCode() {
         return getIdentify() != null ? getIdentify().hashCode() : 0;
+    }
+
+    @Override
+    public MatchOperation supportedOperation() {
+        return this.operation;
+    }
+    @Override
+    public void supportedOperation(MatchOperation operation) {
+        this.operation = operation;
     }
 }

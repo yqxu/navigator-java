@@ -16,10 +16,6 @@ import java.util.stream.Stream;
 
 
 public class BatchStrEquals extends BatchEquals<String> {
-    @Override
-    public MatchOperation supportedOperation() {
-        return StrEquals.getInstance();
-    }
 
     public static SameTypeMatcher<String> newInstance() {
         BatchStrEquals strContains = new BatchStrEquals();
