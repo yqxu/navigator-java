@@ -16,7 +16,7 @@ public interface BatchMatcher<T,ConfT> extends Comparable<BatchMatcher<T,ConfT>>
 
     @Override
     default int compareTo(BatchMatcher<T,ConfT> o) {
-        return this.supportedOperation().sortBy() - o.supportedOperation().sortBy();
+        return this.supportedOperation().compareTo(o.supportedOperation());
     }
 
     void putRule(RuleLeaf<ConfT> rule, Node<RuleLeaf, RuleTrieElement> node);
