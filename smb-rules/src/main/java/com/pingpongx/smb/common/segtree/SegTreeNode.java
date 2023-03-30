@@ -104,9 +104,9 @@ public class SegTreeNode<ValType> {
         }
         EndPoint end;
         if (this.segment.getEnd().compareTo(segment.getEnd())>=0){
-            end = segment.getStart();
+            end = segment.getEnd();
         }else {
-            end = this.segment.getStart();
+            end = this.segment.getEnd();
         }
         return end.compareTo(start)>=0;
     }
