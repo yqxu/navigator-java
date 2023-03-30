@@ -13,6 +13,7 @@ import com.pingpongx.smb.rule.routers.operatiors.batch.BatchMatcher;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
     Engine engine;
@@ -27,7 +28,35 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
         return this;
     }
 
-    public MatchResult match(Object data) {
+    //仅在beta 网络中移除对应handler，如果需要节省内存资源或者减少alpha网络产出的中间结果数，需要重新构建字典树。
+    public RuleTrie remove(Rule rule, RuleHandler handler) {
+        RuleOr or = rule.expansion();
+        Set<Node<RuleLeaf, RuleTrieElement>> nodes = get(or);
+        nodes.stream().forEach(node -> node.getData().removeHandler(handler));
+        return this;
+    }
+
+    public Set<Node<RuleLeaf, RuleTrieElement>> get(Rule rule) {
+        RuleOr or = rule.expansion();
+        return orGet(or).collect(Collectors.toSet());
+    }
+
+    private Stream<Node<RuleLeaf, RuleTrieElement>> orGet(RuleOr or) {
+        return or.getOrRuleSet().stream().flatMap(r -> getOnly(r));
+    }
+
+    private Stream<Node<RuleLeaf, RuleTrieElement>> getOnly(Rule rule){
+        if (rule instanceof RuleAnd) {
+            return andGet((RuleAnd) rule);
+        } else if (rule instanceof RuleOr) {
+            return orGet((RuleOr) rule);
+        }
+        RuleAnd and = (RuleAnd) RuleAnd.newAnd(rule);
+        return andGet(and);
+
+    }
+
+    public Set<Node<RuleLeaf, RuleTrieElement>> innerMatch(Object data) {
         Set<Node<RuleLeaf, RuleTrieElement>> matchedRulesRepeat = new HashSet<>();
         MatchResult result = new MatchResult();
         TreeMap<BatchMatcher, MatchOperation> bfsQ = new TreeMap<>();
@@ -48,7 +77,17 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
                 bfsQ.put(toAdd, operation);
             });
         }
-        Set<RuleHandler> handlerSet = matchedRulesRepeat.stream().map(matched -> matched.getData()).filter(Objects::nonNull).map(element -> element.getHandlers()).filter(Objects::nonNull).flatMap(handlers -> handlers.stream()).collect(Collectors.toSet());
+        return matchedRulesRepeat;
+    }
+
+    public MatchResult match(Object data) {
+        MatchResult result = new MatchResult();
+        Set<Node<RuleLeaf, RuleTrieElement>> matchedRulesRepeat = innerMatch(data);
+        Set<RuleHandler> handlerSet = matchedRulesRepeat.stream()
+                .map(matched -> matched.getData()).filter(Objects::nonNull)
+                .map(element -> element.getHandlers())
+                .filter(Objects::nonNull).flatMap(handlers -> handlers.stream())
+                .collect(Collectors.toSet());
         result.setMatchedData(handlerSet);
         return result;
     }
@@ -104,6 +143,15 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
             current = n.getChildren();
         }
         return this;
+    }
+
+
+    private Stream<Node<RuleLeaf, RuleTrieElement>>  andGet(RuleAnd and) {
+        //Beta 树操作
+        List<RuleLeaf> ids = and.getAndRuleList().stream().map(r -> ((RuleLeaf) r)).collect(Collectors.toList());
+        IdentityPath<RuleLeaf> path = IdentityPath.of(ids);
+        Node<RuleLeaf, RuleTrieElement> node = getOrCreate(path);
+        return Stream.of(node);
     }
 
 }
