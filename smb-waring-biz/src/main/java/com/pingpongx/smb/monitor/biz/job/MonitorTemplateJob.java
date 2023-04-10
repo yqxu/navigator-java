@@ -311,12 +311,12 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 //                route.resume();
 //        });
         // 解决容器环境中访问 https://flowmore.pingpongx.com/api/front/v2/auth/token 拿不到响应数据的问题
-//        page.route("**/*", route -> {
-//            // Override headers
-//            Map<String, String> headers = new HashMap<>(route.request().headers());
-//            headers.put("X-Forwarded-For", "47.96.196.247");
-//            route.resume(new Route.ResumeOptions().setHeaders(headers));
-//        });
+        page.route("**/*", route -> {
+            // Override headers
+            Map<String, String> headers = new HashMap<>(route.request().headers());
+            headers.put("X-Forwarded-For", "47.96.196.247");
+            route.resume(new Route.ResumeOptions().setHeaders(headers));
+        });
         return listener;
     }
 
