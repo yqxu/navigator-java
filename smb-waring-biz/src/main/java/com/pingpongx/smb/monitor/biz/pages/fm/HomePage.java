@@ -133,7 +133,6 @@ public class HomePage {
         switchPage("合同订单");
         switchPage("收款账户管理");
         switchPage("资金轨迹");
-        switchPage("银行卡收款");
 
         switchPage("账单收款");
         switchPage("应收账款统计");
