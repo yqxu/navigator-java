@@ -110,7 +110,7 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
         return this;
     }
     private RuleTrie putAnd(RuleAnd and, RuleHandler handler) {
-        List<RuleLeaf> ids = and.getAndRuleList().stream().map(r -> ((RuleLeaf) r)).collect(Collectors.toList());
+        List<RuleLeaf> ids = and.getAndRuleList().stream().sorted().map(r -> ((RuleLeaf) r)).collect(Collectors.toList());
         IdentityPath<RuleLeaf> path = IdentityPath.of(ids);
         Node<RuleLeaf, RuleTrieElement> node = getOrCreate(path);
         if (node.isNew()) {
