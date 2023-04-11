@@ -34,7 +34,7 @@ public class Codec {
         RuleAnd ruleAnd = new RuleAnd();
         and.getAndRules().stream()
                 .map(r -> buildRule(r))
-                .forEach(r->ruleAnd.or(r));
+                .forEach(r->ruleAnd.and(r));
         return ruleAnd;
     }
 
