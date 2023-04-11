@@ -5,12 +5,18 @@ import com.pingpongx.smb.export.module.Rule;
 import com.pingpongx.smb.export.module.persistance.And;
 import com.pingpongx.smb.export.module.persistance.RuleDto;
 
+import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
 
 public class RuleAnd implements Rule {
-    PriorityQueue<Rule> andRuleList = new PriorityQueue<>();
+    PriorityQueue<Rule> andRuleList = new PriorityQueue<>(new Comparator<Rule>() {
+        @Override
+        public int compare(Rule o1, Rule o2) {
+            return o1.compareTo(o2);
+        }
+    });
 
     @Override
     public RuleOr expansion(){
