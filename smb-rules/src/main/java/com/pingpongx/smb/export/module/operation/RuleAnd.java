@@ -59,16 +59,13 @@ public class RuleAnd implements Rule {
 
     @Override
     public int compareTo(Object o) {
-        int one,other ;
-        one = -1;
         if (o instanceof  RuleAnd){
-            other = -1;
+            return 0;
         }else if (o instanceof  RuleOr){
-            other = -2;
+            return 1;
         }else {
-            other = ((RuleLeaf)o).operatorType().sortBy();
+            return -1;
         }
-        return one - other;
     }
 
     public PriorityQueue<Rule> getAndRuleList() {

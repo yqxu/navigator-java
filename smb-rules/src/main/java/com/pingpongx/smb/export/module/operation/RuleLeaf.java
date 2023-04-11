@@ -24,23 +24,12 @@ public abstract class RuleLeaf<T> implements Rule<T>, Identified<String> {
 
     @Override
     public int compareTo(Rule<T> o) {
-        int one,other ;
-        one = this.operatorType().sortBy();
         if (o instanceof RuleAnd){
-            other = -1;
+            return  1;
         }else if (o instanceof RuleOr){
-            other = -2;
-        }else {
-            other =  ((RuleLeaf<T>)o).operatorType().sortBy();
+            return  1;
         }
-        int ret = one - other;
-        if (ret == 0){
-            ret = this.dependsAttr().compareTo(((RuleLeaf<T>)o).dependsAttr());
-        }
-        if (ret == 0){
-            ret = this.getIdentify().compareTo(((RuleLeaf<T>)o).getIdentify());
-        }
-        return ret;
+        return this.operatorType().compareTo(((RuleLeaf)o).operatorType());
     }
 
     @Override

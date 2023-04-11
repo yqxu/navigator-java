@@ -75,16 +75,13 @@ public class RuleOr implements Rule {
 
     @Override
     public int compareTo(Object o) {
-        int one,other ;
-        one = -2;
         if (o instanceof  RuleAnd){
-            other = -1;
+            return -1;
         }else if (o instanceof  RuleOr){
-            other = -2;
+            return 0;
         }else {
-            other = ((RuleLeaf)o).operatorType().sortBy();
+            return -1;
         }
-        return one - other;
     }
 
     public Set<Rule> getOrRuleSet() {
