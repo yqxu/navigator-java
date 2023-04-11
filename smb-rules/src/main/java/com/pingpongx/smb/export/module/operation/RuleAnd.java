@@ -7,16 +7,12 @@ import com.pingpongx.smb.export.module.persistance.RuleDto;
 
 import java.util.Comparator;
 import java.util.PriorityQueue;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 
 public class RuleAnd implements Rule {
-    PriorityQueue<Rule> andRuleList = new PriorityQueue<>(new Comparator<Rule>() {
-        @Override
-        public int compare(Rule o1, Rule o2) {
-            return o1.compareTo(o2);
-        }
-    });
+    TreeSet<Rule> andRuleList = new TreeSet<>();
 
     @Override
     public RuleOr expansion(){
@@ -47,7 +43,7 @@ public class RuleAnd implements Rule {
         if (andRuleList.size()<=0){
             return null;
         }
-        return andRuleList.peek().type();
+        return andRuleList.first().type();
     }
 
     @Override
@@ -58,7 +54,7 @@ public class RuleAnd implements Rule {
         }else if (rule instanceof RuleOr){
             return ((RuleOr)rule).and(this);
         }else{
-            andRuleList.offer(rule);
+            andRuleList.add(rule);
             return this;
         }
     }
@@ -74,11 +70,11 @@ public class RuleAnd implements Rule {
         }
     }
 
-    public PriorityQueue<Rule> getAndRuleList() {
+    public TreeSet<Rule> getAndRuleList() {
         return andRuleList;
     }
 
-    public void setAndRuleList(PriorityQueue<Rule> andRuleList) {
+    public void setAndRuleList(TreeSet<Rule> andRuleList) {
         this.andRuleList = andRuleList;
     }
 
