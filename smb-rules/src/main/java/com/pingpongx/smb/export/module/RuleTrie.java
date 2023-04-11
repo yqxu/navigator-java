@@ -148,7 +148,7 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
 
     private Stream<Node<RuleLeaf, RuleTrieElement>>  andGet(RuleAnd and) {
         //Beta 树操作
-        List<RuleLeaf> ids = and.getAndRuleList().stream().map(r -> ((RuleLeaf) r)).collect(Collectors.toList());
+        List<RuleLeaf> ids = and.getAndRuleList().stream().sorted().map(r -> ((RuleLeaf) r)).collect(Collectors.toList());
         IdentityPath<RuleLeaf> path = IdentityPath.of(ids);
         Node<RuleLeaf, RuleTrieElement> node = getOrCreate(path);
         return Stream.of(node);
