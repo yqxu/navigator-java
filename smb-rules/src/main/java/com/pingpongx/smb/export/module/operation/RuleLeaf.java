@@ -29,7 +29,11 @@ public abstract class RuleLeaf<T> implements Rule<T>, Identified<String> {
         }else if (o instanceof RuleOr){
             return  1;
         }
-        return this.operatorType().compareTo(((RuleLeaf)o).operatorType());
+        int ret = this.operatorType().compareTo(((RuleLeaf)o).operatorType());
+        if (ret != 0 ){
+            return ret;
+        }
+        return this.expected().toString().compareTo(((RuleLeaf<Object>) o).expected().toString());
     }
 
     @Override
