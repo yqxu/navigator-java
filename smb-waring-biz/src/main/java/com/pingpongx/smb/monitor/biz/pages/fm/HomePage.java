@@ -68,7 +68,13 @@ public class HomePage {
                 page.getByText("合同订单").click();
                 break;
             case "账单收款":
-                page.getByText("账单收款").click();
+                log.info("账单收款，count:{}", page.locator("#app").getByText("账单收款", new Locator.GetByTextOptions().setExact(true)).count());
+                page.locator("xpath=//div/span[contains(string(), '账单收款')]").hover();
+                page.getByRole(AriaRole.TOOLTIP, new Page.GetByRoleOptions().setName("账单收款 应收账款统计")).getByText("账单收款").click();
+                break;
+            case "应收账款统计":
+                page.locator("xpath=//div/span[contains(string(), '账单收款')]").hover();
+                page.getByText("应收账款统计").click();
                 break;
             case "外贸收款提现":
                 boolean tiXianVisible = page.getByText("提现", new Page.GetByTextOptions().setExact(true)).isVisible();
@@ -127,9 +133,9 @@ public class HomePage {
         switchPage("合同订单");
         switchPage("收款账户管理");
         switchPage("资金轨迹");
-        switchPage("银行卡收款");
 
         switchPage("账单收款");
+        switchPage("应收账款统计");
 
         switchPage("外贸收款提现");
         switchPage("人民币账户提现");
