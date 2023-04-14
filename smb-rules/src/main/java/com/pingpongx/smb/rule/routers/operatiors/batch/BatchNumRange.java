@@ -71,13 +71,13 @@ public class BatchNumRange implements BatchMatcher<BigDecimal,Range> {
                 return new HashSet<>();
             }
             if (newOne==null){
-                return oldOne;
+                return oldOne.stream().collect(Collectors.toSet());
             }
             if (oldOne==null){
-                return newOne;
+                return newOne.stream().collect(Collectors.toSet());
             }
             oldOne.addAll(newOne);
-            return oldOne;
+            return oldOne.stream().collect(Collectors.toSet());
         }));
     }
 
