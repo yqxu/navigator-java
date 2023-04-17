@@ -317,7 +317,10 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             Map<String, String> headers = new HashMap<>(route.request().headers());
             if (route.request().url().contains("/api/front/v2/auth/token")) {
                 Random random = new Random();
-                headers.put("X-Forwarded-For", "47.96.196." + random.nextInt(255));
+                StringBuilder sb = new StringBuilder("47.96.196.");
+                sb.append(random.nextInt(255));
+                log.info("fm login forwarded ip: {}", sb.toString());
+                headers.put("X-Forwarded-For", sb.toString());
             }
             route.resume(new Route.ResumeOptions().setHeaders(headers));
         });
