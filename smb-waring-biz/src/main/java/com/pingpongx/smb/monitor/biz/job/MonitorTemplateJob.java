@@ -26,6 +26,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -314,7 +315,10 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         page.route("**/*", route -> {
             // Override headers
             Map<String, String> headers = new HashMap<>(route.request().headers());
-            headers.put("X-Forwarded-For", "47.96.196.247");
+            if (route.request().url().contains("/api/front/v2/auth/token")) {
+                Random random = new Random();
+                headers.put("X-Forwarded-For", "47.96.196." + random.nextInt(255));
+            }
             route.resume(new Route.ResumeOptions().setHeaders(headers));
         });
         return listener;
