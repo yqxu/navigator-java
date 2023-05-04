@@ -27,13 +27,7 @@ import com.pingpongx.smb.warning.dal.dataobject.BusinessAlertsUserMap;
 import com.pingpongx.smb.warning.dal.repository.BusinessAlertsAppRepository;
 import com.pingpongx.smb.warning.dal.repository.BusinessAlertsUserRepository;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -86,7 +80,7 @@ public class BusinessAlertServiceImpl implements BusinessAlertService {
         log.info("BusinessAlertServiceImpl.findDingDingReceivers#查询告警应用:[{}]", appName);
         //考虑性能问题数据从缓存取
         List<BusinessAlertsUserMap> alertUserCache = businessAlertsCache.findByAppName(appName);
-        if (null == alertUserCache) {//通知默认负责人
+        if (null == alertUserCache||alertUserCache.size() == 0) {//通知默认负责人
             return DingDingReceiverDTO.builder().receivers(Lists.newArrayList(businessAlertsCache.defaultReceiver())).build();
         }
         List<DingDReceiverDTO> receiverDTOList = alertUserCache.stream()
@@ -120,7 +114,12 @@ public class BusinessAlertServiceImpl implements BusinessAlertService {
         String businessLine = Optional.ofNullable(getAppDTO(appName)).map(BusinessAlertsAppDTO::getClassify).orElse("SMB-B2B");
         List<BusinessAlertsUserMap> users = businessAlertsCache.findByAppName(appName);
         String aDefault = (String) JSON.parseObject(jiraAppTestDict).getOrDefault(businessLine, "fuww");
-        String testName = users.stream().filter(user->"Test".equalsIgnoreCase(user.getRole())).map(BusinessAlertsUserMap::getDomainAccount).findFirst().orElse(aDefault);
+        String testName = users.stream()
+                .filter(Objects::nonNull)
+                .filter(user->"Test".equalsIgnoreCase(user.getRole()))
+                .map(BusinessAlertsUserMap::getDomainAccount)
+                .filter(Objects::nonNull)
+                .findFirst().orElse(aDefault);
         JSONObject req = new JSONObject();
         JSONObject fields = new JSONObject();
         req.put("fields", fields);
