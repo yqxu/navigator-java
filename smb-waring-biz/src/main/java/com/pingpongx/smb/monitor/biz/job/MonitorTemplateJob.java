@@ -1,7 +1,9 @@
 package com.pingpongx.smb.monitor.biz.job;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONPath;
 import com.microsoft.playwright.*;
+import com.microsoft.playwright.options.HarMode;
 import com.microsoft.playwright.options.RequestOptions;
 import com.microsoft.playwright.options.Timing;
 import com.pingpongx.job.core.biz.model.ReturnT;
@@ -18,11 +20,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.nio.file.Paths;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
+import static com.pingpongx.smb.monitor.biz.util.PlayWrightUtils.initUtil;
 import static com.pingpongx.smb.monitor.biz.util.TimeUtils.getFormattedTime;
 
 @Slf4j
@@ -66,6 +73,25 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 
     public abstract void logout();
 
+    public void clearLocalResult(Path path) {
+        try {
+            Files.walkFileTree(path, new SimpleFileVisitor<Path>(){
+                //遍历删除文件
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+                //遍历删除目录
+                public FileVisitResult postVisitDirectory(Path dir,IOException exc) throws IOException{
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public ReturnT<String> monitor() {
         log.info("hostParam.getEnable():{}", monitorEnvParam.getEnable());
         if (monitorEnvParam.getEnable().equalsIgnoreCase(Boolean.FALSE.toString())) {
@@ -78,7 +104,18 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         Browser browser = null;
         BrowserContext context = null;
         APIRequestContext apiRequestContext = null;
-        Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions().setViewportSize(1440, 875);
+        Path localResultPath = Paths.get("/tmp/ui-monitor/" + getFormattedTime());
+        ReturnT<String> jobResult = null;
+        Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions()
+                // 因为福贸的业务有向导弹窗，弹出来比较恶心，而且是前端记忆的，所以在启动浏览器时把这个填入localStorage里面
+                .setStorageState("{\"origins\":[{\"origin\":\"https://flowmore.pingpongx.com\",\"localStorage\":[{\"name\":\"guideStep\",\"value\":\"{\\\"haveKyc\\\":true,\\\"vaGuide\\\":true,\\\"vaUseGuide\\\":true,\\\"firstInbound\\\":false,\\\"inboundGuide1\\\":false,\\\"inboundGuide2\\\":false,\\\"inboundGuide3\\\":false}\"},{\"name\":\"LockExchangeGuide\",\"value\":\"1\"},{\"name\":\"menuV2Tips\",\"value\":\"1\"}]}]}")
+                .setViewportSize(1440, 875)
+                .setRecordVideoSize(576, 350)
+                .setRecordVideoDir(localResultPath)
+//                .setRecordHarPath(Paths.get(localResultPath.toString() + "/harFile.har"))
+//                .setRecordHarMode(HarMode.MINIMAL)
+//                .setRecordHarUrlFilter(Pattern.compile(".*pingpongx.com/api.*"))
+                ;
 
         try {
             playwright = Playwright.create();
@@ -91,11 +128,11 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                     .setSlowMo(2200));
             // 不同的context的配置，理论上是一样的，例如浏览器的尺寸
             context = browser.newContext(newContextOptions);
-            context.setDefaultTimeout(60 * 1000);
+            context.setDefaultTimeout(20 * 1000);
             context.setDefaultNavigationTimeout(60 * 1000);
             page = context.newPage();
-            page.setDefaultTimeout(60 * 1000);
-            page.setDefaultNavigationTimeout(60 * 1000);
+            page.setDefaultTimeout(20 * 1000);
+            page.setDefaultNavigationTimeout(20 * 1000);
             apiRequestContext = playwright.request().newContext(new APIRequest.NewContextOptions());
 
             listener = monitorPageRequest(apiRequestContext, page);
@@ -104,7 +141,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                 login();
             } catch (Exception t) {
                 t.printStackTrace();
-                log.info(t.getMessage());
+                log.info("登录出问题了，{}", t.getMessage());
                 throw new LoginException();
             }
 
@@ -112,23 +149,29 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 
             logout();
 
-            // 执行成功，将结果写入库表
-            insertRecord("success", "na");
-            return ReturnT.SUCCESS;
+            // 执行成功，将结果写入库表，成功了不记库表了
+            // insertRecord("success", "na");
+
+            jobResult = ReturnT.SUCCESS;
+            return jobResult;
         } catch (Exception e) {
-            // 执行失败，截个图的，可以通过命令将文件复制出容器查看：curl -F 'x=@/tmp/ui-monitor/20230224024050.png' file.pingpongx.com/disk
+            jobResult = ReturnT.FAIL;
+            jobResult.setMsg(e.getMessage());
+
+            // 执行失败，截个图的，可以通过命令将文件复制出容器查看：curl -F 'x=@/tmp/ui-monitor/20230321132133.png' file.pingpongx.com/disk
             // 打开地址：https://file.pingpongx.com/disk
-            if (page != null) {
-                page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("/tmp/ui-monitor/" + getFormattedTime() + ".png")));
-            }
+            // if (page != null) {
+            //    page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("/tmp/ui-monitor/" + getFormattedTime() + ".png")));
+            // }
             log.warn("monitor, message size: " + e.getMessage());
             // 如果是登录失败，才发送钉钉告警
             if (apiRequestContext != null && e instanceof LoginException) {
-                sendWarnMessage(apiRequestContext , e.getMessage());
+                // sendWarnMessage(apiRequestContext, e.getMessage());
+                log.error("{}监控：{}", this.business, e.getMessage());
             }
             // 执行失败，写入库表
             insertRecord("failed", e.getMessage());
-            return ReturnT.FAIL;
+            return jobResult;
         } finally {
             if (page != null && listener != null) {
                 page.offResponse(listener);
@@ -154,6 +197,10 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             if (playwright != null) {
                 playwright.close();
             }
+            // 如果执行成功了，则删除录制的视频及目录
+            if (jobResult != null && jobResult.getCode() == 200) {
+                clearLocalResult(localResultPath);
+            }
         }
 
     }
@@ -164,7 +211,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
      */
     public void sendWarnMessage(APIRequestContext apiRequestContext, String message) {
         Map<String, String> data = new HashMap<>();
-        data.put("appName", "ui-monitor");
+        data.put("appName", "smb-warning");
         data.put("className", this.getClass().getSimpleName());
         data.put("content", message);
         data.put("hostName", host);
@@ -172,7 +219,10 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 
         // 如果当前是生产环境，发告警出来
         if (monitorEnvParam.getMonitorEnv().equals(MonitorEnv.PROD.getMonitorEnv())) {
-            apiRequestContext.post("https://smb-warning.pingpongx.com/v2/alert/" + dingGroup, RequestOptions.create().setData(data));
+            log.info("error happened and data is:{}", JSON.toJSONString(data));
+            // 在容器中执行下面的post方法时，容器中没有https，应访问http
+            APIResponse postDingMsgRes = apiRequestContext.post("http://smb-warning.pingpongx.com/v2/alert/" + dingGroup, RequestOptions.create().setData(data));
+            log.info("调用钉钉告警结果：{}", postDingMsgRes.text());
         }
     }
 
@@ -216,12 +266,14 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                         // 后续可能需要考虑code的判断条件，比如如果服务端错误，是5开头这种，
                         // 20404 40401 主站的code 码
                         if (code != 0 && code != 401 && code != 20404 && code != 40401) {
+                            log.info("monitorPageRequest error, url:{}, code:{}", response.request().url(), code);
                             saveResponseDetail(response, code);
                             // 发送告警，50004是服务端超时错误，暂时不发告警
                             if (code != 50004) {
-                                sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
+                                // sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
+                                log.error("{}监控, url:{}, res:{}", this.business, response.request().url(), resText);
                             }
-                            log.warn("api monitor error url:"+ response.request().url() + ",res:" + resText);
+                            log.warn("api monitor error url:{}, code: {}, res:{} ", response.request().url(), code, resText);
                         }
                     }
                 }
@@ -259,18 +311,20 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 //                route.resume();
 //        });
         // 解决容器环境中访问 https://flowmore.pingpongx.com/api/front/v2/auth/token 拿不到响应数据的问题
-//        page.route("**/*", route -> {
-//            // Override headers
-//            Map<String, String> headers = new HashMap<>(route.request().headers());
-//            headers.put("X-Forwarded-For", "47.96.196.247");
-//            route.resume(new Route.ResumeOptions().setHeaders(headers));
-//        });
+        page.route("**/*", route -> {
+            // Override headers
+            Map<String, String> headers = new HashMap<>(route.request().headers());
+            headers.put("X-Forwarded-For", "47.96.196.247");
+            route.resume(new Route.ResumeOptions().setHeaders(headers));
+        });
         return listener;
     }
 
     @Override
     public ReturnT<String> execute(String param) throws Exception {
         log.info("param is: {}",param);
+
+        initUtil();
 
         return monitor();
     }

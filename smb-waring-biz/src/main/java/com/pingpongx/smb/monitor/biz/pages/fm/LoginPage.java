@@ -36,6 +36,8 @@ public class LoginPage {
 //        options.setWaitUntil(WaitUntilState.NETWORKIDLE);
         options.setTimeout(60000);
         page.navigate(loginUrl, options);
+        // 打印浏览器的 localStorage
+        // page.context().storageState();
 
         page.getByPlaceholder("邮箱地址").click();
         page.getByPlaceholder("邮箱地址").fill(loginUsername);
@@ -48,14 +50,8 @@ public class LoginPage {
         // 福贸登录完成后会对用户进行菜单变更引导，但是这个没有做在后端，前端会在每次打开浏览器时进行引导，如果清除了缓存的话
         log.info("fm login finished");
 
-        if (waitElementExist(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("确定")), 10000)) {
-            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("确定")).click();
-        }
-        if (waitElementExist(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("关闭")), 5000)) {
-            page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("关闭")).click();
-        }
         // 对福贸登录后可能出现的弹窗进行关闭
-        if (waitElementExist(page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")), 5000)) {
+        if (waitElementExist(page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")), 1200)) {
             page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).locator("i").click();
         }
         log.info("fm login finished and menu check finished");
