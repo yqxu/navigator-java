@@ -75,6 +75,9 @@ public class ConfiguredScene {
         }
         scenes.stream().forEach(scene -> {
             Rule rule = Codec.buildRule(scene.getRulesOf());
+            if (rule == null){
+                return;
+            }
             CountContext countContext = new CountContext(scene);
             engine.put(rule, countContext);
             Inhibition<ThirdPartAlert> inhibition = inhibitionFactory.newInhibition(scene.getIdentity(), scene.getCountWith());
