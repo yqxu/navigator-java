@@ -9,6 +9,7 @@ import com.microsoft.playwright.options.Timing;
 import com.pingpongx.job.core.biz.model.ReturnT;
 import com.pingpongx.job.core.handler.IJobHandler;
 import com.pingpongx.smb.monitor.biz.exception.LoginException;
+import com.pingpongx.smb.monitor.biz.util.TimeUtils;
 import com.pingpongx.smb.monitor.dal.entity.constant.BusinessLine;
 import com.pingpongx.smb.monitor.dal.entity.constant.MonitorEnv;
 import com.pingpongx.smb.monitor.dal.entity.dataobj.ApiDetail;
@@ -164,7 +165,8 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                 throw new LoginException();
             } finally {
                 context.tracing().stop(new Tracing.StopOptions()
-                        .setPath(Paths.get(localResultPath.toString() + "/trace.zip")));
+                        .setPath(Paths.get(localResultPath.toString() +
+                                "/" + business + "-trace-" + TimeUtils.getFormattedTime() +".zip")));
             }
 
             actions();
