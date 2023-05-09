@@ -33,6 +33,12 @@ import java.util.regex.Pattern;
 import static com.pingpongx.smb.monitor.biz.util.PlayWrightUtils.initUtil;
 import static com.pingpongx.smb.monitor.biz.util.TimeUtils.getFormattedTime;
 
+/**
+ * 问题：
+ * 1. 主站监控的是ro环境，不是生产
+ * 2. 主站有时候打开登录页，是空白页面，刷不出登录页
+ * 3. 福贸登录时，有时会触发类似ddos拦截，导致响应信息拿不到数据 => 找光明加了公网ip的白名单
+ */
 @Slf4j
 public abstract class MonitorTemplateJob extends IJobHandler {
 
@@ -113,10 +119,15 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                 .setViewportSize(1440, 875)
                 .setRecordVideoSize(576, 350)
                 .setRecordVideoDir(localResultPath)
-//                .setRecordHarPath(Paths.get(localResultPath.toString() + "/harFile.har"))
-//                .setRecordHarMode(HarMode.MINIMAL)
-//                .setRecordHarUrlFilter(Pattern.compile(".*pingpongx.com/api.*"))
+                .setRecordHarPath(Paths.get(localResultPath.toString() + "/harFile.har"))
+                .setRecordHarMode(HarMode.MINIMAL)
                 ;
+        // 如果是主站的，只录主站的登录，如果是福贸的，只录福贸的登录
+        if (host.contains("flowmore")) {
+            newContextOptions.setRecordHarUrlFilter(host + "/api/front/v2/auth/token");
+        } else {
+            newContextOptions.setRecordHarUrlFilter(host + "/api/user/web/login");
+        }
 
         try {
             playwright = Playwright.create();
@@ -138,12 +149,22 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 
             listener = monitorPageRequest(apiRequestContext, page);
 
+            // 开启trace录制，可以通过trace文件，帮助分析问题
+            context.tracing().start(new Tracing.StartOptions()
+                    .setScreenshots(false)
+                    .setSnapshots(true)
+                    .setSources(false)
+            );
+
             try {
                 login();
             } catch (Exception t) {
                 t.printStackTrace();
                 log.info("登录出问题了，{}", t.getMessage());
                 throw new LoginException();
+            } finally {
+                context.tracing().stop(new Tracing.StopOptions()
+                        .setPath(Paths.get(localResultPath.toString() + "/trace.zip")));
             }
 
             actions();
@@ -312,18 +333,18 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 //                route.resume();
 //        });
         // 解决容器环境中访问 https://flowmore.pingpongx.com/api/front/v2/auth/token 拿不到响应数据的问题
-        page.route("**/*", route -> {
-            // Override headers
-            Map<String, String> headers = new HashMap<>(route.request().headers());
-            if (route.request().url().contains("/api/front/v2/auth/token")) {
-                Random random = new Random();
-                StringBuilder sb = new StringBuilder("47.96.196.");
-                sb.append(random.nextInt(255));
-                log.info("fm login forwarded ip: {}", sb.toString());
-                headers.put("X-Forwarded-For", sb.toString());
-            }
-            route.resume(new Route.ResumeOptions().setHeaders(headers));
-        });
+//        page.route("**/*", route -> {
+//            // Override headers
+//            Map<String, String> headers = new HashMap<>(route.request().headers());
+//            if (route.request().url().contains("/api/front/v2/auth/token")) {
+//                Random random = new Random();
+//                StringBuilder sb = new StringBuilder("47.96.196.");
+//                sb.append(random.nextInt(255));
+//                log.info("fm login forwarded ip: {}", sb.toString());
+//                headers.put("X-Forwarded-For", sb.toString());
+//            }
+//            route.resume(new Route.ResumeOptions().setHeaders(headers));
+//        });
         return listener;
     }
 

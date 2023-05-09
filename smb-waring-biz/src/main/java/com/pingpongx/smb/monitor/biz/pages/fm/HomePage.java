@@ -65,7 +65,7 @@ public class HomePage {
                 if (!page.getByText("合同订单", new Page.GetByTextOptions().setExact(true)).isVisible()) {
                     page.getByText("外贸收款", new Page.GetByTextOptions().setExact(true)).first().hover();
                 }
-                page.getByText("合同订单").click();
+                page.getByText("合同订单", new Page.GetByTextOptions().setExact(true)).click();
                 break;
             case "账单收款":
                 log.info("账单收款，count:{}", page.locator("#app").getByText("账单收款", new Locator.GetByTextOptions().setExact(true)).count());
