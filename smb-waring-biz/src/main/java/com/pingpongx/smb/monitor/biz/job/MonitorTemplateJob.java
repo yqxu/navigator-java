@@ -3,6 +3,7 @@ package com.pingpongx.smb.monitor.biz.job;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONPath;
 import com.microsoft.playwright.*;
+import com.microsoft.playwright.options.FormData;
 import com.microsoft.playwright.options.HarMode;
 import com.microsoft.playwright.options.RequestOptions;
 import com.microsoft.playwright.options.Timing;
@@ -31,7 +32,10 @@ import java.util.Random;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
+import static com.pingpongx.smb.monitor.biz.util.DingUtils.sendApiMonitorResultMsg;
+import static com.pingpongx.smb.monitor.biz.util.DingUtils.sendUIMonitorResultMsg;
 import static com.pingpongx.smb.monitor.biz.util.PlayWrightUtils.initUtil;
+import static com.pingpongx.smb.monitor.biz.util.RegUtils.extractStringByReg;
 import static com.pingpongx.smb.monitor.biz.util.TimeUtils.getFormattedTime;
 
 /**
@@ -56,6 +60,16 @@ public abstract class MonitorTemplateJob extends IJobHandler {
     private String dingGroup;
     private String business;
     private Page page;
+    private String phoneNumber;
+    private String loginSwitch;
+
+    public void setLoginSwitch(String loginSwitch) {
+        this.loginSwitch = loginSwitch;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     public void setDingGroup(String dingGroup) {
         this.dingGroup = dingGroup;
@@ -83,14 +97,14 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 
     public void clearLocalResult(Path path) {
         try {
-            Files.walkFileTree(path, new SimpleFileVisitor<Path>(){
+            Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
                 //遍历删除文件
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     Files.delete(file);
                     return FileVisitResult.CONTINUE;
                 }
                 //遍历删除目录
-                public FileVisitResult postVisitDirectory(Path dir,IOException exc) throws IOException{
+                public FileVisitResult postVisitDirectory(Path dir,IOException exc) throws IOException {
                     Files.delete(dir);
                     return FileVisitResult.CONTINUE;
                 }
@@ -106,17 +120,18 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             return new ReturnT<>( "监控开关未打开");
         }
         initEnv();
-        log.info("开始时间：{}，当前monitor的环境：{}，当前业务线：{}", getFormattedTime(), monitorEnvParam.getMonitorEnv(), business);
+        String jobStartTime = getFormattedTime();
+        log.info("开始时间：{}，当前monitor的环境：{}，当前业务线：{}", jobStartTime, monitorEnvParam.getMonitorEnv(), business);
         Playwright playwright = null;
         Consumer<Response> listener = null;
         Browser browser = null;
         BrowserContext context = null;
         APIRequestContext apiRequestContext = null;
-        Path localResultPath = Paths.get("/tmp/ui-monitor/" + getFormattedTime());
+        Path localResultPath = Paths.get("/tmp/ui-monitor/ui-monitor-" + getFormattedTime());
         ReturnT<String> jobResult = null;
         Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions()
                 // 因为福贸的业务有向导弹窗，弹出来比较恶心，而且是前端记忆的，所以在启动浏览器时把这个填入localStorage里面
-                .setStorageState("{\"origins\":[{\"origin\":\"https://flowmore.pingpongx.com\",\"localStorage\":[{\"name\":\"guideStep\",\"value\":\"{\\\"haveKyc\\\":true,\\\"vaGuide\\\":true,\\\"vaUseGuide\\\":true,\\\"firstInbound\\\":false,\\\"inboundGuide1\\\":false,\\\"inboundGuide2\\\":false,\\\"inboundGuide3\\\":false}\"},{\"name\":\"LockExchangeGuide\",\"value\":\"1\"},{\"name\":\"menuV2Tips\",\"value\":\"1\"}]}]}")
+                .setStorageState("{\"origins\":[{\"origin\":\"" + host + "\",\"localStorage\":[{\"name\":\"guideStep\",\"value\":\"{\\\"haveKyc\\\":true,\\\"vaGuide\\\":true,\\\"vaUseGuide\\\":true,\\\"firstInbound\\\":false,\\\"inboundGuide1\\\":false,\\\"inboundGuide2\\\":false,\\\"inboundGuide3\\\":false}\"},{\"name\":\"LockExchangeGuide\",\"value\":\"1\"},{\"name\":\"menuV2Tips\",\"value\":\"1\"}]}]}")
                 .setViewportSize(1440, 875)
                 .setRecordVideoSize(576, 350)
                 .setRecordVideoDir(localResultPath)
@@ -157,21 +172,15 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                     .setSources(false)
             );
 
-            try {
-                login();
-            } catch (Exception t) {
-                t.printStackTrace();
-                log.info("登录出问题了，{}", t.getMessage());
-                throw new LoginException();
-            } finally {
-                context.tracing().stop(new Tracing.StopOptions()
-                        .setPath(Paths.get(localResultPath.toString() +
-                                "/" + business + "-trace-" + TimeUtils.getFormattedTime() +".zip")));
+            login();
+
+            // 如果开关开启，则不运行登录后的其他操作了，默认关闭
+            if ("false".equalsIgnoreCase(loginSwitch)) {
+                actions();
+
+                logout();
             }
 
-            actions();
-
-            logout();
 
             // 执行成功，将结果写入库表，成功了不记库表了
             // insertRecord("success", "na");
@@ -193,10 +202,17 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                 // sendWarnMessage(apiRequestContext, e.getMessage());
                 log.error("{}监控：{}", this.business, e.getMessage());
             }
+
             // 执行失败，写入库表
             insertRecord("failed", e.getMessage());
             return jobResult;
         } finally {
+            // 停止trace录制
+            if (context != null) {
+                context.tracing().stop(new Tracing.StopOptions()
+                        .setPath(Paths.get(localResultPath.toString() +
+                                "/" + business + "-trace-" + TimeUtils.getFormattedTime() +".zip")));
+            }
             if (page != null && listener != null) {
                 page.offResponse(listener);
             }
@@ -207,12 +223,28 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                 page.close(closeOptions);
                 page = null;
             }
-            if (apiRequestContext != null) {
-                apiRequestContext.dispose();
-            }
+            // har文件是在context关闭后才生成的
             if (context != null) {
                 context.close();
                 context = null;
+            }
+            // 如果执行成功了，则删除录制的视频及目录
+            if (jobResult != null && jobResult.getCode() == ReturnT.SUCCESS.getCode()) {
+                clearLocalResult(localResultPath);
+            } else if (jobResult != null && jobResult.getCode() == ReturnT.FAIL.getCode()) {
+                // 上传文件到文件服务器并发送钉钉告警
+                if (apiRequestContext != null) {
+                    uploadUiMonitorFiles(apiRequestContext, localResultPath);
+                    String failReason = jobResult.getMsg();
+                    String formattedFailReason = extractStringByReg(failReason, "logs =+(.*?)=").trim();
+                    log.info("formattedFailReason:{}", formattedFailReason);
+                    sendUIMonitorResultMsg(business, phoneNumber, jobStartTime,
+                            "https://file.pingpongx.com/disk/"+localResultPath.toString().substring(16),
+                            "".equals(formattedFailReason) ? failReason : formattedFailReason);
+                }
+            }
+            if (apiRequestContext != null) {
+                apiRequestContext.dispose();
             }
             if (browser != null) {
                 browser.close();
@@ -221,12 +253,28 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             if (playwright != null) {
                 playwright.close();
             }
-            // 如果执行成功了，则删除录制的视频及目录
-            if (jobResult != null && jobResult.getCode() == 200) {
-                clearLocalResult(localResultPath);
-            }
         }
+    }
 
+    private void uploadUiMonitorFiles(APIRequestContext apiRequestContext, Path localResultPath) {
+        // 创建文件夹，使用localResultPath时，截取文件夹的名字
+        apiRequestContext.post("https://file.pingpongx.com/disk", RequestOptions.create().setForm(
+                FormData.create().set("action", "folder").set("name", localResultPath.toString().substring(16))
+        ));
+        // 上传文件
+        try {
+            Files.walkFileTree(localResultPath, new SimpleFileVisitor<Path>() {
+                //遍历上传文件
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    apiRequestContext.post("https://file.pingpongx.com/disk/"+localResultPath.toString().substring(16), RequestOptions.create().setMultipart(
+                            FormData.create().set("fileField", file))
+                    );
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -296,6 +344,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                             if (code != 50004) {
                                 // sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
                                 log.error("{}监控, url:{}, res:{}", this.business, response.request().url(), resText);
+                                sendApiMonitorResultMsg(business, phoneNumber, response.request().url(), getFormattedTime(), resText);
                             }
                             log.warn("api monitor error url:{}, code: {}, res:{} ", response.request().url(), code, resText);
                         }
@@ -347,6 +396,20 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 //            }
 //            route.resume(new Route.ResumeOptions().setHeaders(headers));
 //        });
+
+        // 如果是福贸的生产环境，需要增加特定的key，以避免被限流拦截
+        if ("https://flowmore.pingpongx.com".equals(host)) {
+            page.route("**/*", route -> {
+                // Override headers
+                Map<String, String> headers = new HashMap<>(route.request().headers());
+                if (route.request().url().contains("/api/front/v2/auth/token")) {
+                    // 此配置是在 ppconfig中 business-gateway下面，
+                    headers.put("monitor", "monitorTest");
+                }
+                route.resume(new Route.ResumeOptions().setHeaders(headers));
+            });
+        }
+
         return listener;
     }
 

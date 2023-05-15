@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.Set;
+
 /**
  * 业务系统登录相关的参数配置化
  */
@@ -23,5 +25,11 @@ public class FMLoginParam {
 
     @Value("${uimonitor.fm.login.url:https://flowmore.pingpongx.com/entrance/signin}")
     private String fmLoginUrl;
+
+    @Value("${uimonitor.fm.notify.phone:15105163710}")
+    private String phoneNumber;
+
+    @Value("${uimonitor.fm.login.switch:false}")
+    private String loginSwitch;
 
 }
