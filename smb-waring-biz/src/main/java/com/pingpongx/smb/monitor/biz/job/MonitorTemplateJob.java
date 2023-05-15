@@ -238,7 +238,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                     String failReason = jobResult.getMsg();
                     String formattedFailReason = extractStringByReg(failReason, "logs =+(.*?)=").trim();
                     log.info("formattedFailReason:{}", formattedFailReason);
-                    sendUIMonitorResultMsg(business, phoneNumber, jobStartTime,
+                    sendUIMonitorResultMsg(host, business, phoneNumber, jobStartTime,
                             "https://file.pingpongx.com/disk/"+localResultPath.toString().substring(16),
                             "".equals(formattedFailReason) ? failReason : formattedFailReason);
                 }
@@ -337,7 +337,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                         // saveResponseDetail(response, code);
                         // 后续可能需要考虑code的判断条件，比如如果服务端错误，是5开头这种，
                         // 20404 40401 主站的code 码
-                        if (code != 0 && code != 401 && code != 20404 && code != 40401) {
+                        if (code != 0 && code != 20404 && code != 40401) {
                             log.info("monitorPageRequest error, url:{}, code:{}", response.request().url(), code);
                             saveResponseDetail(response, code);
                             // 发送告警，50004是服务端超时错误，暂时不发告警
