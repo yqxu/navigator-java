@@ -33,7 +33,7 @@ public abstract class BatchEquals<ValType> implements SameTypeMatcher<ValType> {
     }
 
     /****
-     * 批量匹配字符串 为StringContains提供批量O（n）支撑
+     * 批量匹配字符串 为StringContains提供批量O（1）支撑
      * @param input 对象的待匹配属性，因为操作符的限制只能是string
      * @return 用了contains 规则的rule 的 identify 集合
      */
