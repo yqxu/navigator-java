@@ -1,10 +1,7 @@
 package com.pingpongx.smb.rule.routers.operatiors;
 
 import com.pingpongx.smb.export.RuleConstant;
-import com.pingpongx.smb.export.module.ConfiguredRangeRule;
-import com.pingpongx.smb.export.module.ConfiguredRule;
-import com.pingpongx.smb.export.module.ConfiguredStrRule;
-import com.pingpongx.smb.export.module.MatchOperation;
+import com.pingpongx.smb.export.module.*;
 import com.pingpongx.smb.rule.routers.operatiors.batch.*;
 
 import java.util.Map;
@@ -38,7 +35,7 @@ public class Factories {
         public static Map<String, Supplier<BatchMatcher>> map = new ConcurrentHashMap<>();
         static {
             map.put(RuleConstant.Operations.StrEquals.getSimpleName(), BatchStrEquals::newInstance);
-            map.put(RuleConstant.Operations.NumEquals.getSimpleName(),BatchStrEquals::newInstance);
+            map.put(RuleConstant.Operations.NumEquals.getSimpleName(),BatchNumEquals::newInstance);
             map.put(RuleConstant.Operations.StrNotBlank.getSimpleName(), BatchStrNotBlank::newInstance);
             map.put(RuleConstant.Operations.StrContains.getSimpleName(), BatchStrContains::newInstance);
             map.put(RuleConstant.Operations.NumberRangeIn.getSimpleName(), BatchNumRange::newInstance);
@@ -53,7 +50,7 @@ public class Factories {
         public static Map<String, Supplier<ConfiguredRule>> map = new ConcurrentHashMap<>();
         static {
             map.put(RuleConstant.Operations.StrEquals.getSimpleName(), ConfiguredStrRule::new);
-            map.put(RuleConstant.Operations.NumEquals.getSimpleName(),ConfiguredStrRule::new);
+            map.put(RuleConstant.Operations.NumEquals.getSimpleName(), ConfiguredNumRule::new);
             map.put(RuleConstant.Operations.StrNotBlank.getSimpleName(), ConfiguredStrRule::new);
             map.put(RuleConstant.Operations.StrContains.getSimpleName(), ConfiguredStrRule::new);
             map.put(RuleConstant.Operations.NumberRangeIn.getSimpleName(), ConfiguredRangeRule::new);
