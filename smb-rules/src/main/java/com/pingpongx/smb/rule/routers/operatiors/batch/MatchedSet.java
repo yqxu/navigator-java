@@ -37,6 +37,12 @@ public class MatchedSet {
         matchedRule.add(node);
     }
 
+    /****
+     * parentRepeat 已经匹配到的元素，用于去重
+     * @param parentRepeat
+     * @param notSet
+     * @return
+     */
     Set<Node<RuleLeaf, RuleTrieElement>> getResult(Set<Node<RuleLeaf, RuleTrieElement>> parentRepeat,Set<Node<RuleLeaf, RuleTrieElement>> notSet){
         if (notSet == null){
             notSet = new HashSet<>();

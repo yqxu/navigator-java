@@ -33,7 +33,12 @@ public abstract class RuleLeaf<T> implements Rule<T>, Identified<String> {
         if (ret != 0 ){
             return ret;
         }
-        return this.expected().toString().compareTo(((RuleLeaf<Object>) o).expected().toString());
+        ret = this.expected().toString().compareTo(((RuleLeaf<Object>) o).expected().toString());
+        if (ret != 0 ){
+            return ret;
+        }
+        ret = String.valueOf(this.isNot()).compareTo(String.valueOf(((RuleLeaf<Object>) o).isNot()));
+        return ret;
     }
 
     @Override
