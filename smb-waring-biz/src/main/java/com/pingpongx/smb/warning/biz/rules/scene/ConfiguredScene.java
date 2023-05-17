@@ -54,21 +54,6 @@ public class ConfiguredScene {
     }
 
     public void loadConfigStr(String confStr) {
-        Scene scenet = new Scene();
-        Or or = new Or();
-        And and = new And();
-        LeafRuleConf conf = new LeafRuleConf();
-        conf.setType("type");
-        conf.setNot(false);
-        conf.setExpected("32423");
-        conf.setOperation("NumberRangeIn");
-        conf.setAttr("attr");
-        and.setAndRules(Stream.of(conf).collect(Collectors.toList()));
-        or.setOrRules(Stream.of(and).collect(Collectors.toList()));
-        scenet.setRulesOf(or);
-        String strTest = JSON.toJSONString(or, JSONWriter.Feature.WriteClassName);
-        JSON.parseObject(strTest,RuleDto.class);
-
         List<Scene> scenes = JSON.parseArray(confStr, Scene.class);
         if (scenes == null) {
             return;
