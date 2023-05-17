@@ -1,16 +1,12 @@
 package com.pingpongx.smb.warning.biz.rules.scene;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONWriter;
 import com.pingpongx.smb.export.RuleConstant;
 import com.pingpongx.smb.export.globle.Engine;
 import com.pingpongx.smb.export.module.Rule;
-import com.pingpongx.smb.export.module.operation.RuleOr;
 import com.pingpongx.smb.export.module.persistance.And;
 import com.pingpongx.smb.export.module.persistance.LeafRuleConf;
 import com.pingpongx.smb.export.module.persistance.Or;
-import com.pingpongx.smb.export.module.persistance.RuleDto;
-import com.pingpongx.smb.rule.routers.operatiors.Factories;
 import com.pingpongx.smb.store.Codec;
 import com.pingpongx.smb.warning.biz.alert.InhibitionFactory;
 import com.pingpongx.smb.warning.biz.alert.ThresholdAlertConf;
@@ -18,14 +14,12 @@ import com.pingpongx.smb.warning.biz.alert.counter.CountContext;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
 import com.pingpongx.smb.warning.biz.alert.threshold.Inhibition;
 import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
-import com.pingpongx.smb.warning.biz.rules.scene.configure.*;
+import com.pingpongx.smb.warning.biz.rules.scene.configure.Scene;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 public class ConfiguredScene {
@@ -60,7 +54,7 @@ public class ConfiguredScene {
         }
         scenes.stream().forEach(scene -> {
             Rule rule = Codec.buildRule(scene.getRulesOf());
-            if (rule == null){
+            if (rule == null) {
                 return;
             }
             CountContext countContext = new CountContext(scene);
