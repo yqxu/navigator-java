@@ -16,11 +16,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class BatchStrContains implements BatchMatcher<String>{
+public class BatchStrContains implements SameTypeMatcher<String>{
     //AC自动机
     ACTrie<Character, MatchedSet> trie = new ACTrie<>();
 
     Set<Node<RuleLeaf, RuleTrieElement>> notSet = new HashSet<>();
+    private MatchOperation operation;
 
     public void putAndReIndex(String str,Node<RuleLeaf, RuleTrieElement> node,boolean isNot){
         putOnly(str,node,isNot);
@@ -50,11 +51,11 @@ public class BatchStrContains implements BatchMatcher<String>{
      * @param input 对象的待匹配属性，因为操作符的限制只能是string
      * @return 用了contains 规则的rule 的 identify 集合
      */
-    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(String input,Set<Node<RuleLeaf, RuleTrieElement>> repeat){
+    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object input,Set<Node<RuleLeaf, RuleTrieElement>> repeat){
         if (input == null){
             return notSet.stream().collect(Collectors.toSet());
         }
-        IdentityPath<Character> path = IdentityPath.of(input.toCharArray());
+        IdentityPath<Character> path = IdentityPath.of(input.toString().toCharArray());
         MatchedSet matchedSet = trie.walk(path).stream().map(Node::getData).map(FSMNode::getData).filter(Objects::nonNull).reduce((set1, set2)->{
             set1.getMatchedNotRule().addAll(set2.getMatchedNotRule());
             set1.getMatchedRule().addAll(set2.getMatchedRule());
@@ -65,17 +66,20 @@ public class BatchStrContains implements BatchMatcher<String>{
 
     @Override
     public MatchOperation supportedOperation() {
-        return StringContains.getInstance();
+        return this.operation;
     }
-
     @Override
-    public void putRule(RuleLeaf< String> rule, Node<RuleLeaf, RuleTrieElement> node) {
+    public void supportedOperation(MatchOperation operation) {
+        this.operation = operation;
+    }
+    @Override
+    public void putRule(RuleLeaf<String> rule, Node<RuleLeaf, RuleTrieElement> node) {
         String exp = rule.expected();
         //TODO:Init 完成节点做一次reindex
         putAndReIndex(exp,node,rule.isNot());
     }
 
-    public static BatchMatcher<String> newInstance() {
+    public static SameTypeMatcher<String> newInstance() {
         BatchStrContains strContains = new BatchStrContains();
         return strContains;
     }

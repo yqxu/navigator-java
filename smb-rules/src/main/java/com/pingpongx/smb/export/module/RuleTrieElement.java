@@ -50,4 +50,12 @@ public class RuleTrieElement {
         this.handlers = handlers;
     }
 
+    public boolean removeHandler(String handlerIdentify){
+        return this.handlers.removeIf(ruleHandler -> ruleHandler.getIdentify().equals(handlerIdentify));
+    }
+
+    public boolean removeHandler(RuleHandler handler){
+        return this.handlers.remove(handler);
+    }
+
 }

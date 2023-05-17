@@ -4,24 +4,25 @@ import com.pingpongx.smb.export.RuleConstant;
 import com.pingpongx.smb.export.module.MatchOperation;
 
 
-public class NumBiggerAndEqualsThen implements MatchOperation<Number> {
-    public static NumBiggerAndEqualsThen getInstance(){
-        return new NumBiggerAndEqualsThen();
+public class StrNotBlank implements MatchOperation<String> {
+
+    String obj;
+    String attr;
+    public static StrNotBlank getInstance(){
+        return new StrNotBlank();
     }
     public static MatchOperation getInstance(String obj,String attr){
         return getInstance().attr(attr).obj(obj);
     }
-    String attr;
-    String obj;
 
     @Override
     public String getIdentify() {
-        return RuleConstant.Operations.NumBiggerThen;
+        return RuleConstant.Operations.StrNotBlank.getSimpleName();
     }
 
     @Override
     public int sortBy() {
-        return 100;
+        return 0;
     }
 
     @Override
@@ -51,16 +52,16 @@ public class NumBiggerAndEqualsThen implements MatchOperation<Number> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        NumBiggerAndEqualsThen that = (NumBiggerAndEqualsThen) o;
+        StrNotBlank strEquals = (StrNotBlank) o;
 
-        if (attr != null ? !attr.equals(that.attr) : that.attr != null) return false;
-        return obj != null ? obj.equals(that.obj) : that.obj == null;
+        if (obj != null ? !obj.equals(strEquals.obj) : strEquals.obj != null) return false;
+        return attr != null ? attr.equals(strEquals.attr) : strEquals.attr == null;
     }
 
     @Override
     public int hashCode() {
-        int result = attr != null ? attr.hashCode() : 0;
-        result = 31 * result + (obj != null ? obj.hashCode() : 0);
+        int result = obj != null ? obj.hashCode() : 0;
+        result = 31 * result + (attr != null ? attr.hashCode() : 0);
         return result;
     }
 }

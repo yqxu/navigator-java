@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 public abstract class AbstractPPDingTalkClient implements PPDingTalkClient {
 
     abstract public String getNotifyUrl();
-    private final DingTalkClient dingTalkClient;
-    private final String notifyUrl;
+    protected  DingTalkClient dingTalkClient;
+    protected  String notifyUrl;
 
     public AbstractPPDingTalkClient() {
         this.notifyUrl = getNotifyUrl();
