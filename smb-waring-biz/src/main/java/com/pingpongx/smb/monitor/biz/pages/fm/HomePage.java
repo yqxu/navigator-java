@@ -65,7 +65,7 @@ public class HomePage {
                 if (!page.getByText("合同订单", new Page.GetByTextOptions().setExact(true)).isVisible()) {
                     page.getByText("外贸收款", new Page.GetByTextOptions().setExact(true)).first().hover();
                 }
-                page.getByText("合同订单").click();
+                page.getByText("合同订单", new Page.GetByTextOptions().setExact(true)).click();
                 break;
             case "账单收款":
                 log.info("账单收款，count:{}", page.locator("#app").getByText("账单收款", new Locator.GetByTextOptions().setExact(true)).count());
@@ -106,11 +106,15 @@ public class HomePage {
                 page.getByText("付款", new Page.GetByTextOptions().setExact(true)).hover();
                 page.getByText("服务商付款").last().click();
                 break;
-            case "外贸收款明细":
-                page.getByText("外贸收款", new Page.GetByTextOptions().setExact(true)).first().hover();
-                page.getByText("外贸收款明细").click();
+            case "外贸收款交易查询":
+                page.getByText("交易查询", new Page.GetByTextOptions().setExact(true)).first().hover();
+                page.getByText("外贸收款交易查询").click();
                 break;
-            case "人民币账户明细":
+            case "挂单记录":
+                page.getByText("交易查询", new Page.GetByTextOptions().setExact(true)).first().hover();
+                page.getByText("挂单记录").click();
+                break;
+            case "人民币账户交易查询":
                 page.getByText("交易查询", new Page.GetByTextOptions().setExact(true)).hover();
                 // 人民币账户明细按钮，有时会不展示，需要前端协助修改
                 if (page.getByText("人民币账户交易查询").isVisible()) {
@@ -146,6 +150,7 @@ public class HomePage {
         switchPage("服务商付款");
 
         switchPage("外贸收款交易查询");
+        switchPage("挂单记录");
         switchPage("人民币账户交易查询");
 
         switchPage("汇率风险");

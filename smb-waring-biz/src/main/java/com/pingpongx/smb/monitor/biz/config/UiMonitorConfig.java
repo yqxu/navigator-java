@@ -1,5 +1,6 @@
 package com.pingpongx.smb.monitor.biz.config;
 
+import com.pingpongx.smb.monitor.dal.entity.uiprops.B2BHKLoginParam;
 import com.pingpongx.smb.monitor.dal.entity.uiprops.FMLoginParam;
 import com.pingpongx.smb.monitor.dal.entity.uiprops.MerchantLoginParam;
 import com.pingpongx.smb.monitor.dal.entity.uiprops.MonitorEnvParam;
@@ -8,6 +9,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class UiMonitorConfig {
+
+    @Bean
+    public B2BHKLoginParam b2bHKLoginParam() {
+        return new B2BHKLoginParam();
+    }
 
     @Bean
     public FMLoginParam fmLoginParam() {
