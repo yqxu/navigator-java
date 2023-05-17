@@ -49,6 +49,7 @@ public class LoginPage {
         page.getByPlaceholder("登录密码").click();
         page.getByPlaceholder("登录密码").fill(loginPassword);
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("立即登录")).click();
+        page.waitForLoadState(LoadState.DOMCONTENTLOADED);
         // 解决首页温馨提示弹2,3次的问题
         for (int i=0; i<3; i++) {
             if (waitElementExist(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")), 800)) {
