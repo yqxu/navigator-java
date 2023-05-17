@@ -4,10 +4,14 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.WaitUntilState;
+import com.pingpongx.smb.monitor.biz.exception.LoginException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
+import java.nio.file.Paths;
+
 import static com.pingpongx.smb.monitor.biz.util.PlayWrightUtils.waitElementExist;
+import static com.pingpongx.smb.monitor.biz.util.TimeUtils.getFormattedTime;
 
 
 /**
@@ -34,7 +38,7 @@ public class LoginPage {
         Page.NavigateOptions options = new Page.NavigateOptions();
         options.setWaitUntil(WaitUntilState.DOMCONTENTLOADED);
 //        options.setWaitUntil(WaitUntilState.NETWORKIDLE);
-        options.setTimeout(60000);
+        options.setTimeout(20000);
         page.navigate(loginUrl, options);
         // 打印浏览器的 localStorage
         // page.context().storageState();
@@ -52,7 +56,15 @@ public class LoginPage {
 
         // 对福贸登录后可能出现的弹窗进行关闭
         if (waitElementExist(page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")), 1200)) {
-            page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).locator("i").click();
+            if (page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).locator("i").isVisible()) {
+                page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).locator("i").click();
+            }
+            if (page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("我知道了")).isVisible()) {
+                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("我知道了")).click();
+            }
+        }
+        if (!waitElementExist(page.getByText("首页", new Page.GetByTextOptions().setExact(true)), 1000)) {
+            throw new LoginException("登录后，未能找到首页菜单，认定为登录失败");
         }
         log.info("fm login finished and menu check finished");
 
