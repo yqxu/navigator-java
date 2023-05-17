@@ -24,4 +24,9 @@ public class MerchantLoginParam {
     @Value("${uimonitor.merchant.login.url:https://ro-us.pingpongx.com/entrance/signin}")
     private String merchantLoginUrl;
 
+    @Value("${uimonitor.merchant.notify.phone:15105163710}")
+    private String phoneNumber;
+
+    @Value("${uimonitor.merchant.login.switch:false}")
+    private String loginSwitch;
 }
