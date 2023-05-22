@@ -24,7 +24,7 @@ public class FMMonitor extends MonitorTemplateJob {
 
     @Override
     public void initEnv() {
-        super.setHost(fmLoginParam.getMonitorFmHost());
+        super.setHost(fmLoginParam.getMonitorHost());
         super.setDingGroup("FLOWMORE");
         super.setBusiness(this.getClass().getSimpleName());
         super.setPhoneNumber(fmLoginParam.getPhoneNumber());
@@ -37,9 +37,9 @@ public class FMMonitor extends MonitorTemplateJob {
 
         LoginPage loginPage = new LoginPage();
         loginPage.setPage(super.getPage());
-        loginPage.setLoginUrl(fmLoginParam.getFmLoginUrl());
-        loginPage.setLoginUsername(fmLoginParam.getFmLoginUserName());
-        loginPage.setLoginPassword(fmLoginParam.getFmLoginPassword());
+        loginPage.setLoginUrl(fmLoginParam.getLoginUrl());
+        loginPage.setLoginUsername(fmLoginParam.getLoginUserName());
+        loginPage.setLoginPassword(fmLoginParam.getLoginPassword());
         loginPage.login();
     }
 

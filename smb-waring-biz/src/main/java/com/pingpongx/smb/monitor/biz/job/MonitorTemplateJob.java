@@ -37,6 +37,7 @@ import static com.pingpongx.smb.monitor.biz.util.DingUtils.sendUIMonitorResultMs
 import static com.pingpongx.smb.monitor.biz.util.PlayWrightUtils.initUtil;
 import static com.pingpongx.smb.monitor.biz.util.RegUtils.extractStringByReg;
 import static com.pingpongx.smb.monitor.biz.util.TimeUtils.getFormattedTime;
+import static com.pingpongx.smb.monitor.biz.util.TimeUtils.getFormattedTime2;
 
 /**
  * 问题：
@@ -62,6 +63,8 @@ public abstract class MonitorTemplateJob extends IJobHandler {
     private Page page;
     private String phoneNumber;
     private String loginSwitch;
+
+    private int continueFailedTimes = 0;
 
     public void setLoginSwitch(String loginSwitch) {
         this.loginSwitch = loginSwitch;
@@ -120,7 +123,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             return new ReturnT<>( "监控开关未打开");
         }
         initEnv();
-        String jobStartTime = getFormattedTime();
+        String jobStartTime = getFormattedTime2();
         log.info("开始时间：{}，当前monitor的环境：{}，当前业务线：{}", jobStartTime, monitorEnvParam.getMonitorEnv(), business);
         Playwright playwright = null;
         Consumer<Response> listener = null;
@@ -132,8 +135,9 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions()
                 // 因为福贸的业务有向导弹窗，弹出来比较恶心，而且是前端记忆的，所以在启动浏览器时把这个填入localStorage里面
                 .setStorageState("{\"origins\":[{\"origin\":\"" + host + "\",\"localStorage\":[{\"name\":\"guideStep\",\"value\":\"{\\\"haveKyc\\\":true,\\\"vaGuide\\\":true,\\\"vaUseGuide\\\":true,\\\"firstInbound\\\":false,\\\"inboundGuide1\\\":false,\\\"inboundGuide2\\\":false,\\\"inboundGuide3\\\":false}\"},{\"name\":\"LockExchangeGuide\",\"value\":\"1\"},{\"name\":\"menuV2Tips\",\"value\":\"1\"}]}]}")
-                .setViewportSize(1440, 875)
-                .setRecordVideoSize(576, 350)
+                .setViewportSize(1440, 874)
+                .setRecordVideoSize(1440, 874) // 仅录制登录，大约
+                // .setRecordVideoSize(720, 437) // 仅录制登录，大约1.1M左右
                 .setRecordVideoDir(localResultPath)
                 .setRecordHarPath(Paths.get(localResultPath.toString() + "/harFile.har"))
                 .setRecordHarMode(HarMode.MINIMAL)
@@ -231,16 +235,21 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             // 如果执行成功了，则删除录制的视频及目录
             if (jobResult != null && jobResult.getCode() == ReturnT.SUCCESS.getCode()) {
                 clearLocalResult(localResultPath);
+                continueFailedTimes = 0;
             } else if (jobResult != null && jobResult.getCode() == ReturnT.FAIL.getCode()) {
+                continueFailedTimes++;
                 // 上传文件到文件服务器并发送钉钉告警
                 if (apiRequestContext != null) {
                     uploadUiMonitorFiles(apiRequestContext, localResultPath);
                     String failReason = jobResult.getMsg();
                     String formattedFailReason = extractStringByReg(failReason, "logs =+(.*?)=").trim();
                     log.info("formattedFailReason:{}", formattedFailReason);
-                    sendUIMonitorResultMsg(host, business, phoneNumber, jobStartTime,
-                            "https://file.pingpongx.com/disk/"+localResultPath.toString().substring(16),
-                            "".equals(formattedFailReason) ? failReason : formattedFailReason);
+                    if (continueFailedTimes > 1) {
+                        sendUIMonitorResultMsg(host, business, phoneNumber, jobStartTime,
+                                "https://file.pingpongx.com/disk/"+localResultPath.toString().substring(16),
+                                continueFailedTimes,
+                                "".equals(formattedFailReason) ? failReason : formattedFailReason);
+                    }
                 }
             }
             if (apiRequestContext != null) {

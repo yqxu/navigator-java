@@ -5,6 +5,7 @@ import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.WaitUntilState;
 import com.pingpongx.smb.monitor.biz.exception.LoginException;
+import com.pingpongx.smb.monitor.biz.exception.ScriptException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,10 +28,14 @@ public class LoginPage {
     }
 
     public void login() {
-        Page.NavigateOptions options = new Page.NavigateOptions();
-        options.setWaitUntil(WaitUntilState.DOMCONTENTLOADED);
-        options.setTimeout(60000);
-        page.navigate(loginUrl, options);
+        try {
+            Page.NavigateOptions options = new Page.NavigateOptions();
+            options.setWaitUntil(WaitUntilState.DOMCONTENTLOADED);
+            options.setTimeout(60000);
+            page.navigate(loginUrl, options);
+        } catch (Exception e) {
+            throw new ScriptException("网络差？60秒内未能成功打开b2b登录页");
+        }
 
         page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Email")).click();
         page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Email")).fill(loginUsername);

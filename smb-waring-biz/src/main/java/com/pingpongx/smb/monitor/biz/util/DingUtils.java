@@ -45,7 +45,7 @@ public class DingUtils {
         }
     }
 
-    public static void sendUIMonitorResultMsg(String host, String businessLine, String phoneNumber, String jobStartTime, String folderUrl, String failReason)  {
+    public static void sendUIMonitorResultMsg(String host, String businessLine, String phoneNumber, String jobStartTime, String folderUrl, int continueFailedTimes, String failReason)  {
         Long timestamp = System.currentTimeMillis();
         String sign = getSign(timestamp);
 
@@ -57,7 +57,8 @@ public class DingUtils {
                 "### <font color='red'>执行失败，请检查</font>\n" +
                 "##### 执行环境：" + host + "\n" +
                 "##### 失败原因：" + failReason + "\n" +
-                "##### 时间：" + jobStartTime + "\n" +
+                "##### 任务开始时间：" + jobStartTime + "\n" +
+                "##### 连续失败：" + continueFailedTimes + "\n" +
                 "##### 视频及trace文件：[戳我](" + folderUrl+")");
         msg.setMarkdown(markDown);
         At at = new At();
