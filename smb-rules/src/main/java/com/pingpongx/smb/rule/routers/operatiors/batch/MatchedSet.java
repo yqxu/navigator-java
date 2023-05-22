@@ -37,7 +37,16 @@ public class MatchedSet {
         matchedRule.add(node);
     }
 
+    /****
+     * parentRepeat 已经匹配到的元素，用于去重
+     * @param parentRepeat
+     * @param notSet
+     * @return
+     */
     Set<Node<RuleLeaf, RuleTrieElement>> getResult(Set<Node<RuleLeaf, RuleTrieElement>> parentRepeat,Set<Node<RuleLeaf, RuleTrieElement>> notSet){
+        if (notSet == null){
+            notSet = new HashSet<>();
+        }
         Set<Node<RuleLeaf, RuleTrieElement>> ret = Stream.concat(getMatchedRule().stream(),notSet.stream()
                         .filter(s -> !matchedNotRule.contains(s))).filter(node->node.getParent() != null)
                 //实现且逻辑短路优化

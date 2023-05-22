@@ -17,12 +17,12 @@ public class NumEquals implements MatchOperation<Number> {
 
     @Override
     public String getIdentify() {
-        return RuleConstant.Operations.NumEquals;
+        return RuleConstant.Operations.NumEquals.getSimpleName();
     }
 
     @Override
     public int sortBy() {
-        return 0;
+        return 2;
     }
 
     @Override

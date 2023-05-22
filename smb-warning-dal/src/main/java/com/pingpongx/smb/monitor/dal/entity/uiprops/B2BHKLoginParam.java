@@ -8,18 +8,21 @@ import org.springframework.beans.factory.annotation.Value;
 @Setter
 public class B2BHKLoginParam {
 
-    @Value("${uimonitor.b2b.host:https://test2-business.pingpongx.com}")
+    @Value("${uimonitor.b2bhk.host:https://test2-business.pingpongx.com}")
     private String monitorB2BHKHost;
 
-    @Value("${uimonitor.b2b.login.username:skyler_xub2b@163.com}")
+    @Value("${uimonitor.b2bhk.login.username:skyler_xub2b@163.com}")
     private String b2bHKLoginUserName;
 
-    @Value("${uimonitor.b2b.login.password:pingpong0000}")
+    @Value("${uimonitor.b2bhk.login.password:pingpong0000}")
     private String b2bHKLoginPassword;
 
-    @Value("${uimonitor.b2b.login.url:https://test2-business.pingpongx.com/entrance/signin}")
+    @Value("${uimonitor.b2bhk.login.url:https://test2-business.pingpongx.com/entrance/signin}")
     private String b2bHKLoginUrl;
 
-    @Value("${uimonitor.notify.phone:15105163710}")
+    @Value("${uimonitor.b2bhk.notify.phone:15105163710}")
     private String phoneNumber;
+
+    @Value("${uimonitor.b2bhk.login.switch:false}")
+    private String loginSwitch;
 }

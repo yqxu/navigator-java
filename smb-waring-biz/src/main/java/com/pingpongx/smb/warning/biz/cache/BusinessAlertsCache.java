@@ -106,8 +106,8 @@ public class BusinessAlertsCache {
     public List<BusinessAlertsUserMap> findByAppName(String appName) {
         List<BusinessAlertsUserMap> alertUsers = businessAlertUserMap.get(appName);
         if (businessAlertUserMap.isEmpty() || CollectionUtils.isEmpty(alertUsers)) {
-            log.error("未设置应用告警负责人,请及时维护应用告警负责人！");
-            return null;
+            log.error("未设置应用告警负责人,请及时维护应用告警负责人！app:"+appName);
+            return new ArrayList<>();
         }
         List<BusinessAlertsUserMap> alertsUserMapList = new ArrayList<>(alertUsers);
         // 通知小组组长
