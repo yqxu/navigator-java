@@ -3,6 +3,8 @@ package com.pingpongx.smb.export.module.operation;
 import com.pingpongx.smb.export.module.Identified;
 import com.pingpongx.smb.export.module.MatchOperation;
 import com.pingpongx.smb.export.module.Rule;
+import com.pingpongx.smb.export.module.persistance.LeafRuleConf;
+import com.pingpongx.smb.export.module.persistance.RuleDto;
 
 public abstract class RuleLeaf<T> implements Rule<T>, Identified<String> {
     public abstract String dependsObject();
@@ -22,22 +24,20 @@ public abstract class RuleLeaf<T> implements Rule<T>, Identified<String> {
 
     @Override
     public int compareTo(Rule<T> o) {
-        int one,other ;
-        one = this.operatorType().sortBy();
         if (o instanceof RuleAnd){
-            other = -1;
+            return  1;
         }else if (o instanceof RuleOr){
-            other = -2;
-        }else {
-            other =  ((RuleLeaf<T>)o).operatorType().sortBy();
+            return  1;
         }
-        int ret = one - other;
-        if (ret == 0){
-            ret = this.dependsAttr().compareTo(((RuleLeaf<T>)o).dependsAttr());
+        int ret = this.operatorType().compareTo(((RuleLeaf)o).operatorType());
+        if (ret != 0 ){
+            return ret;
         }
-        if (ret == 0){
-            ret = this.getIdentify().compareTo(((RuleLeaf<T>)o).getIdentify());
+        ret = this.expected().toString().compareTo(((RuleLeaf<Object>) o).expected().toString());
+        if (ret != 0 ){
+            return ret;
         }
+        ret = String.valueOf(this.isNot()).compareTo(String.valueOf(((RuleLeaf<Object>) o).isNot()));
         return ret;
     }
 
@@ -53,4 +53,15 @@ public abstract class RuleLeaf<T> implements Rule<T>, Identified<String> {
         }
         return this.getIdentify().equals(((RuleLeaf< ?>) obj).getIdentify());
     }
+
+    public RuleDto toDto(){
+        LeafRuleConf leafRule = new LeafRuleConf();
+        leafRule.setOperation(this.operatorType().getIdentify().toString());
+        leafRule.setExpected(this.expected().toString());
+        leafRule.setAttr(this.dependsAttr());
+        leafRule.setNot(this.isNot());
+        leafRule.setType(this.type());
+        return leafRule;
+    }
+
 }

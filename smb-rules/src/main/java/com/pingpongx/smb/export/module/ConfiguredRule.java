@@ -1,8 +1,9 @@
 package com.pingpongx.smb.export.module;
 
+import com.alibaba.fastjson2.JSON;
 import com.pingpongx.smb.export.module.operation.RuleLeaf;
 
-public class ConfiguredLeafRule extends RuleLeaf<String> {
+public abstract class ConfiguredRule<T> extends RuleLeaf<T> {
     String type;
     String attr;
     MatchOperation operation;
@@ -22,11 +23,6 @@ public class ConfiguredLeafRule extends RuleLeaf<String> {
     @Override
     public MatchOperation operatorType() {
         return operation;
-    }
-
-    @Override
-    public String expected() {
-        return expected;
     }
 
     @Override
@@ -75,4 +71,5 @@ public class ConfiguredLeafRule extends RuleLeaf<String> {
     public String type() {
         return type;
     }
+
 }

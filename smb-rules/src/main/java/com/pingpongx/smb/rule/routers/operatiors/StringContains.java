@@ -18,7 +18,7 @@ public class StringContains implements MatchOperation<String> {
 
     @Override
     public String getIdentify() {
-        return RuleConstant.Operations.StrContains;
+        return RuleConstant.Operations.StrContains.getSimpleName();
     }
 
     @Override

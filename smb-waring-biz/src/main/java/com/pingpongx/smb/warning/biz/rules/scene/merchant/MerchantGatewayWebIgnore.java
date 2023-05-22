@@ -1,6 +1,6 @@
 package com.pingpongx.smb.warning.biz.rules.scene.merchant;
 
-import com.pingpongx.smb.export.module.ConfiguredLeafRule;
+import com.pingpongx.smb.export.module.ConfiguredStrRule;
 import com.pingpongx.smb.rule.routers.operatiors.StrEquals;
 import com.pingpongx.smb.warning.biz.alert.model.MerchantAlert;
 import org.springframework.stereotype.Component;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-public class MerchantGatewayWebIgnore extends ConfiguredLeafRule {
+public class MerchantGatewayWebIgnore extends ConfiguredStrRule {
     private static String except = "merchant-gateway-web";
 
     @PostConstruct

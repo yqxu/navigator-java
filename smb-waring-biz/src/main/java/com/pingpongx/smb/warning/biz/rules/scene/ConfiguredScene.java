@@ -1,9 +1,9 @@
 package com.pingpongx.smb.warning.biz.rules.scene;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.pingpongx.smb.export.RuleConstant;
 import com.pingpongx.smb.export.globle.Engine;
-import com.pingpongx.smb.export.module.operation.RuleOr;
+import com.pingpongx.smb.export.module.Rule;
 import com.pingpongx.smb.export.module.persistance.And;
 import com.pingpongx.smb.export.module.persistance.LeafRuleConf;
 import com.pingpongx.smb.export.module.persistance.Or;
@@ -14,7 +14,7 @@ import com.pingpongx.smb.warning.biz.alert.counter.CountContext;
 import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
 import com.pingpongx.smb.warning.biz.alert.threshold.Inhibition;
 import com.pingpongx.smb.warning.biz.alert.threshold.TimeUnit;
-import com.pingpongx.smb.warning.biz.rules.scene.configure.*;
+import com.pingpongx.smb.warning.biz.rules.scene.configure.Scene;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,7 +39,7 @@ public class ConfiguredScene {
         rule.setAttr("content");
         rule.setType("SlsAlert");
         rule.setExpected("Test");
-        rule.setOperation(RuleConstant.Operations.StrContains);
+        rule.setOperation(RuleConstant.Operations.StrContains.getSimpleName());
         Scene scene = new Scene();
         scene.setCountWith(new ThresholdAlertConf(5, TimeUnit.Minutes, 10, 10));
         scene.setRulesOf(or);
@@ -53,7 +53,10 @@ public class ConfiguredScene {
             return;
         }
         scenes.stream().forEach(scene -> {
-            RuleOr rule = Codec.buildRule(scene.getRulesOf());
+            Rule rule = Codec.buildRule(scene.getRulesOf());
+            if (rule == null) {
+                return;
+            }
             CountContext countContext = new CountContext(scene);
             engine.put(rule, countContext);
             Inhibition<ThirdPartAlert> inhibition = inhibitionFactory.newInhibition(scene.getIdentity(), scene.getCountWith());
