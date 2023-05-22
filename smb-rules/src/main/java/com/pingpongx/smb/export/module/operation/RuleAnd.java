@@ -2,17 +2,34 @@ package com.pingpongx.smb.export.module.operation;
 
 
 import com.pingpongx.smb.export.module.Rule;
+import com.pingpongx.smb.export.module.persistance.And;
+import com.pingpongx.smb.export.module.persistance.RuleDto;
 
+import java.util.Comparator;
 import java.util.PriorityQueue;
+import java.util.stream.Collectors;
 
 
 public class RuleAnd implements Rule {
-    PriorityQueue<Rule> andRuleList = new PriorityQueue<>();
+    PriorityQueue<Rule> andRuleList = new PriorityQueue<>(new Comparator<Rule>() {
+        @Override
+        public int compare(Rule o1, Rule o2) {
+            return o1.compareTo(o2);
+        }
+    });
 
     @Override
     public RuleOr expansion(){
         return andRuleList.stream().map(r->r.expansion()).reduce((or1,or2)->or1.and(or2)).get();
     }
+
+    @Override
+    public RuleDto toDto() {
+        And and = new And();
+        and.setAndRules(andRuleList.stream().map(rule -> rule.toDto()).collect(Collectors.toList()));
+        return and;
+    }
+
     public static Rule newAnd(Rule rule){
         if (rule instanceof RuleAnd){
             return rule;
@@ -48,16 +65,13 @@ public class RuleAnd implements Rule {
 
     @Override
     public int compareTo(Object o) {
-        int one,other ;
-        one = -1;
         if (o instanceof  RuleAnd){
-            other = -1;
+            return 0;
         }else if (o instanceof  RuleOr){
-            other = -2;
+            return 1;
         }else {
-            other = ((RuleLeaf)o).operatorType().sortBy();
+            return -1;
         }
-        return one - other;
     }
 
     public PriorityQueue<Rule> getAndRuleList() {

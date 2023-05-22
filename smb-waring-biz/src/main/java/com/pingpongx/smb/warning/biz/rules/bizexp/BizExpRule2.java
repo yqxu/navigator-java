@@ -1,6 +1,6 @@
 package com.pingpongx.smb.warning.biz.rules.bizexp;
 
-import com.pingpongx.smb.export.module.ConfiguredLeafRule;
+import com.pingpongx.smb.export.module.ConfiguredStrRule;
 import com.pingpongx.smb.rule.routers.operatiors.StringContains;
 import com.pingpongx.smb.warning.biz.alert.model.SlsAlert;
 import org.springframework.stereotype.Component;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-public class BizExpRule2 extends ConfiguredLeafRule {
+public class BizExpRule2 extends ConfiguredStrRule {
     private static String except = "request calculate failed:资金不足";
 
     @PostConstruct

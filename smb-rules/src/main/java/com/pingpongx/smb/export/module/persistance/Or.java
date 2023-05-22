@@ -1,17 +1,22 @@
 package com.pingpongx.smb.export.module.persistance;
 
 
+import com.alibaba.fastjson2.annotation.JSONType;
+import com.pingpongx.smb.export.module.Rule;
+
 import java.io.Serializable;
 import java.util.List;
+@JSONType(typeName = "Or",typeKey = "ruleType")
+public class Or extends RuleDto {
 
-public class Or implements Serializable {
-    List<And> orRules;
+    List<RuleDto> orRules;
 
-    public List<And> getOrRules() {
+    public List<RuleDto> getOrRules() {
         return orRules;
     }
 
-    public void setOrRules(List<And> orRules) {
+    public void setOrRules(List<RuleDto> orRules) {
         this.orRules = orRules;
     }
+
 }

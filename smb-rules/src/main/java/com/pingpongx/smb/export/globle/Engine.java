@@ -15,7 +15,6 @@ import com.pingpongx.smb.store.DataAttrMapper;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
 public class Engine {
     public static Engine newInstance(){
         return new Engine();
@@ -39,6 +38,9 @@ public class Engine {
     }
 
     public void put(Rule rule, RuleHandler handler){
+        if (rule == null){
+            throw new RuntimeException("rule can't be null.");
+        }
         RuleOr or = rule.expansion();
         RuleTrie ruleTrie = ruleTries.get(rule.type());
         if (ruleTrie == null){
@@ -48,6 +50,18 @@ public class Engine {
         ruleTrie.putOr(or,handler);
     }
 
+    public void remove(Rule rule, RuleHandler handler){
+        if (rule == null){
+            throw new RuntimeException("rule can't be null.");
+        }
+        RuleOr or = rule.expansion();
+        RuleTrie ruleTrie = ruleTries.get(rule.type());
+        if (ruleTrie == null){
+            ruleTrie = new RuleTrie(this);
+            ruleTries.put(rule.type(),ruleTrie);
+        }
+        ruleTrie.putOr(or,handler);
+    }
 
     public MatchResult match(String clazz,Object data){
         RuleTrie ruleTrie = ruleTries.get(clazz);

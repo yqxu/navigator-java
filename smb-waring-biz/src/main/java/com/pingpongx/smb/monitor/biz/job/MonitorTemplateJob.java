@@ -156,11 +156,11 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                     .setSlowMo(2200));
             // 不同的context的配置，理论上是一样的，例如浏览器的尺寸
             context = browser.newContext(newContextOptions);
-            context.setDefaultTimeout(20 * 1000);
-            context.setDefaultNavigationTimeout(60 * 1000);
+            context.setDefaultTimeout(30 * 1000);
+            context.setDefaultNavigationTimeout(30 * 1000);
             page = context.newPage();
-            page.setDefaultTimeout(20 * 1000);
-            page.setDefaultNavigationTimeout(20 * 1000);
+            page.setDefaultTimeout(30 * 1000);
+            page.setDefaultNavigationTimeout(30 * 1000);
             apiRequestContext = playwright.request().newContext(new APIRequest.NewContextOptions());
 
             listener = monitorPageRequest(apiRequestContext, page);
