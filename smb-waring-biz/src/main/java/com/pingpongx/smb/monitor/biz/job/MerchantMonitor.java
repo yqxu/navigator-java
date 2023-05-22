@@ -23,7 +23,7 @@ public class MerchantMonitor extends MonitorTemplateJob {
         super.setHost(merchantLoginParam.getMonitorHost());
         super.setDingGroup("MERCHANT");
         super.setBusiness(this.getClass().getSimpleName());
-        super.setPhoneNumber(merchantLoginParam.getPhoneNumber());
+        super.setPhoneNumberList(merchantLoginParam.getPhoneNumberList());
         super.setLoginSwitch(merchantLoginParam.getLoginSwitch());
     }
 

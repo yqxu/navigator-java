@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.List;
+
 /**
  * 业务系统登录相关的参数配置化
  */
@@ -25,7 +27,7 @@ public class MerchantLoginParam {
     private String loginUrl;
 
     @Value("${uimonitor.merchant.notify.phone:15105163710}")
-    private String phoneNumber;
+    private List<String> phoneNumberList;
 
     @Value("${uimonitor.merchant.login.switch:false}")
     private String loginSwitch;

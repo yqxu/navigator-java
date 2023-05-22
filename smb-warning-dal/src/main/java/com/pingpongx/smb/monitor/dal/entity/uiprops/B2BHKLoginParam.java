@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class B2BHKLoginParam {
@@ -21,7 +23,7 @@ public class B2BHKLoginParam {
     private String loginPassword;
 
     @Value("${uimonitor.b2b.notify.phone:15105163710}")
-    private String phoneNumber;
+    private List<String> phoneNumberList;
 
     @Value("${uimonitor.b2b.login.switch:false}")
     private String loginSwitch;

@@ -27,7 +27,7 @@ public class FMMonitor extends MonitorTemplateJob {
         super.setHost(fmLoginParam.getMonitorHost());
         super.setDingGroup("FLOWMORE");
         super.setBusiness(this.getClass().getSimpleName());
-        super.setPhoneNumber(fmLoginParam.getPhoneNumber());
+        super.setPhoneNumberList(fmLoginParam.getPhoneNumberList());
         super.setLoginSwitch(fmLoginParam.getLoginSwitch());
     }
 

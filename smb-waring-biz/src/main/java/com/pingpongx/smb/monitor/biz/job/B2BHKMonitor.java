@@ -23,7 +23,7 @@ public class B2BHKMonitor extends MonitorTemplateJob {
         super.setHost(b2bHKLoginParam.getMonitorHost());
         super.setDingGroup("B2B");
         super.setBusiness(this.getClass().getSimpleName());
-        super.setPhoneNumber(b2bHKLoginParam.getPhoneNumber());
+        super.setPhoneNumberList(b2bHKLoginParam.getPhoneNumberList());
         super.setLoginSwitch(b2bHKLoginParam.getLoginSwitch());
     }
 
