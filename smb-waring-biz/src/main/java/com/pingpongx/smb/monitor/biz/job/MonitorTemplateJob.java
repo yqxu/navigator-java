@@ -62,6 +62,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
     private List<String> phoneNumberList;
     private String loginSwitch;
 
+    // 不同的job执行时，使用的是不同的线程号，理论上是线程安全的
     private int continueFailedTimes = 0;
 
     public void setLoginSwitch(String loginSwitch) {
@@ -272,7 +273,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             Files.walkFileTree(localResultPath, new SimpleFileVisitor<Path>() {
                 //遍历上传文件
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    apiRequestContext.post("https://file.pingpongx.com/disk/"+localResultPath.toString().substring(16), RequestOptions.create().setMultipart(
+                    apiRequestContext.post("https://file.pingpongx.com/disk/" + localResultPath.toString().substring(16), RequestOptions.create().setMultipart(
                             FormData.create().set("fileField", file))
                     );
                     return FileVisitResult.CONTINUE;
@@ -334,11 +335,22 @@ public abstract class MonitorTemplateJob extends IJobHandler {
      */
     private Consumer<Response> monitorPageRequest(APIRequestContext apiRequestContext, Page page) {
         Consumer<Response> listener = response -> {
+            String httpStatus = "";
             try {
                 if (response.request().url().contains(host) && !response.request().url().endsWith("png") && response.request().url().contains("api")) {
+                    try {
+                        httpStatus = "" + response.status();
+                    } catch (Exception ex1) {
+                        httpStatus = response.statusText();
+                    }
                     String resText = response.text();
                     if (StringUtils.hasLength(resText)) {
-                        int code = JSONPath.read(resText, "$.code", Integer.class);
+                        int code;
+                        try {
+                            code = JSONPath.read(resText, "$.code", Integer.class);
+                        } catch (Exception ex2) {
+                            throw new RuntimeException("响应结果不是合理的json串");
+                        }
                         // todo 如果响应信息的内容长度过长需要告警吗？例如有一个接口的响应内容超过64K，目前超64K插入库表会报错的
                         // saveResponseDetail(response, code);
                         // 后续可能需要考虑code的判断条件，比如如果服务端错误，是5开头这种，
@@ -350,19 +362,21 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                             if (code != 50004) {
                                 // sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
                                 log.error("{}监控, url:{}, res:{}", this.business, response.request().url(), resText);
-                                sendApiMonitorResultMsg(business, phoneNumberList, response.request().url(), getFormattedTime2(), resText);
+                                sendApiMonitorResultMsg(business, phoneNumberList, response.request().url(), httpStatus, getFormattedTime2(), resText);
                             }
                             log.warn("api monitor error url:{}, code: {}, res:{} ", response.request().url(), code, resText);
                         }
                     }
                 }
             } catch (Throwable throwable) {
-                // 可能会因为服务端没有给响应信息而中断
+                // 可能会因为服务端没有给响应信息而中断，或者因为服务端ng出错，导致接口报502等ng出错的html给到接口出来，导致解析json出错
                 if (throwable.getMessage() == null) {
                     log.warn("throwable.getMessage() is null");
+                    sendApiMonitorResultMsg(business, phoneNumberList, response.request().url(), httpStatus, getFormattedTime2(), "throwable.getMessage() is null");
                 }
                 if (throwable.getMessage() != null && !throwable.getMessage().contains("No resource with given identifier found")) {
                     log.warn("monitor url: {}, error:{}", response.request().url(), throwable.getMessage());
+                    sendApiMonitorResultMsg(business, phoneNumberList, response.request().url(), httpStatus, getFormattedTime2(), throwable.getMessage());
                 }
             }
         };
