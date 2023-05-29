@@ -19,10 +19,13 @@ import com.pingpongx.smb.monitor.dal.entity.uiprops.MonitorEnvParam;
 import com.pingpongx.smb.monitor.dal.mapper.ApiDetailMapper;
 import com.pingpongx.smb.monitor.dal.mapper.TaskRecordMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
@@ -165,7 +168,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             page.setDefaultNavigationTimeout(30 * 1000);
             apiRequestContext = playwright.request().newContext(new APIRequest.NewContextOptions());
 
-            listener = monitorPageRequest(apiRequestContext, page);
+            listener = monitorPageRequest(apiRequestContext, page, localResultPath);
 
             // 开启trace录制，可以通过trace文件，帮助分析问题
             context.tracing().start(new Tracing.StartOptions()
@@ -214,6 +217,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                 context.tracing().stop(new Tracing.StopOptions()
                         .setPath(Paths.get(localResultPath.toString() +
                                 "/" + business + "-trace-" + TimeUtils.getFormattedTime() +".zip")));
+                saveBrowserStorageInfo(localResultPath, context);
             }
             if (page != null && listener != null) {
                 page.offResponse(listener);
@@ -260,6 +264,20 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             if (playwright != null) {
                 playwright.close();
             }
+        }
+    }
+
+    /**
+     * 保存浏览器的Cookie，LocalStorage信息到文件
+     * @param localResultPath
+     * @param context
+     */
+    private void saveBrowserStorageInfo(Path localResultPath, BrowserContext context) {
+        try {
+            File browserStorageInfo = new File(localResultPath.toString() + "/BrowserStorageInfo.json");
+            FileUtils.write(browserStorageInfo, context.storageState(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -333,7 +351,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
      * 监听页面接口请求，如果响应信息中有失败的，报错的，需要钉钉告警
      * @param page
      */
-    private Consumer<Response> monitorPageRequest(APIRequestContext apiRequestContext, Page page) {
+    private Consumer<Response> monitorPageRequest(APIRequestContext apiRequestContext, Page page, Path localResultPath) {
         Consumer<Response> listener = response -> {
             String httpStatus = "";
             try {
@@ -381,6 +399,17 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             }
         };
         page.onResponse(listener);
+
+        File consoleLogMsgFile = new File(localResultPath.toString() + "/ConsoleLogMsg.txt");
+        page.onConsoleMessage(msg -> {
+            log.info("console msg, arg:{}, text:{}", msg, msg.text());
+            // 保存控制台输出到文件
+            try {
+                FileUtils.write(consoleLogMsgFile, msg.text() + "\n", StandardCharsets.UTF_8, true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
         // 对页面上可能的弹窗进行处理，例如温馨提示什么的
 //        Consumer<Page> pageConsumer = pageC -> {
