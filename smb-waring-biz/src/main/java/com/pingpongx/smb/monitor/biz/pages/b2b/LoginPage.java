@@ -31,7 +31,7 @@ public class LoginPage {
         try {
             Page.NavigateOptions options = new Page.NavigateOptions();
             options.setWaitUntil(WaitUntilState.DOMCONTENTLOADED);
-            options.setTimeout(60000);
+            options.setTimeout(150000);
             page.navigate(loginUrl, options);
         } catch (Exception e) {
             throw new ScriptException("网络差？60秒内未能成功打开b2b登录页");

@@ -131,7 +131,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         Browser browser = null;
         BrowserContext context = null;
         APIRequestContext apiRequestContext = null;
-        Path localResultPath = Paths.get("/tmp/ui-monitor/ui-monitor-" + monitorEnvParam.getMonitorEnv() + "-" + getFormattedTime());
+        Path localResultPath = Paths.get("/tmp/ui-monitor/ui-monitor-" + monitorEnvParam.getMonitorEnv() + "-" + business + "-" + getFormattedTime());
         ReturnT<String> jobResult = null;
         Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions()
                 // 因为福贸的业务有向导弹窗，弹出来比较恶心，而且是前端记忆的，所以在启动浏览器时把这个填入localStorage里面
