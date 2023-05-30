@@ -94,7 +94,7 @@ public class DingUtils {
         sb.append(
                 "### <font color='red'>接口调用出错，请检查</font>\n" +
                 "##### 接口：" + apiUrl + "\n" +
-                "##### HttpStatus：" + httpStatus + "\n" +
+                "##### 响应码：" + httpStatus + "\n" +
                 "##### 时间：" + apiExecTime + "\n" +
                 "##### 响应：" + apiRes);
         markDown.setText(sb.toString());

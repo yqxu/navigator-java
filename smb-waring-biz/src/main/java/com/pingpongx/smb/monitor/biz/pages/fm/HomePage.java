@@ -33,7 +33,7 @@ public class HomePage {
             case "首页":
                 page.getByText("首页", new Page.GetByTextOptions().setExact(true)).click();
                 // 处理首页中可能出现的问卷弹窗
-                if (waitElementExist(page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).locator("i"), 600)) {
+                if (waitElementExist(page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).locator("i"), 3000)) {
                     page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).locator("i").click();
                 }
                 break;

@@ -44,7 +44,7 @@ public class LoginPage {
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Sign In")).click();
         page.waitForLoadState(LoadState.DOMCONTENTLOADED);
 
-        if (!waitElementExist(page.getByText("DASHBOARD", new Page.GetByTextOptions().setExact(true)), 1000)) {
+        if (!waitElementExist(page.getByText("DASHBOARD", new Page.GetByTextOptions().setExact(true)), 3000)) {
             throw new LoginException("登录后，未能找到首页菜单，认定为登录失败");
         }
 
