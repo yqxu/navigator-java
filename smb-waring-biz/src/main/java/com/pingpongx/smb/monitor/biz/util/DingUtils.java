@@ -78,7 +78,7 @@ public class DingUtils {
     }
 
 
-    public static void sendApiMonitorResultMsg(String businessLine, List<String> phoneNumberList, String apiUrl, String apiExecTime, String apiRes) {
+    public static void sendApiMonitorResultMsg(String businessLine, List<String> phoneNumberList, String apiUrl, String httpStatus, String apiExecTime, String apiRes) {
         Long timestamp = System.currentTimeMillis();
         String sign = getSign(timestamp);
 
@@ -94,6 +94,7 @@ public class DingUtils {
         sb.append(
                 "### <font color='red'>接口调用出错，请检查</font>\n" +
                 "##### 接口：" + apiUrl + "\n" +
+                "##### 响应码：" + httpStatus + "\n" +
                 "##### 时间：" + apiExecTime + "\n" +
                 "##### 响应：" + apiRes);
         markDown.setText(sb.toString());

@@ -1,28 +1,24 @@
 package com.pingpongx.smb.monitor.biz.job;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONPath;
 import com.microsoft.playwright.*;
-import com.microsoft.playwright.options.FormData;
-import com.microsoft.playwright.options.HarMode;
-import com.microsoft.playwright.options.RequestOptions;
-import com.microsoft.playwright.options.Timing;
+import com.microsoft.playwright.options.*;
 import com.pingpongx.job.core.biz.model.ReturnT;
 import com.pingpongx.job.core.handler.IJobHandler;
-import com.pingpongx.smb.monitor.biz.exception.LoginException;
 import com.pingpongx.smb.monitor.biz.util.TimeUtils;
 import com.pingpongx.smb.monitor.dal.entity.constant.BusinessLine;
-import com.pingpongx.smb.monitor.dal.entity.constant.MonitorEnv;
 import com.pingpongx.smb.monitor.dal.entity.dataobj.ApiDetail;
 import com.pingpongx.smb.monitor.dal.entity.dataobj.TaskRecord;
 import com.pingpongx.smb.monitor.dal.entity.uiprops.MonitorEnvParam;
 import com.pingpongx.smb.monitor.dal.mapper.ApiDetailMapper;
 import com.pingpongx.smb.monitor.dal.mapper.TaskRecordMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
@@ -56,12 +52,12 @@ public abstract class MonitorTemplateJob extends IJobHandler {
     private MonitorEnvParam monitorEnvParam;
 
     private String host;
-    private String dingGroup;
     private String business;
     private Page page;
     private List<String> phoneNumberList;
     private String loginSwitch;
 
+    // 不同的job执行时，使用的是不同的线程号，理论上是线程安全的
     private int continueFailedTimes = 0;
 
     public void setLoginSwitch(String loginSwitch) {
@@ -70,10 +66,6 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 
     public void setPhoneNumberList(List<String> phoneNumberList) {
         this.phoneNumberList = phoneNumberList;
-    }
-
-    public void setDingGroup(String dingGroup) {
-        this.dingGroup = dingGroup;
     }
 
     public void setHost(String host) {
@@ -128,7 +120,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         Browser browser = null;
         BrowserContext context = null;
         APIRequestContext apiRequestContext = null;
-        Path localResultPath = Paths.get("/tmp/ui-monitor/ui-monitor-" + getFormattedTime());
+        Path localResultPath = Paths.get("/tmp/ui-monitor/ui-monitor-" + monitorEnvParam.getMonitorEnv() + "-" + business + "-" + getFormattedTime());
         ReturnT<String> jobResult = null;
         Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions()
                 // 因为福贸的业务有向导弹窗，弹出来比较恶心，而且是前端记忆的，所以在启动浏览器时把这个填入localStorage里面
@@ -148,13 +140,14 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 
         try {
             playwright = Playwright.create();
-            browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
+            BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
                     .setHandleSIGHUP(true)
                     .setHandleSIGINT(true)
                     .setHandleSIGTERM(true)
                     .setHeadless(true)
                     .setDevtools(false)
-                    .setSlowMo(2200));
+                    .setSlowMo(2200);
+            browser = playwright.chromium().launch(launchOptions);
             // 不同的context的配置，理论上是一样的，例如浏览器的尺寸
             context = browser.newContext(newContextOptions);
             context.setDefaultTimeout(30 * 1000);
@@ -164,7 +157,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             page.setDefaultNavigationTimeout(30 * 1000);
             apiRequestContext = playwright.request().newContext(new APIRequest.NewContextOptions());
 
-            listener = monitorPageRequest(apiRequestContext, page);
+            listener = monitorPageRequest(apiRequestContext, page, localResultPath);
 
             // 开启trace录制，可以通过trace文件，帮助分析问题
             context.tracing().start(new Tracing.StartOptions()
@@ -198,11 +191,6 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             //    page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("/tmp/ui-monitor/" + getFormattedTime() + ".png")));
             // }
             log.warn("monitor, message size: " + e.getMessage());
-            // 如果是登录失败，才发送钉钉告警
-            if (apiRequestContext != null && e instanceof LoginException) {
-                // sendWarnMessage(apiRequestContext, e.getMessage());
-                log.error("{}监控：{}", this.business, e.getMessage());
-            }
 
             // 执行失败，写入库表
             insertRecord("failed", e.getMessage());
@@ -213,6 +201,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                 context.tracing().stop(new Tracing.StopOptions()
                         .setPath(Paths.get(localResultPath.toString() +
                                 "/" + business + "-trace-" + TimeUtils.getFormattedTime() +".zip")));
+                saveBrowserStorageInfo(localResultPath, context);
             }
             if (page != null && listener != null) {
                 page.offResponse(listener);
@@ -229,23 +218,25 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                 context.close();
                 context = null;
             }
-            // 如果执行成功了，则删除录制的视频及目录
-            if (jobResult != null && jobResult.getCode() == ReturnT.SUCCESS.getCode()) {
-                clearLocalResult(localResultPath);
-                continueFailedTimes = 0;
-            } else if (jobResult != null && jobResult.getCode() == ReturnT.FAIL.getCode()) {
-                continueFailedTimes++;
-                // 上传文件到文件服务器并发送钉钉告警
-                if (apiRequestContext != null) {
-                    uploadUiMonitorFiles(apiRequestContext, localResultPath);
-                    String failReason = jobResult.getMsg();
-                    String formattedFailReason = extractStringByReg(failReason, "logs =+(.*?)=").trim();
-                    log.info("formattedFailReason:{}", formattedFailReason);
-                    if (continueFailedTimes > 1) {
-                        sendUIMonitorResultMsg(host, business, phoneNumberList, jobStartTime,
-                                "https://file.pingpongx.com/disk/"+localResultPath.toString().substring(16),
-                                continueFailedTimes,
-                                "".equals(formattedFailReason) ? failReason : formattedFailReason);
+            if (jobResult != null) {
+                // 如果执行成功了，则删除录制的视频及目录
+                if (jobResult.getCode() == ReturnT.SUCCESS.getCode()) {
+                    clearLocalResult(localResultPath);
+                    continueFailedTimes = 0;
+                } else {
+                    continueFailedTimes++;
+                    // 上传文件到文件服务器并发送钉钉告警
+                    if (apiRequestContext != null) {
+                        uploadUiMonitorFiles(apiRequestContext, localResultPath);
+                        String failReason = jobResult.getMsg();
+                        String formattedFailReason = extractStringByReg(failReason, "logs =+(.*?)=").trim();
+                        log.info("formattedFailReason:{}", formattedFailReason);
+                        if (continueFailedTimes > 1) {
+                            sendUIMonitorResultMsg(host, business, phoneNumberList, jobStartTime,
+                                    "https://file.pingpongx.com/disk/" + localResultPath.toString().substring(16),
+                                    continueFailedTimes,
+                                    "".equals(formattedFailReason) ? failReason : formattedFailReason);
+                        }
                     }
                 }
             }
@@ -262,6 +253,20 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         }
     }
 
+    /**
+     * 保存浏览器的Cookie，LocalStorage信息到文件
+     * @param localResultPath
+     * @param context
+     */
+    private void saveBrowserStorageInfo(Path localResultPath, BrowserContext context) {
+        try {
+            File browserStorageInfo = new File(localResultPath.toString() + "/BrowserStorageInfo.json");
+            FileUtils.write(browserStorageInfo, context.storageState(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void uploadUiMonitorFiles(APIRequestContext apiRequestContext, Path localResultPath) {
         // 创建文件夹，使用localResultPath时，截取文件夹的名字
         apiRequestContext.post("https://file.pingpongx.com/disk", RequestOptions.create().setForm(
@@ -272,7 +277,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             Files.walkFileTree(localResultPath, new SimpleFileVisitor<Path>() {
                 //遍历上传文件
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    apiRequestContext.post("https://file.pingpongx.com/disk/"+localResultPath.toString().substring(16), RequestOptions.create().setMultipart(
+                    apiRequestContext.post("https://file.pingpongx.com/disk/" + localResultPath.toString().substring(16), RequestOptions.create().setMultipart(
                             FormData.create().set("fileField", file))
                     );
                     return FileVisitResult.CONTINUE;
@@ -280,27 +285,6 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             });
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * 调用开发的接口发送钉钉告警，只会判断是生产环境才发告警
-     * @param message
-     */
-    public void sendWarnMessage(APIRequestContext apiRequestContext, String message) {
-        Map<String, String> data = new HashMap<>();
-        data.put("appName", "smb-warning");
-        data.put("className", this.getClass().getSimpleName());
-        data.put("content", message);
-        data.put("hostName", host);
-        data.put("time", getFormattedTime());
-
-        // 如果当前是生产环境，发告警出来
-        if (monitorEnvParam.getMonitorEnv().equals(MonitorEnv.PROD.getMonitorEnv())) {
-            log.info("error happened and data is:{}", JSON.toJSONString(data));
-            // 在容器中执行下面的post方法时，容器中没有https，应访问http
-            APIResponse postDingMsgRes = apiRequestContext.post("http://smb-warning.pingpongx.com/v2/alert/" + dingGroup, RequestOptions.create().setData(data));
-            log.info("调用钉钉告警结果：{}", postDingMsgRes.text());
         }
     }
 
@@ -332,13 +316,25 @@ public abstract class MonitorTemplateJob extends IJobHandler {
      * 监听页面接口请求，如果响应信息中有失败的，报错的，需要钉钉告警
      * @param page
      */
-    private Consumer<Response> monitorPageRequest(APIRequestContext apiRequestContext, Page page) {
+    private Consumer<Response> monitorPageRequest(APIRequestContext apiRequestContext, Page page, Path localResultPath) {
         Consumer<Response> listener = response -> {
+            String httpStatus = "";
             try {
+                //todo 对响应的header判断，如果返回的类型是html，一种处理方式，如果返回的类型是json再以json处理？
                 if (response.request().url().contains(host) && !response.request().url().endsWith("png") && response.request().url().contains("api")) {
+                    try {
+                        httpStatus = "" + response.status();
+                    } catch (Exception ex1) {
+                        httpStatus = response.statusText();
+                    }
                     String resText = response.text();
                     if (StringUtils.hasLength(resText)) {
-                        int code = JSONPath.read(resText, "$.code", Integer.class);
+                        int code;
+                        try {
+                            code = JSONPath.read(resText, "$.code", Integer.class);
+                        } catch (Exception ex2) {
+                            throw new RuntimeException("响应结果不是合理的json串");
+                        }
                         // todo 如果响应信息的内容长度过长需要告警吗？例如有一个接口的响应内容超过64K，目前超64K插入库表会报错的
                         // saveResponseDetail(response, code);
                         // 后续可能需要考虑code的判断条件，比如如果服务端错误，是5开头这种，
@@ -349,24 +345,37 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                             // 发送告警，50004是服务端超时错误，暂时不发告警
                             if (code != 50004) {
                                 // sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
-                                log.error("{}监控, url:{}, res:{}", this.business, response.request().url(), resText);
-                                sendApiMonitorResultMsg(business, phoneNumberList, response.request().url(), getFormattedTime2(), resText);
+                                // log.error("{}监控, url:{}, res:{}", this.business, response.request().url(), resText);
+                                sendApiMonitorResultMsg(business, phoneNumberList, response.request().url(), httpStatus, getFormattedTime2(), resText);
                             }
                             log.warn("api monitor error url:{}, code: {}, res:{} ", response.request().url(), code, resText);
                         }
                     }
                 }
             } catch (Throwable throwable) {
-                // 可能会因为服务端没有给响应信息而中断
+                // 可能会因为服务端没有给响应信息而中断，或者因为服务端ng出错，导致接口报502等ng出错的html给到接口出来，导致解析json出错
                 if (throwable.getMessage() == null) {
                     log.warn("throwable.getMessage() is null");
+                    sendApiMonitorResultMsg(business, phoneNumberList, response.request().url(), httpStatus, getFormattedTime2(), "throwable.getMessage() is null");
                 }
                 if (throwable.getMessage() != null && !throwable.getMessage().contains("No resource with given identifier found")) {
                     log.warn("monitor url: {}, error:{}", response.request().url(), throwable.getMessage());
+                    sendApiMonitorResultMsg(business, phoneNumberList, response.request().url(), httpStatus, getFormattedTime2(), throwable.getMessage());
                 }
             }
         };
         page.onResponse(listener);
+
+        File consoleLogMsgFile = new File(localResultPath.toString() + "/ConsoleLogMsg.txt");
+        page.onConsoleMessage(msg -> {
+            log.info("console msg, arg:{}, text:{}", msg, msg.text());
+            // 保存控制台输出到文件
+            try {
+                FileUtils.write(consoleLogMsgFile, msg.text() + "\n", StandardCharsets.UTF_8, true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
         // 对页面上可能的弹窗进行处理，例如温馨提示什么的
 //        Consumer<Page> pageConsumer = pageC -> {

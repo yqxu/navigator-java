@@ -142,8 +142,8 @@ public class HomePage {
                     page.getByText("更多服务").first().hover();
                 }
                 page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("对账助手")).click();
-                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("返回PingPong")).click();
-                waitElementExist(page.getByText("首页"), 400);
+                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("返回PingPong").setExact(true)).click();
+                waitElementExist(page.getByText("首页"), 2000);
                 break;
         }
     }

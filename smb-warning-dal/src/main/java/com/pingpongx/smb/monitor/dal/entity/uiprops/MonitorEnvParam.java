@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 @Setter
 public class MonitorEnvParam {
 
-    @Value("${uimonitor.env:local}")
+    @Value("${uimonitor.env:dev}")
     private String monitorEnv;
 
     @Value("${uimonitor.enable:false}")
