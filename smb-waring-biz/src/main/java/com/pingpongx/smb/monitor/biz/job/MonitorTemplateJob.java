@@ -22,21 +22,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
 
 import static com.pingpongx.smb.monitor.biz.util.DingUtils.sendApiMonitorResultMsg;
 import static com.pingpongx.smb.monitor.biz.util.DingUtils.sendUIMonitorResultMsg;
 import static com.pingpongx.smb.monitor.biz.util.PlayWrightUtils.initUtil;
 import static com.pingpongx.smb.monitor.biz.util.RegUtils.extractStringByReg;
 import static com.pingpongx.smb.monitor.biz.util.TimeUtils.getFormattedTime;
+import static com.pingpongx.smb.monitor.biz.util.TimeUtils.getFormattedTime2;
 
 /**
  * 问题：
@@ -60,15 +59,17 @@ public abstract class MonitorTemplateJob extends IJobHandler {
     private String dingGroup;
     private String business;
     private Page page;
-    private String phoneNumber;
+    private List<String> phoneNumberList;
     private String loginSwitch;
+
+    private int continueFailedTimes = 0;
 
     public void setLoginSwitch(String loginSwitch) {
         this.loginSwitch = loginSwitch;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhoneNumberList(List<String> phoneNumberList) {
+        this.phoneNumberList = phoneNumberList;
     }
 
     public void setDingGroup(String dingGroup) {
@@ -120,7 +121,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             return new ReturnT<>( "监控开关未打开");
         }
         initEnv();
-        String jobStartTime = getFormattedTime();
+        String jobStartTime = getFormattedTime2();
         log.info("开始时间：{}，当前monitor的环境：{}，当前业务线：{}", jobStartTime, monitorEnvParam.getMonitorEnv(), business);
         Playwright playwright = null;
         Consumer<Response> listener = null;
@@ -132,14 +133,14 @@ public abstract class MonitorTemplateJob extends IJobHandler {
         Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions()
                 // 因为福贸的业务有向导弹窗，弹出来比较恶心，而且是前端记忆的，所以在启动浏览器时把这个填入localStorage里面
                 .setStorageState("{\"origins\":[{\"origin\":\"" + host + "\",\"localStorage\":[{\"name\":\"guideStep\",\"value\":\"{\\\"haveKyc\\\":true,\\\"vaGuide\\\":true,\\\"vaUseGuide\\\":true,\\\"firstInbound\\\":false,\\\"inboundGuide1\\\":false,\\\"inboundGuide2\\\":false,\\\"inboundGuide3\\\":false}\"},{\"name\":\"LockExchangeGuide\",\"value\":\"1\"},{\"name\":\"menuV2Tips\",\"value\":\"1\"}]}]}")
-                .setViewportSize(1440, 875)
-                .setRecordVideoSize(576, 350)
+                .setViewportSize(1440, 874)
+                .setRecordVideoSize(1440, 874)
                 .setRecordVideoDir(localResultPath)
                 .setRecordHarPath(Paths.get(localResultPath.toString() + "/harFile.har"))
                 .setRecordHarMode(HarMode.MINIMAL)
                 ;
         // 如果是主站的，只录主站的登录，如果是福贸的，只录福贸的登录
-        if (host.contains("flowmore")) {
+        if (host.contains("flowmore") || host.contains("business")) {
             newContextOptions.setRecordHarUrlFilter(host + "/api/front/v2/auth/token");
         } else {
             newContextOptions.setRecordHarUrlFilter(host + "/api/user/web/login");
@@ -231,16 +232,21 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             // 如果执行成功了，则删除录制的视频及目录
             if (jobResult != null && jobResult.getCode() == ReturnT.SUCCESS.getCode()) {
                 clearLocalResult(localResultPath);
+                continueFailedTimes = 0;
             } else if (jobResult != null && jobResult.getCode() == ReturnT.FAIL.getCode()) {
+                continueFailedTimes++;
                 // 上传文件到文件服务器并发送钉钉告警
                 if (apiRequestContext != null) {
                     uploadUiMonitorFiles(apiRequestContext, localResultPath);
                     String failReason = jobResult.getMsg();
                     String formattedFailReason = extractStringByReg(failReason, "logs =+(.*?)=").trim();
                     log.info("formattedFailReason:{}", formattedFailReason);
-                    sendUIMonitorResultMsg(host, business, phoneNumber, jobStartTime,
-                            "https://file.pingpongx.com/disk/"+localResultPath.toString().substring(16),
-                            "".equals(formattedFailReason) ? failReason : formattedFailReason);
+                    if (continueFailedTimes > 1) {
+                        sendUIMonitorResultMsg(host, business, phoneNumberList, jobStartTime,
+                                "https://file.pingpongx.com/disk/"+localResultPath.toString().substring(16),
+                                continueFailedTimes,
+                                "".equals(formattedFailReason) ? failReason : formattedFailReason);
+                    }
                 }
             }
             if (apiRequestContext != null) {
@@ -344,7 +350,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                             if (code != 50004) {
                                 // sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
                                 log.error("{}监控, url:{}, res:{}", this.business, response.request().url(), resText);
-                                sendApiMonitorResultMsg(business, phoneNumber, response.request().url(), getFormattedTime(), resText);
+                                sendApiMonitorResultMsg(business, phoneNumberList, response.request().url(), getFormattedTime2(), resText);
                             }
                             log.warn("api monitor error url:{}, code: {}, res:{} ", response.request().url(), code, resText);
                         }
@@ -414,9 +420,10 @@ public abstract class MonitorTemplateJob extends IJobHandler {
     }
 
     @Override
-    public ReturnT<String> execute(String param) throws Exception {
+    public ReturnT<String> execute(String param) {
         log.info("param is: {}",param);
 
+        // 调用静态类的方法，对静态类初始化
         initUtil();
 
         return monitor();

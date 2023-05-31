@@ -20,10 +20,10 @@ public class B2BHKMonitor extends MonitorTemplateJob {
 
     @Override
     public void initEnv() {
-        super.setHost(b2bHKLoginParam.getMonitorB2BHKHost());
-        super.setDingGroup("B2BHK");
+        super.setHost(b2bHKLoginParam.getMonitorHost());
+        super.setDingGroup("B2B");
         super.setBusiness(this.getClass().getSimpleName());
-        super.setPhoneNumber(b2bHKLoginParam.getPhoneNumber());
+        super.setPhoneNumberList(b2bHKLoginParam.getPhoneNumberList());
         super.setLoginSwitch(b2bHKLoginParam.getLoginSwitch());
     }
 
@@ -32,9 +32,9 @@ public class B2BHKMonitor extends MonitorTemplateJob {
         log.info("B2BHKMonitor 参数信息：{}", JSON.toJSONString(b2bHKLoginParam));
         LoginPage loginPage = new LoginPage();
         loginPage.setPage(super.getPage());
-        loginPage.setLoginUrl(b2bHKLoginParam.getB2bHKLoginUrl());
-        loginPage.setLoginUsername(b2bHKLoginParam.getB2bHKLoginUserName());
-        loginPage.setLoginPassword(b2bHKLoginParam.getB2bHKLoginPassword());
+        loginPage.setLoginUrl(b2bHKLoginParam.getLoginUrl());
+        loginPage.setLoginUsername(b2bHKLoginParam.getLoginUserName());
+        loginPage.setLoginPassword(b2bHKLoginParam.getLoginPassword());
 
         loginPage.login();
     }
