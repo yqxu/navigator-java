@@ -20,10 +20,10 @@ public class MerchantMonitor extends MonitorTemplateJob {
 
     @Override
     public void initEnv() {
-        super.setHost(merchantLoginParam.getMonitorMerchantHost());
+        super.setHost(merchantLoginParam.getMonitorHost());
         super.setDingGroup("MERCHANT");
         super.setBusiness(this.getClass().getSimpleName());
-        super.setPhoneNumber(merchantLoginParam.getPhoneNumber());
+        super.setPhoneNumberList(merchantLoginParam.getPhoneNumberList());
         super.setLoginSwitch(merchantLoginParam.getLoginSwitch());
     }
 
@@ -33,9 +33,9 @@ public class MerchantMonitor extends MonitorTemplateJob {
 
         LoginPage loginPage = new LoginPage();
         loginPage.setPage(super.getPage());
-        loginPage.setLoginUrl(merchantLoginParam.getMerchantLoginUrl());
-        loginPage.setLoginUsername(merchantLoginParam.getMerchantLoginUserName());
-        loginPage.setLoginPassword(merchantLoginParam.getMerchantLoginPassword());
+        loginPage.setLoginUrl(merchantLoginParam.getLoginUrl());
+        loginPage.setLoginUsername(merchantLoginParam.getLoginUserName());
+        loginPage.setLoginPassword(merchantLoginParam.getLoginPassword());
 
         loginPage.login();
     }
