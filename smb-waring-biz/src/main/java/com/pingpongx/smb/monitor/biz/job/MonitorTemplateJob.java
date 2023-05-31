@@ -219,23 +219,25 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                 context.close();
                 context = null;
             }
-            // 如果执行成功了，则删除录制的视频及目录
-            if (jobResult != null && jobResult.getCode() == ReturnT.SUCCESS.getCode()) {
-                clearLocalResult(localResultPath);
-                continueFailedTimes = 0;
-            } else if (jobResult != null && jobResult.getCode() == ReturnT.FAIL.getCode()) {
-                continueFailedTimes++;
-                // 上传文件到文件服务器并发送钉钉告警
-                if (apiRequestContext != null) {
-                    uploadUiMonitorFiles(apiRequestContext, localResultPath);
-                    String failReason = jobResult.getMsg();
-                    String formattedFailReason = extractStringByReg(failReason, "logs =+(.*?)=").trim();
-                    log.info("formattedFailReason:{}", formattedFailReason);
-                    if (continueFailedTimes > 1) {
-                        sendUIMonitorResultMsg(host, business, phoneNumberList, jobStartTime,
-                                "https://file.pingpongx.com/disk/" + localResultPath.toString().substring(16),
-                                continueFailedTimes,
-                                "".equals(formattedFailReason) ? failReason : formattedFailReason);
+            if (jobResult != null) {
+                // 如果执行成功了，则删除录制的视频及目录
+                if (jobResult.getCode() == ReturnT.SUCCESS.getCode()) {
+                    clearLocalResult(localResultPath);
+                    continueFailedTimes = 0;
+                } else {
+                    continueFailedTimes++;
+                    // 上传文件到文件服务器并发送钉钉告警
+                    if (apiRequestContext != null) {
+                        uploadUiMonitorFiles(apiRequestContext, localResultPath);
+                        String failReason = jobResult.getMsg();
+                        String formattedFailReason = extractStringByReg(failReason, "logs =+(.*?)=").trim();
+                        log.info("formattedFailReason:{}", formattedFailReason);
+                        if (continueFailedTimes > 1) {
+                            sendUIMonitorResultMsg(host, business, phoneNumberList, jobStartTime,
+                                    "https://file.pingpongx.com/disk/" + localResultPath.toString().substring(16),
+                                    continueFailedTimes,
+                                    "".equals(formattedFailReason) ? failReason : formattedFailReason);
+                        }
                     }
                 }
             }
