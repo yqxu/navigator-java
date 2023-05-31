@@ -1,17 +1,12 @@
 package com.pingpongx.smb.monitor.biz.job;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONPath;
 import com.microsoft.playwright.*;
-import com.microsoft.playwright.options.FormData;
-import com.microsoft.playwright.options.HarMode;
-import com.microsoft.playwright.options.RequestOptions;
-import com.microsoft.playwright.options.Timing;
+import com.microsoft.playwright.options.*;
 import com.pingpongx.job.core.biz.model.ReturnT;
 import com.pingpongx.job.core.handler.IJobHandler;
 import com.pingpongx.smb.monitor.biz.util.TimeUtils;
 import com.pingpongx.smb.monitor.dal.entity.constant.BusinessLine;
-import com.pingpongx.smb.monitor.dal.entity.constant.MonitorEnv;
 import com.pingpongx.smb.monitor.dal.entity.dataobj.ApiDetail;
 import com.pingpongx.smb.monitor.dal.entity.dataobj.TaskRecord;
 import com.pingpongx.smb.monitor.dal.entity.uiprops.MonitorEnvParam;
@@ -58,7 +53,6 @@ public abstract class MonitorTemplateJob extends IJobHandler {
     private MonitorEnvParam monitorEnvParam;
 
     private String host;
-    private String dingGroup;
     private String business;
     private Page page;
     private List<String> phoneNumberList;
@@ -73,10 +67,6 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 
     public void setPhoneNumberList(List<String> phoneNumberList) {
         this.phoneNumberList = phoneNumberList;
-    }
-
-    public void setDingGroup(String dingGroup) {
-        this.dingGroup = dingGroup;
     }
 
     public void setHost(String host) {
@@ -151,13 +141,14 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 
         try {
             playwright = Playwright.create();
-            browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
+            BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
                     .setHandleSIGHUP(true)
                     .setHandleSIGINT(true)
                     .setHandleSIGTERM(true)
                     .setHeadless(true)
                     .setDevtools(false)
-                    .setSlowMo(2200));
+                    .setSlowMo(2200);
+            browser = playwright.chromium().launch(launchOptions);
             // 不同的context的配置，理论上是一样的，例如浏览器的尺寸
             context = browser.newContext(newContextOptions);
             context.setDefaultTimeout(30 * 1000);
@@ -201,11 +192,6 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             //    page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("/tmp/ui-monitor/" + getFormattedTime() + ".png")));
             // }
             log.warn("monitor, message size: " + e.getMessage());
-            // 如果是登录失败，才发送钉钉告警
-            // if (apiRequestContext != null && e instanceof LoginException) {
-                // sendWarnMessage(apiRequestContext, e.getMessage());
-                // log.error("{}监控：{}", this.business, e.getMessage());
-            //}
 
             // 执行失败，写入库表
             insertRecord("failed", e.getMessage());
@@ -247,7 +233,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                     log.info("formattedFailReason:{}", formattedFailReason);
                     if (continueFailedTimes > 1) {
                         sendUIMonitorResultMsg(host, business, phoneNumberList, jobStartTime,
-                                "https://file.pingpongx.com/disk/"+localResultPath.toString().substring(16),
+                                "https://file.pingpongx.com/disk/" + localResultPath.toString().substring(16),
                                 continueFailedTimes,
                                 "".equals(formattedFailReason) ? failReason : formattedFailReason);
                     }
@@ -298,27 +284,6 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             });
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * 调用开发的接口发送钉钉告警，只会判断是生产环境才发告警
-     * @param message
-     */
-    public void sendWarnMessage(APIRequestContext apiRequestContext, String message) {
-        Map<String, String> data = new HashMap<>();
-        data.put("appName", "smb-warning");
-        data.put("className", this.getClass().getSimpleName());
-        data.put("content", message);
-        data.put("hostName", host);
-        data.put("time", getFormattedTime());
-
-        // 如果当前是生产环境，发告警出来
-        if (monitorEnvParam.getMonitorEnv().equals(MonitorEnv.PROD.getMonitorEnv())) {
-            log.info("error happened and data is:{}", JSON.toJSONString(data));
-            // 在容器中执行下面的post方法时，容器中没有https，应访问http
-            APIResponse postDingMsgRes = apiRequestContext.post("http://smb-warning.pingpongx.com/v2/alert/" + dingGroup, RequestOptions.create().setData(data));
-            log.info("调用钉钉告警结果：{}", postDingMsgRes.text());
         }
     }
 
