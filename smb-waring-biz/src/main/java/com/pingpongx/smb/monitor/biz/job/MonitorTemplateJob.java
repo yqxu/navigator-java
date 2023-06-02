@@ -5,6 +5,7 @@ import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.*;
 import com.pingpongx.job.core.biz.model.ReturnT;
 import com.pingpongx.job.core.handler.IJobHandler;
+import com.pingpongx.smb.monitor.biz.util.HikerResultUploadUtils;
 import com.pingpongx.smb.monitor.biz.util.TimeUtils;
 import com.pingpongx.smb.monitor.dal.entity.constant.BusinessLine;
 import com.pingpongx.smb.monitor.dal.entity.dataobj.ApiDetail;
@@ -29,6 +30,8 @@ import java.util.function.Consumer;
 
 import static com.pingpongx.smb.monitor.biz.util.DingUtils.sendApiMonitorResultMsg;
 import static com.pingpongx.smb.monitor.biz.util.DingUtils.sendUIMonitorResultMsg;
+import static com.pingpongx.smb.monitor.biz.util.HikerResultUploadUtils.uploadApiMonitorResult;
+import static com.pingpongx.smb.monitor.biz.util.HikerResultUploadUtils.uploadUiMonitorResult;
 import static com.pingpongx.smb.monitor.biz.util.PlayWrightUtils.initUtil;
 import static com.pingpongx.smb.monitor.biz.util.RegUtils.extractStringByReg;
 import static com.pingpongx.smb.monitor.biz.util.TimeUtils.getFormattedTime;
@@ -212,32 +215,33 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             // 不能直接关闭，可能退出登录了，还有请求在进行中，会导致 page.onResponse监控的接口数据 报错
             if (page != null) {
                 page.close(closeOptions);
-                page = null;
             }
             // har文件是在context关闭后才生成的
             if (context != null) {
                 context.close();
-                context = null;
             }
             if (jobResult != null) {
                 // 如果执行成功了，则删除录制的视频及目录
                 if (jobResult.getCode() == ReturnT.SUCCESS.getCode()) {
                     clearLocalResult(localResultPath);
                     continueFailedTimes = 0;
+                    uploadUIResultToHiker(0, "", "", "");
                 } else {
                     continueFailedTimes++;
                     // 上传文件到文件服务器并发送钉钉告警
                     if (apiRequestContext != null) {
                         uploadUiMonitorFiles(apiRequestContext, localResultPath);
-                        String failReason = jobResult.getMsg();
-                        String formattedFailReason = extractStringByReg(failReason, "logs =+(.*?)=").trim();
+                        String formattedFailReason = extractStringByReg(jobResult.getMsg(), "logs =+(.*?)=").trim();
+                        String failReason = "".equals(formattedFailReason) ? jobResult.getMsg() : formattedFailReason;
                         log.info("formattedFailReason:{}", formattedFailReason);
                         if (continueFailedTimes > 1) {
                             sendUIMonitorResultMsg(host, business, phoneNumberList, jobStartTime,
                                     "https://file.pingpongx.com/disk/" + localResultPath.toString().substring(16),
-                                    continueFailedTimes,
-                                    "".equals(formattedFailReason) ? failReason : formattedFailReason);
+                                    continueFailedTimes, failReason);
                         }
+                        uploadUIResultToHiker(-1, failReason,
+                                "https://file.pingpongx.com/disk/" + localResultPath.toString().substring(16),
+                                "https://file.pingpongx.com/disk/" + localResultPath.toString().substring(16));
                     }
                 }
             }
@@ -246,12 +250,38 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             }
             if (browser != null) {
                 browser.close();
-                browser = null;
             }
             if (playwright != null) {
                 playwright.close();
             }
         }
+    }
+
+    private void uploadUIResultToHiker(int result, String failReason, String traceLink, String videoLink) {
+        HikerResultUploadUtils.E2EUIRunRecordDTO dto = new HikerResultUploadUtils.E2EUIRunRecordDTO();
+        dto.setBusinessLine(business);
+        dto.setEnv(monitorEnvParam.getMonitorEnv());
+        dto.setResult(result);
+        dto.setFailCause(failReason);
+        dto.setTraceLink(traceLink);
+        dto.setVideoLink(videoLink);
+        uploadUiMonitorResult(dto);
+    }
+
+    private void uploadAPIResultToHiker(Integer code, String url, String res, String httpStatus) {
+        HikerResultUploadUtils.E2EAPIRunRecordDTO dto = new HikerResultUploadUtils.E2EAPIRunRecordDTO();
+        dto.setApiCode(code);
+        dto.setApiUrl(url);
+        dto.setApiRespContent(res);
+        dto.setBusinessLine(business);
+        try {
+            dto.setHttpCode(Integer.parseInt(httpStatus));
+        } catch (Exception e) {
+            dto.setHttpCode(-1);
+        }
+        dto.setResult(-1);
+        dto.setEnv(monitorEnvParam.getMonitorEnv());
+        uploadApiMonitorResult(dto);
     }
 
     /**
@@ -348,6 +378,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                                 // sendWarnMessage(apiRequestContext,"api monitor error\nurl:"+ response.request().url() + "\n,res:" + resText);
                                 // log.error("{}监控, url:{}, res:{}", this.business, response.request().url(), resText);
                                 sendApiMonitorResultMsg(business, phoneNumberList, response.request().url(), httpStatus, getFormattedTime2(), resText);
+                                uploadAPIResultToHiker(code, response.url(), resText, httpStatus);
                             }
                             log.warn("api monitor error url:{}, code: {}, res:{} ", response.request().url(), code, resText);
                         }
