@@ -364,7 +364,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                         try {
                             code = JSONPath.read(resText, "$.code", Integer.class);
                         } catch (Exception ex2) {
-                            throw new RuntimeException("响应结果不是合理的json串");
+                            throw new RuntimeException("响应结果不是合理的json串，Content-Type:" + response.headerValue("Content-Type"));
                         }
                         // todo 如果响应信息的内容长度过长需要告警吗？例如有一个接口的响应内容超过64K，目前超64K插入库表会报错的
                         // saveResponseDetail(response, code);
