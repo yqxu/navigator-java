@@ -19,7 +19,8 @@ public class PlayWrightUtils {
     public static boolean waitElementExist(Locator locator, long ms) {
         long hasWait = 0L;
         while (!locator.isVisible() && hasWait <= ms) {
-            ThreadUtil.sleep(120);
+            ThreadUtil.sleep(500);
+            log.info("waitElementExist, locator:{}", locator);
             hasWait = hasWait + 1000;
         }
         return hasWait <= ms;

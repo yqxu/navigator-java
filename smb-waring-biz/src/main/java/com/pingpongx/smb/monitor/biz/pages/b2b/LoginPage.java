@@ -31,10 +31,10 @@ public class LoginPage {
         try {
             Page.NavigateOptions options = new Page.NavigateOptions();
             options.setWaitUntil(WaitUntilState.DOMCONTENTLOADED);
-            options.setTimeout(60000);
+            options.setTimeout(150000);
             page.navigate(loginUrl, options);
         } catch (Exception e) {
-            throw new ScriptException("网络差？60秒内未能成功打开b2b登录页");
+            throw new ScriptException("网络差？150秒内未能成功打开b2b登录页");
         }
 
         page.getByRole(AriaRole.TEXTBOX, new Page.GetByRoleOptions().setName("Email")).click();
@@ -44,7 +44,7 @@ public class LoginPage {
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Sign In")).click();
         page.waitForLoadState(LoadState.DOMCONTENTLOADED);
 
-        if (!waitElementExist(page.getByText("DASHBOARD", new Page.GetByTextOptions().setExact(true)), 1000)) {
+        if (!waitElementExist(page.getByText("DASHBOARD", new Page.GetByTextOptions().setExact(true)), 3000)) {
             throw new LoginException("登录后，未能找到首页菜单，认定为登录失败");
         }
 

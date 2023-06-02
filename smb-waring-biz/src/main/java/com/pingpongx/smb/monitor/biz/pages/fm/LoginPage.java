@@ -55,15 +55,17 @@ public class LoginPage {
         log.info("fm login finished");
 
         // 对福贸登录后可能出现的弹窗进行关闭
-        if (waitElementExist(page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")), 1200)) {
-            if (page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).locator("i").isVisible()) {
-                page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).locator("i").click();
-            }
-            if (page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("我知道了")).isVisible()) {
-                page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("我知道了")).click();
+        for (int i=0; i<2; i++) {
+            if (waitElementExist(page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).first(), 10000)) {
+                if (page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).locator("i").isVisible()) {
+                    page.getByRole(AriaRole.DIALOG, new Page.GetByRoleOptions().setName("dialog")).locator("i").click();
+                }
+                if (page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("我知道了")).isVisible()) {
+                    page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("我知道了")).click();
+                }
             }
         }
-        if (!waitElementExist(page.getByText("首页", new Page.GetByTextOptions().setExact(true)), 1000)) {
+        if (!waitElementExist(page.getByText("首页", new Page.GetByTextOptions().setExact(true)), 5000)) {
             throw new LoginException("登录后，未能找到首页菜单，认定为登录失败");
         }
         log.info("fm login finished and menu check finished");

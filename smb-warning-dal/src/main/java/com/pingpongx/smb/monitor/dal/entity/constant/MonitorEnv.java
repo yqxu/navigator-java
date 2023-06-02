@@ -2,7 +2,7 @@ package com.pingpongx.smb.monitor.dal.entity.constant;
 
 public enum MonitorEnv {
 
-    LOCAL("local"),
+    LOCAL("dev"),
     TEST("test"),
     PRE("pre"),
     PROD("prod"),
