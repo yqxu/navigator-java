@@ -3,6 +3,9 @@ package com.pingpongx.smb.export.module.persistance;
 import com.alibaba.fastjson2.annotation.JSONType;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 @JSONType(typeName = "Leaf",typeKey = "ruleType")
 public class LeafRuleConf extends RuleDto {
     String type;
@@ -10,6 +13,8 @@ public class LeafRuleConf extends RuleDto {
     String operation;
     String expected;
     boolean not = false;
+
+    List<String> debugHandlerCodes = new ArrayList<>();
 
     public String getType() {
         return type;
@@ -51,4 +56,15 @@ public class LeafRuleConf extends RuleDto {
         this.not = not;
     }
 
+    public boolean isNeedDebug() {
+        return debugHandlerCodes.isEmpty();
+    }
+
+    public List<String> getDebugHandlerCodes() {
+        return debugHandlerCodes;
+    }
+
+    public void setDebugHandlerCodes(List<String> debugHandlerCodes) {
+        this.debugHandlerCodes = debugHandlerCodes;
+    }
 }

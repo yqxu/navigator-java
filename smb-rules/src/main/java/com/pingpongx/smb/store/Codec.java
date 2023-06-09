@@ -48,6 +48,7 @@ public class Codec {
         rule.setType(conf.getType());
         rule.setOperation(Factories.Operation.getInstance(conf.getOperation(),rule.getAttr(),rule.getType()));
         rule.setNot(conf.isNot());
+        rule.setNeedDebug(conf.isNeedDebug());
         return rule;
     }
 

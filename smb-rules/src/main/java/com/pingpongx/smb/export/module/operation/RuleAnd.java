@@ -82,5 +82,4 @@ public class RuleAnd implements Rule {
         this.andRuleList = andRuleList;
     }
 
-
 }

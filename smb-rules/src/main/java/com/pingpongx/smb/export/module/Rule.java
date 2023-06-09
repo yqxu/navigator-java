@@ -4,15 +4,11 @@ import com.pingpongx.smb.export.module.operation.RuleAnd;
 import com.pingpongx.smb.export.module.operation.RuleOr;
 import com.pingpongx.smb.export.module.persistance.RuleDto;
 
-import java.lang.reflect.Type;
-
 /***
  *
- * @param <D> 在D对象下，生效该Rule规则
  * @param <T> 规则描述了D对象下字段类型T相关的约束描述
  */
 public interface Rule<T> extends Comparable<Rule<T>> {
-
     String type();
     default Rule and(Rule rule){
         if (this instanceof RuleAnd){
@@ -38,4 +34,5 @@ public interface Rule<T> extends Comparable<Rule<T>> {
         return RuleOr.newOr(this);
     }
     RuleDto toDto();
+
 }

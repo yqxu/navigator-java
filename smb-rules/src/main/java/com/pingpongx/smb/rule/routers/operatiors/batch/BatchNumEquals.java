@@ -17,7 +17,7 @@ public class BatchNumEquals extends BatchEquals<Number> {
         return strContains;
     }
     @Override
-    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object input, Set<Node<RuleLeaf, RuleTrieElement>> repeat) {
+    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object inputObj,Object input, Set<Node<RuleLeaf, RuleTrieElement>> repeat) {
         if (input == null) {
             return notSet.stream().collect(Collectors.toSet());
         }

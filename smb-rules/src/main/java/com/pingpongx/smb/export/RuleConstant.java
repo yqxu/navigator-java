@@ -9,6 +9,7 @@ public class RuleConstant {
         StrNotBlank(StrNotBlank.class.getSimpleName()),
         NumEquals(NumEquals.class.getSimpleName()),
         NumberRangeIn(NumRangeIn.class.getSimpleName()),
+        InstanceOf(com.pingpongx.smb.rule.routers.operatiors.InstanceOf.class.getSimpleName()),
         ;
 
         String simpleName;

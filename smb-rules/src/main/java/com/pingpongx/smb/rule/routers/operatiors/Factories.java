@@ -1,7 +1,13 @@
 package com.pingpongx.smb.rule.routers.operatiors;
 
+import com.pingpongx.smb.debug.DebugHandler;
+import com.pingpongx.smb.debug.DebugHandlerBuilder;
+import com.pingpongx.smb.debug.DebugHandlerTypes;
+import com.pingpongx.smb.debug.NumDeltaDebugHandler;
 import com.pingpongx.smb.export.RuleConstant;
+import com.pingpongx.smb.export.globle.Engine;
 import com.pingpongx.smb.export.module.*;
+import com.pingpongx.smb.export.module.operation.RuleLeaf;
 import com.pingpongx.smb.rule.routers.operatiors.batch.*;
 
 import java.util.Map;
@@ -20,6 +26,7 @@ public class Factories {
             factories.put(RuleConstant.Operations.StrNotBlank.getSimpleName(),()->StrNotBlank.getInstance());
             factories.put(RuleConstant.Operations.NumEquals.getSimpleName(),()->NumEquals.getInstance());
             factories.put(RuleConstant.Operations.NumberRangeIn.getSimpleName(), ()->NumRangeIn.getInstance());
+            factories.put(RuleConstant.Operations.InstanceOf.getSimpleName(), ()-> InstanceOf.getInstance());
         }
         public static MatchOperation getInstance(String name,String attr,String obj){
             try{
@@ -39,6 +46,7 @@ public class Factories {
             map.put(RuleConstant.Operations.StrNotBlank.getSimpleName(), BatchStrNotBlank::newInstance);
             map.put(RuleConstant.Operations.StrContains.getSimpleName(), BatchStrContains::newInstance);
             map.put(RuleConstant.Operations.NumberRangeIn.getSimpleName(), BatchNumRange::newInstance);
+            map.put(RuleConstant.Operations.InstanceOf.getSimpleName(), BatchInstanceOf::newInstance);
         }
 
         public static BatchMatcher newBatchMatcher(String identify){
@@ -61,5 +69,14 @@ public class Factories {
         }
     }
 
+    public static class DebugHandlers{
+        public static Map<String, DebugHandlerBuilder> map = new ConcurrentHashMap<>();
+        static {
+            map.put(DebugHandlerTypes.NumberDelta.name() , (e,r)->new NumDeltaDebugHandler<>(r,e));
+        }
 
+        public static DebugHandler instance(String type, Engine engine, RuleLeaf ruleLeaf){
+            return Optional.ofNullable(map.get(type)).map(builder -> builder.build(engine,ruleLeaf)).orElse(null);
+        }
+    }
 }

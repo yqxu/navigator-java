@@ -32,7 +32,7 @@ public class BatchNumRange implements BatchMatcher<BigDecimal,Range> {
      * @return 用了contains 规则的rule 的 identify 集合
      */
     @Override
-    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object input, Set<Node<RuleLeaf, RuleTrieElement>> repeat) {
+    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object inputObj,Object input, Set<Node<RuleLeaf, RuleTrieElement>> repeat) {
         if (input == null){
             return nullMatchedSet;
         }

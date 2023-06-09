@@ -1,10 +1,10 @@
 package com.pingpongx.smb.rule.routers.operatiors.batch;
 
+
 import com.pingpongx.smb.common.Node;
 import com.pingpongx.smb.export.module.MatchOperation;
 import com.pingpongx.smb.export.module.RuleTrieElement;
 import com.pingpongx.smb.export.module.operation.RuleLeaf;
-import com.pingpongx.smb.rule.routers.operatiors.StrEquals;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -13,14 +13,14 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+public class BatchInstanceOf implements BatchMatcher<Object,String> {
 
-public abstract class BatchEquals<ValType> implements SameTypeMatcher<ValType> {
     private MatchOperation operation;
-    Map<ValType, MatchedSet> ruleMap = new ConcurrentHashMap<>();
+    Map<String, MatchedSet> ruleMap = new ConcurrentHashMap<>();
 
     Set<Node<RuleLeaf, RuleTrieElement>> notSet = new HashSet<>();
 
-    public void putOnly(ValType val, Node<RuleLeaf, RuleTrieElement> node, boolean isNot) {
+    public void putOnly(String val, Node<RuleLeaf, RuleTrieElement> node, boolean isNot) {
         if (isNot) {
             notSet.add(node);
         }
@@ -37,18 +37,13 @@ public abstract class BatchEquals<ValType> implements SameTypeMatcher<ValType> {
      * @param input 对象的待匹配属性，因为操作符的限制只能是string
      * @return 用了contains 规则的rule 的 identify 集合
      */
-    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object inputObj,Object input, Set<Node<RuleLeaf, RuleTrieElement>> repeat) {
+    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object input, Set<Node<RuleLeaf, RuleTrieElement>> repeat) {
         if (input == null) {
             return notSet.stream().collect(Collectors.toSet());
         }
-        MatchedSet matchedSet = Optional.ofNullable(ruleMap.get(input)).orElse(new MatchedSet());
+        String in = input.getClass().getSimpleName();
+        MatchedSet matchedSet = Optional.ofNullable(ruleMap.get(in)).orElse(new MatchedSet());
         return matchedSet.getResult(repeat, notSet);
-    }
-
-    @Override
-    public void putRule(RuleLeaf<ValType> rule, Node<RuleLeaf, RuleTrieElement> node) {
-        ValType exp = rule.expected();
-        putOnly(exp, node, rule.isNot());
     }
 
     @Override
@@ -78,5 +73,16 @@ public abstract class BatchEquals<ValType> implements SameTypeMatcher<ValType> {
     @Override
     public void supportedOperation(MatchOperation operation) {
         this.operation = operation;
+    }
+
+    @Override
+    public void putRule(RuleLeaf<String> rule, Node<RuleLeaf, RuleTrieElement> node) {
+        String exp = rule.expected();
+        putOnly(exp, node, rule.isNot());
+    }
+
+    public static BatchMatcher<Object,String> newInstance() {
+        BatchInstanceOf instanceOf = new BatchInstanceOf();
+        return instanceOf;
     }
 }

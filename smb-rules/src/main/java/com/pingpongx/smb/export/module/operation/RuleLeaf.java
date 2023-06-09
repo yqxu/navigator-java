@@ -1,10 +1,17 @@
 package com.pingpongx.smb.export.module.operation;
 
-import com.pingpongx.smb.export.module.Identified;
-import com.pingpongx.smb.export.module.MatchOperation;
-import com.pingpongx.smb.export.module.Rule;
+import com.pingpongx.smb.debug.DebugHandler;
+import com.pingpongx.smb.export.globle.Engine;
+import com.pingpongx.smb.export.module.*;
 import com.pingpongx.smb.export.module.persistance.LeafRuleConf;
 import com.pingpongx.smb.export.module.persistance.RuleDto;
+import com.pingpongx.smb.export.spi.ResultfulHandler;
+import com.pingpongx.smb.rule.routers.operatiors.Factories;
+import com.pingpongx.smb.rule.routers.operatiors.InstanceOf;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class RuleLeaf<T> implements Rule<T>, Identified<String> {
     public abstract String dependsObject();
@@ -17,6 +24,12 @@ public abstract class RuleLeaf<T> implements Rule<T>, Identified<String> {
     public abstract T expected();
 
     public abstract boolean isNot();
+
+    public abstract boolean needDebug();
+
+    public abstract List<String> getDebugHandlerCodes();
+
+    public abstract void setDebugHandlerCodes(List<String> debugHandlerCodes);
 
     public String getIdentify(){
         return dependsObject()+"."+dependsAttr()+"->"+(isNot()?"!":"")+operatorType().getIdentify()+":"+ expected();
@@ -61,7 +74,23 @@ public abstract class RuleLeaf<T> implements Rule<T>, Identified<String> {
         leafRule.setAttr(this.dependsAttr());
         leafRule.setNot(this.isNot());
         leafRule.setType(this.type());
+        leafRule.setDebugHandlerCodes(this.getDebugHandlerCodes());
         return leafRule;
     }
+    public List<DebugHandler> buildDebugHandlers(Engine engine){
+        if (!this.needDebug()){
+            return new ArrayList<>();
+        }
+        return getDebugHandlerCodes().stream().map(handlerCode->Factories.DebugHandlers.instance(handlerCode,engine,this)).collect(Collectors.toList());
+    }
 
+    public ConfiguredRule debugReplaceRule(){
+        ConfiguredRule configuredRule = new ConfiguredStrRule();
+        configuredRule.setOperation(InstanceOf.getInstance(this.dependsObject(),this.dependsAttr()));
+        configuredRule.setExpected(this.dependsObject());
+        configuredRule.setNot(false);
+        configuredRule.setType(this.dependsObject());
+        configuredRule.setAttr(this.dependsAttr());
+        return configuredRule;
+    }
 }

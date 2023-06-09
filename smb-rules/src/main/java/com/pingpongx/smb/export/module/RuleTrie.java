@@ -3,6 +3,7 @@ package com.pingpongx.smb.export.module;
 import com.pingpongx.smb.common.IdentityPath;
 import com.pingpongx.smb.common.Node;
 import com.pingpongx.smb.common.Trie;
+import com.pingpongx.smb.debug.DebugHandler;
 import com.pingpongx.smb.export.globle.Engine;
 import com.pingpongx.smb.export.module.operation.RuleAnd;
 import com.pingpongx.smb.export.module.operation.RuleLeaf;
@@ -10,6 +11,8 @@ import com.pingpongx.smb.export.module.operation.RuleOr;
 import com.pingpongx.smb.export.spi.RuleHandler;
 import com.pingpongx.smb.rule.routers.operatiors.Factories;
 import com.pingpongx.smb.rule.routers.operatiors.batch.BatchMatcher;
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -58,7 +61,6 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
 
     public Set<Node<RuleLeaf, RuleTrieElement>> innerMatch(Object data) {
         Set<Node<RuleLeaf, RuleTrieElement>> matchedRulesRepeat = new HashSet<>();
-        MatchResult result = new MatchResult();
         TreeMap<BatchMatcher, MatchOperation> bfsQ = new TreeMap<>();
         getRoot().getData().getChildOperations().stream().forEach(operation -> {
             BatchMatcher matcher = engine.batchMatcherMapper.routeMatchers(operation);
@@ -69,7 +71,7 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
             Map.Entry<BatchMatcher, MatchOperation> entry = bfsQ.pollFirstEntry();
             Object attrVal = engine.extractor.getAttr(data, entry.getValue().attr());
             BatchMatcher matcher = entry.getKey();
-            Set<Node<RuleLeaf, RuleTrieElement>> matchedRule = matcher.batchMatch(attrVal, matchedRulesRepeat);
+            Set<Node<RuleLeaf, RuleTrieElement>> matchedRule = matcher.batchMatch(data,attrVal, matchedRulesRepeat);
             matchedRulesRepeat.addAll(matchedRule);
             matchedOp.add(entry.getValue());
             matchedRule.stream().flatMap(node -> node.getData().getChildOperations().stream()).filter(operation -> !matchedOp.contains(operation)).forEach(operation -> {
@@ -92,7 +94,17 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
         return result;
     }
 
-
+    public RuleTrie debugPut(Rule rule, Engine engine) {
+        if (rule instanceof RuleAnd) {
+            debugPutAnd((RuleAnd) rule, engine);
+        } else if (rule instanceof RuleOr) {
+            deBugPutOr((RuleOr) rule, engine);
+        } else {
+            RuleAnd and = (RuleAnd) RuleAnd.newAnd(rule);
+            debugPutAnd(and, engine);
+        }
+        return this;
+    }
     private RuleTrie putOnly(Rule rule, RuleHandler handler) {
         if (rule instanceof RuleAnd) {
             putAnd((RuleAnd) rule, handler);
@@ -104,13 +116,36 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
         }
         return this;
     }
+    public RuleTrie deBugPutOr(RuleOr or, Engine engine) {
+        or.getOrRuleSet().stream().forEach(r -> debugPut(r, engine));
+        return this;
+    }
+    private RuleTrie debugPutAnd(RuleAnd and, Engine engine) {
+        List<RuleLeaf> ids = and.getAndRuleList().stream().sorted().map(r -> ((RuleLeaf) r)).collect(Collectors.toList());
+        ids.stream().filter(RuleLeaf::needDebug)
+                .map(ruleLeaf -> Tuple.of(replaceDebugLeaf(ids,ruleLeaf),ruleLeaf.buildDebugHandlers(engine)))
+                .forEach(tuple2->{
+                    List<DebugHandler> handlers = tuple2._2();
+                    List<RuleLeaf> rule = tuple2._1();
+                    handlers.stream().forEach(h->putAnd(rule,h));
+                });
+        return this;
+    }
+    List<RuleLeaf> replaceDebugLeaf(List<RuleLeaf> ids ,RuleLeaf toReplace){
+        return ids.stream().map(rl->{
+            if (toReplace.equals(rl)){
+                return rl.debugReplaceRule();
+            }
+            return rl;
+        }).collect(Collectors.toList());
+    }
 
     public RuleTrie putOr(RuleOr or, RuleHandler handler) {
         or.getOrRuleSet().stream().forEach(r -> putOnly(r, handler));
         return this;
     }
-    private RuleTrie putAnd(RuleAnd and, RuleHandler handler) {
-        List<RuleLeaf> ids = and.getAndRuleList().stream().sorted().map(r -> ((RuleLeaf) r)).collect(Collectors.toList());
+    private RuleTrie putAnd(List<RuleLeaf> and, RuleHandler handler) {
+        List<RuleLeaf> ids = and;
         IdentityPath<RuleLeaf> path = IdentityPath.of(ids);
         Node<RuleLeaf, RuleTrieElement> node = getOrCreate(path);
         if (node.isNew()) {
@@ -143,6 +178,10 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
             current = n.getChildren();
         }
         return this;
+    }
+    private RuleTrie putAnd(RuleAnd and, RuleHandler handler) {
+        List<RuleLeaf> ids = and.getAndRuleList().stream().sorted().map(r -> ((RuleLeaf) r)).collect(Collectors.toList());
+        return putAnd(ids,handler);
     }
 
 

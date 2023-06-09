@@ -19,7 +19,7 @@ public class BatchStrNotBlank extends BatchNotEmpty<String> {
     }
 
     @Override
-    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object input, Set<Node<RuleLeaf, RuleTrieElement>> repeat) {
+    public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object inputObj,Object input, Set<Node<RuleLeaf, RuleTrieElement>> repeat) {
         if (input==null||input.toString().isEmpty()) {
             return emptySet.stream().collect(Collectors.toSet());
         } else {

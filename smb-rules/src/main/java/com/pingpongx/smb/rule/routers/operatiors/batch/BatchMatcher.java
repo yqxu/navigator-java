@@ -10,7 +10,7 @@ import com.pingpongx.smb.export.module.MatchOperation;
 import java.util.Set;
 
 public interface BatchMatcher<T,ConfT> extends Comparable<BatchMatcher<T,ConfT>>, Identified<String> {
-    Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object input,Set<Node<RuleLeaf, RuleTrieElement>> repeat);
+    Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object inoutObj,Object inputAttr,Set<Node<RuleLeaf, RuleTrieElement>> repeat);
 
     MatchOperation supportedOperation();
     void supportedOperation(MatchOperation operation);
