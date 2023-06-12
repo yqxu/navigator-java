@@ -60,7 +60,7 @@ public class SlidingCounter  implements Counter{
         return this;
     }
 
-    public long sum(){
+    public Long sum(){
         long term = term();
         int currentIndex = route();
         return buckets.stream()

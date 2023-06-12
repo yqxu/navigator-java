@@ -41,5 +41,21 @@ public class NumDeltaDebugHandler<D> implements DebugHandler<D, BigDecimal> {
         return deltaStart.min(deltaEnd);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        NumDeltaDebugHandler<?> that = (NumDeltaDebugHandler<?>) o;
+
+        if (ruleLeaf != null ? !ruleLeaf.equals(that.ruleLeaf) : that.ruleLeaf != null) return false;
+        return engine != null ? engine.equals(that.engine) : that.engine == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = ruleLeaf != null ? ruleLeaf.hashCode() : 0;
+        result = 31 * result + (engine != null ? engine.hashCode() : 0);
+        return result;
+    }
 }

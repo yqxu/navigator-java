@@ -23,6 +23,9 @@ public class CountDoneHandler implements ApplicationListener<CountDone> {
     @Autowired
     ApplicationContext applicationContext;
 
+    private String getContextScene(PipelineContext context){
+        return context.getParams().get("scene");
+    }
 
     @Override
     public void onApplicationEvent(CountDone event) {
@@ -30,12 +33,12 @@ public class CountDoneHandler implements ApplicationListener<CountDone> {
         PipelineContext context = event.getContext();
         Set<RuleHandler> handlerSet = context.getMatchedHandler().getMatchedData().stream()
                 .filter(handler -> handler.getIdentify()!=null)
-                .filter(handler -> handler.scene().equals(event.getContext().getScene()))
+                .filter(handler -> handler.tags().contains(getContextScene(event.getContext())))
                 .filter(handler -> handler instanceof Inhibition).collect(Collectors.toSet());
         if (handlerSet.size() == 0){
             applicationContext.publishEvent(new ToExecute(applicationContext,alert));
             return;
         }
-        handlerSet.forEach(handler -> handler.handleMatchedData(alert,context));
+        handlerSet.forEach(handler -> handler.doAction(alert,context));
     }
 }

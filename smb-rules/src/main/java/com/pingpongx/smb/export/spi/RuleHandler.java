@@ -15,4 +15,11 @@ public interface RuleHandler<T> extends Identified<String> {
      * @return
      */
     List<String> tags();
+
+    Object applyData(T data);
+    void doAction(T data);
+
+    void doAction(T data,PipelineContext context);
+
+
 }
