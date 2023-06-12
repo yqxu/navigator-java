@@ -26,7 +26,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <revision>1.0.2-SNAPSHOT</revision>
+        <revision>1.0.2.1</revision>
     </properties>
     <dependencies>
         <dependency>
