@@ -67,7 +67,7 @@ public class BatchInstanceOf implements BatchMatcher<Object,String> {
     }
 
     public Set<Node<RuleLeaf, RuleTrieElement>> batchMatch(Object inputObj,Object input, Set<Node<RuleLeaf, RuleTrieElement>> repeat) {
-        if (input == null) {
+        if (inputObj == null) {
             return notSet.stream().collect(Collectors.toSet());
         }
         MatchedSet matchedSet = Optional.ofNullable(ruleMap.get(inputObj.getClass().getSimpleName())).orElse(new MatchedSet());

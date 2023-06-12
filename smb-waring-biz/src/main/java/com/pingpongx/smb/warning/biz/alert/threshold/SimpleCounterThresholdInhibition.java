@@ -9,6 +9,8 @@ import com.pingpongx.smb.warning.biz.alert.model.ThirdPartAlert;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 
+import java.util.List;
+
 @Slf4j
 public class SimpleCounterThresholdInhibition<T extends ThirdPartAlert> extends AbstractRuleHandler<T> implements Inhibition<T>{
     long threshold;
@@ -31,12 +33,20 @@ public class SimpleCounterThresholdInhibition<T extends ThirdPartAlert> extends 
 //        return InhibitionResultEnum.MatchedAndNeedInhibition;
 //    }
 
+    private Integer getCount(PipelineContext context){
+        String countStr = context.getParams().get("count");
+        if (countStr == null){
+            return null;
+        }
+        return Integer.valueOf(countStr);
+    }
+
     public InhibitionResultEnum needInhibition(T date, PipelineContext context){
-        if (context.getCount() == null){
+        if (getCount(context) == null){
             log.error("matched but no context found.Method:needInhibition,Class:"+this.getClass().getName()+"\nContext:"+ JSON.toJSONString(context));
             return InhibitionResultEnum.MatchedAndNeedThrow;
         }
-        if (context.getCount()>=threshold){
+        if (getCount(context)>=threshold){
             return InhibitionResultEnum.MatchedAndNeedThrow;
         }
         return InhibitionResultEnum.MatchedAndNeedInhibition;
@@ -73,8 +83,27 @@ public class SimpleCounterThresholdInhibition<T extends ThirdPartAlert> extends 
 //        log.error("matched inhibition rule . but no Inhibition strategy found."+this.getClass().getName());
 //    }
 
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
     @Override
-    public void handleMatchedData(T data, PipelineContext context) {
+    public List<String> tags() {
+        return null;
+    }
+
+    @Override
+    public List<String> chainsOf() {
+        return null;
+    }
+
+    @Override
+    public void doAction(T data, PipelineContext context) {
         InhibitionResultEnum inhibitionResult = needInhibition(data,context);
         if (InhibitionResultEnum.MatchedAndNeedInhibition.equals(inhibitionResult)){
             ToInhibition toInhibition = new ToInhibition(applicationContext,data);
@@ -88,13 +117,5 @@ public class SimpleCounterThresholdInhibition<T extends ThirdPartAlert> extends 
             return;
         }
         log.error("matched inhibition rule . but no Inhibition strategy found."+this.getClass().getName());
-    }
-
-    public ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
-
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
     }
 }

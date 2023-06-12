@@ -1,13 +1,12 @@
 package com.pingpongx.smb.rule.handler;
 
-import com.pingpongx.smb.export.spi.EventPublisher;
-import com.pingpongx.smb.export.spi.RuleHandler;
+import com.pingpongx.smb.export.module.PipelineContext;
+import com.pingpongx.smb.export.spi.*;
 import com.pingpongx.smb.export.module.MatchResult;
 
-public abstract class AbstractRuleHandler<T> implements RuleHandler<T> {
+public abstract class AbstractRuleHandler<T> implements ChainedActionHandler<T> {
 
     private MatchResult handleContext;
-    private EventPublisher publisher;
     protected String sceneIdentity;
 
     @Override
@@ -21,10 +20,6 @@ public abstract class AbstractRuleHandler<T> implements RuleHandler<T> {
     @Override
     public int hashCode() {
         return getIdentify().hashCode();
-    }
-
-    public MatchResult getHandleContext() {
-        return handleContext;
     }
 
     public void setHandleContext(MatchResult handleContext) {

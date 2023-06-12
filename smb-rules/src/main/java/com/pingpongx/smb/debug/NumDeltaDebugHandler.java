@@ -31,7 +31,7 @@ public class NumDeltaDebugHandler<D> implements DebugHandler<D, BigDecimal> {
     }
 
     @Override
-    public BigDecimal applyData(D data, PipelineContext context) {
+    public BigDecimal applyData(D data) {
         Range exp = ruleLeaf.expected();
         BigDecimal start = new BigDecimal(exp.getRangeStart());
         BigDecimal end = new BigDecimal(exp.getRangeEnd());

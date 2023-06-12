@@ -41,8 +41,9 @@ public class AlertReceivedHandler implements ApplicationListener<AlertReceived> 
         result.getMatchedData().stream()
                         .filter(handler -> handler instanceof CountContext)
                         .map(handler-> {
-                            PipelineContext context = PipelineContext.of(result,((CountContext)handler).getSceneIdentity());
-                            handler.handleMatchedData(alert, context);
+                            PipelineContext context = PipelineContext.of(result);
+                            context.getParams().put("scene",((CountContext)handler).getSceneIdentity());
+                            ((CountContext) handler).handleMatchedData(alert, context);
                             return context;
                         })
                 .map(context->new CountDone(applicationContext,alert,context))

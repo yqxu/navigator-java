@@ -1,4 +1,5 @@
 package com.pingpongx.smb.export.spi;
 
-public class EventPublisher {
+public interface EventPublisher {
+    void publish();
 }

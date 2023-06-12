@@ -29,13 +29,13 @@ public class EngineTest {
         rule1.setDebugHandlerCodes(Stream.of("ShowDeviation").collect(Collectors.toList()));
         FunctionalHandler functionalHandler = new FunctionalHandler() {
             @Override
-            public String applyData(Object data, PipelineContext context) {
-                return "Val";
+            public List<String> tags() {
+                return null;
             }
 
             @Override
-            public List<String> tags() {
-                return null;
+            public Object applyData(Object data) {
+                return "";
             }
 
             @Override

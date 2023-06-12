@@ -20,7 +20,7 @@ public class InstanceOf implements MatchOperation<Object> {
 
     @Override
     public String getIdentify() {
-        return RuleConstant.Operations.StrNotBlank.getSimpleName();
+        return RuleConstant.Operations.InstanceOf.getSimpleName();
     }
 
     @Override

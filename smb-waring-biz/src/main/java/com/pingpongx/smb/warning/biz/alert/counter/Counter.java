@@ -4,5 +4,5 @@ import java.util.concurrent.atomic.LongAdder;
 
 public interface Counter {
     Counter increment();
-    long sum();
+    Long sum();
 }

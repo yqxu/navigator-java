@@ -7,14 +7,12 @@ import java.util.Map;
 
 public class PipelineContext {
     MatchResult matchedHandler;
-    String scene;
-    Long count;
     Map<String,String> params = new HashMap<>();
 
-    public static PipelineContext of(MatchResult result, String scene){
+    public static PipelineContext of(MatchResult result){
         PipelineContext context = new PipelineContext();
         context.setMatchedHandler(result);
-        context.setScene(scene);
+        context.setParams(new HashMap<>());
         return context;
     }
 
@@ -26,21 +24,7 @@ public class PipelineContext {
         this.matchedHandler = matchedHandler;
     }
 
-    public String getScene() {
-        return scene;
-    }
 
-    public void setScene(String scene) {
-        this.scene = scene;
-    }
-
-    public Long getCount() {
-        return count;
-    }
-
-    public void setCount(Long count) {
-        this.count = count;
-    }
 
     public Map<String, String> getParams() {
         return params;

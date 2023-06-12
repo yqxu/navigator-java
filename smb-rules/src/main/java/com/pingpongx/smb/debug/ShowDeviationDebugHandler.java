@@ -30,7 +30,7 @@ public class ShowDeviationDebugHandler<D> implements DebugHandler<D, Deviation> 
     }
 
     @Override
-    public Deviation applyData(D data, PipelineContext context) {
+    public Deviation applyData(D data) {
         Deviation deviation = new Deviation();
         deviation.setExpected(ruleLeaf.expected());
         deviation.setActual(engine.extractor.getAttr(data,ruleLeaf.dependsAttr()));
