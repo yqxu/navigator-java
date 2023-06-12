@@ -1,9 +1,6 @@
 package com.pingpongx.smb.rule.routers.operatiors;
 
-import com.pingpongx.smb.debug.DebugHandler;
-import com.pingpongx.smb.debug.DebugHandlerBuilder;
-import com.pingpongx.smb.debug.DebugHandlerTypes;
-import com.pingpongx.smb.debug.NumDeltaDebugHandler;
+import com.pingpongx.smb.debug.*;
 import com.pingpongx.smb.export.RuleConstant;
 import com.pingpongx.smb.export.globle.Engine;
 import com.pingpongx.smb.export.module.*;
@@ -73,6 +70,7 @@ public class Factories {
         public static Map<String, DebugHandlerBuilder> map = new ConcurrentHashMap<>();
         static {
             map.put(DebugHandlerTypes.NumberDelta.name() , (e,r)->new NumDeltaDebugHandler<>(r,e));
+            map.put(DebugHandlerTypes.ShowDeviation.name() , (e, r)->new ShowDeviationDebugHandler(r,e));
         }
 
         public static DebugHandler instance(String type, Engine engine, RuleLeaf ruleLeaf){
