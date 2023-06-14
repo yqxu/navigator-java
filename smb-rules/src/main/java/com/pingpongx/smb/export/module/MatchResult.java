@@ -14,4 +14,6 @@ public class MatchResult {
     public void setMatchedData(Set<RuleHandler> matchedData) {
         this.matchedData = matchedData;
     }
+
+
 }
