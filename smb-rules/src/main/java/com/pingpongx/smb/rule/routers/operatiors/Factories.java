@@ -67,10 +67,13 @@ public class Factories {
     }
 
     public static class DebugHandlers{
+        public static void reg(String key,DebugHandler debugHandler){
+            map.put(key,debugHandler);
+        }
         public static Map<String, DebugHandler> map = new ConcurrentHashMap<>();
         static {
-            map.put(DebugHandlerTypes.NumberDelta.name() , new NumDeltaDebugHandler<>());
-            map.put(DebugHandlerTypes.ShowDeviation.name() , new ShowDeviationDebugHandler());
+            reg(DebugHandlerTypes.NumberDelta.name() , new NumDeltaDebugHandler<>());
+            reg(DebugHandlerTypes.ShowDeviation.name() , new ShowDeviationDebugHandler());
         }
 
         public static DebugHandler instance(String type, Engine engine, RuleLeaf ruleLeaf){
