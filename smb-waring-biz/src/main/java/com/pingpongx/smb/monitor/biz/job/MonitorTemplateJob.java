@@ -135,10 +135,10 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                 .setRecordHarPath(Paths.get(localResultPath.toString() + "/harFile.har"))
                 .setRecordHarMode(HarMode.MINIMAL)
                 ;
-        // 如果是主站的，只录主站的登录，如果是福贸的，只录福贸的登录
-        if (host.contains("flowmore") || host.contains("business")) {
+        // 如果是主站的，只录主站的登录，如果是福贸的，只录福贸的登录，如果是b2b的业务，全录
+        if ("flowmore".equals(business)) {
             newContextOptions.setRecordHarUrlFilter(host + "/api/front/v2/auth/token");
-        } else {
+        } else if ("merchant".equals(business)) {
             newContextOptions.setRecordHarUrlFilter(host + "/api/user/web/login");
         }
 
@@ -151,6 +151,11 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                     .setHeadless(true)
                     .setDevtools(false)
                     .setSlowMo(2200);
+            // 如果是b2b的业务，给配个代理
+            if ("b2b".equals(business)) {
+                Proxy proxy = new Proxy("test-proxy.pingpongx.com:3128");
+                launchOptions.setProxy(proxy);
+            }
             browser = playwright.chromium().launch(launchOptions);
             // 不同的context的配置，理论上是一样的，例如浏览器的尺寸
             context = browser.newContext(newContextOptions);
@@ -234,11 +239,11 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                         String formattedFailReason = extractStringByReg(jobResult.getMsg(), "logs =+(.*?)=").trim();
                         String failReason = "".equals(formattedFailReason) ? jobResult.getMsg() : formattedFailReason;
                         log.info("formattedFailReason:{}", formattedFailReason);
-                        if (continueFailedTimes > 1) {
-                            sendUIMonitorResultMsg(host, business, phoneNumberList, jobStartTime,
-                                    "https://file.pingpongx.com/disk/" + localResultPath.toString().substring(16),
-                                    continueFailedTimes, failReason);
-                        }
+
+                        sendUIMonitorResultMsg(host, business, phoneNumberList, jobStartTime,
+                                "https://file.pingpongx.com/disk/" + localResultPath.toString().substring(16),
+                                continueFailedTimes, failReason);
+
                         uploadUIResultToHiker(-1, failReason,
                                 "https://file.pingpongx.com/disk/" + localResultPath.toString().substring(16),
                                 "https://file.pingpongx.com/disk/" + localResultPath.toString().substring(16));
@@ -430,6 +435,20 @@ public abstract class MonitorTemplateJob extends IJobHandler {
 //            else
 //                route.resume();
 //        });
+
+        // 解决部分 b2b站点访问常失败的问题
+        if ("b2b".equals(business)) {
+            page.route("**/*", route -> {
+                if (route.request().url().contains("q.quora.com") ||
+                        route.request().url().contains("rp.gif") ||
+                        route.request().url().contains("fbevents.js"))
+                    route.abort();
+                else
+                    route.resume();
+            });
+        }
+
+
         // 解决容器环境中访问 https://flowmore.pingpongx.com/api/front/v2/auth/token 拿不到响应数据的问题
 //        page.route("**/*", route -> {
 //            // Override headers
