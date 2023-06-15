@@ -11,12 +11,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class NumDeltaDebugHandler<D> implements DebugHandler<D, BigDecimal> {
-    private final RuleLeaf<Range> ruleLeaf;
-    private final Engine engine;
+    private  RuleLeaf<Range> ruleLeaf;
+    private Engine engine;
 
-    public NumDeltaDebugHandler(RuleLeaf ruleLeaf, Engine engine) {
-        this.ruleLeaf = ruleLeaf;
-        this.engine = engine;
+    public NumDeltaDebugHandler() {
+
     }
 
     @Override
@@ -57,5 +56,25 @@ public class NumDeltaDebugHandler<D> implements DebugHandler<D, BigDecimal> {
         int result = ruleLeaf != null ? ruleLeaf.hashCode() : 0;
         result = 31 * result + (engine != null ? engine.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public DebugHandler<D, BigDecimal> setRuleLeaf(RuleLeaf ruleLeaf) {
+        this.ruleLeaf = ruleLeaf;
+        return this;
+    }
+
+    @Override
+    public DebugHandler<D, BigDecimal> setEngine(Engine engine) {
+        this.engine = engine;
+        return this;
+    }
+
+    @Override
+    public DebugHandler<D, BigDecimal> deepCopy() {
+        NumDeltaDebugHandler handler = new NumDeltaDebugHandler();
+        handler.setRuleLeaf(ruleLeaf);
+        handler.setEngine(engine);
+        return handler;
     }
 }

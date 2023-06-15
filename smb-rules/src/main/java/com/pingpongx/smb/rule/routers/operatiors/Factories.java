@@ -67,14 +67,14 @@ public class Factories {
     }
 
     public static class DebugHandlers{
-        public static Map<String, DebugHandlerBuilder> map = new ConcurrentHashMap<>();
+        public static Map<String, DebugHandler> map = new ConcurrentHashMap<>();
         static {
-            map.put(DebugHandlerTypes.NumberDelta.name() , (e,r)->new NumDeltaDebugHandler<>(r,e));
-            map.put(DebugHandlerTypes.ShowDeviation.name() , (e, r)->new ShowDeviationDebugHandler(r,e));
+            map.put(DebugHandlerTypes.NumberDelta.name() , new NumDeltaDebugHandler<>());
+            map.put(DebugHandlerTypes.ShowDeviation.name() , new ShowDeviationDebugHandler());
         }
 
         public static DebugHandler instance(String type, Engine engine, RuleLeaf ruleLeaf){
-            return Optional.ofNullable(map.get(type)).map(builder -> builder.build(engine,ruleLeaf)).orElse(null);
+            return Optional.ofNullable(map.get(type)).map(builder -> builder.deepCopy().setRuleLeaf(ruleLeaf).setEngine(engine)).orElse(null);
         }
     }
 }

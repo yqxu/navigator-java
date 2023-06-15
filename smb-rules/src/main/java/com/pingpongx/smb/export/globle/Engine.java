@@ -14,9 +14,6 @@ import com.pingpongx.smb.rule.routers.operatiors.Factories;
 import com.pingpongx.smb.store.BatchMatcherMapper;
 import com.pingpongx.smb.store.DataAttrMapper;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 public class Engine {
     public Engine(boolean b) {
         this.enableDebug = b;
@@ -78,6 +75,17 @@ public class Engine {
             debugTrie = new RuleTrie(this);
         }
         debugTrie.debugPut(or,this);
+    }
+
+    public void putDebug(Rule rule, DebugHandler handler){
+        if (rule == null){
+            throw new RuntimeException("rule can't be null.");
+        }
+        RuleOr or = rule.expansion();
+        if (debugTrie == null){
+            debugTrie = new RuleTrie(this);
+        }
+        debugTrie.debugPut(or,handler);
     }
 
     public void remove(Rule rule, RuleHandler handler){

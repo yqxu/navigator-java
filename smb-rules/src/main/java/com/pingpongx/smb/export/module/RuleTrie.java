@@ -12,7 +12,6 @@ import com.pingpongx.smb.export.spi.RuleHandler;
 import com.pingpongx.smb.rule.routers.operatiors.Factories;
 import com.pingpongx.smb.rule.routers.operatiors.batch.BatchMatcher;
 import io.vavr.Tuple;
-import io.vavr.Tuple2;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -105,6 +104,18 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
         }
         return this;
     }
+
+    public RuleTrie debugPut(Rule rule, DebugHandler handler) {
+        if (rule instanceof RuleAnd) {
+            debugPutAnd((RuleAnd) rule, handler);
+        } else if (rule instanceof RuleOr) {
+            deBugPutOr((RuleOr) rule, handler);
+        } else {
+            RuleAnd and = (RuleAnd) RuleAnd.newAnd(rule);
+            debugPutAnd(and, handler);
+        }
+        return this;
+    }
     private RuleTrie putOnly(Rule rule, RuleHandler handler) {
         if (rule instanceof RuleAnd) {
             putAnd((RuleAnd) rule, handler);
@@ -120,6 +131,10 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
         or.getOrRuleSet().stream().forEach(r -> debugPut(r, engine));
         return this;
     }
+    public RuleTrie deBugPutOr(RuleOr or, DebugHandler selfDefDebugHandler) {
+        or.getOrRuleSet().stream().forEach(r -> debugPut(r, selfDefDebugHandler));
+        return this;
+    }
     private RuleTrie debugPutAnd(RuleAnd and, Engine engine) {
         List<RuleLeaf> ids = and.getAndRuleList().stream().sorted().map(r -> ((RuleLeaf) r)).collect(Collectors.toList());
         ids.stream().filter(RuleLeaf::needDebug)
@@ -131,6 +146,19 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
                 });
         return this;
     }
+
+    private RuleTrie debugPutAnd(RuleAnd and,  DebugHandler selfDefDebugHandler) {
+        List<RuleLeaf> ids = and.getAndRuleList().stream().sorted().map(r -> ((RuleLeaf) r)).collect(Collectors.toList());
+        ids.stream().filter(RuleLeaf::needDebug)
+                .map(ruleLeaf -> Tuple.of(replaceDebugLeaf(ids,ruleLeaf),selfDefDebugHandler.deepCopy().setRuleLeaf(ruleLeaf)))
+                .forEach(tuple2->{
+                    DebugHandler handler = tuple2._2();
+                    List<RuleLeaf> rule = tuple2._1();
+                    putAnd(rule,handler);
+                });
+        return this;
+    }
+
     List<RuleLeaf> replaceDebugLeaf(List<RuleLeaf> ids ,RuleLeaf toReplace){
         return ids.stream().map(rl->{
             if (toReplace.equals(rl)){

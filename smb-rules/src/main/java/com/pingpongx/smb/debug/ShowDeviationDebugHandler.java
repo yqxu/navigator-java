@@ -10,12 +10,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ShowDeviationDebugHandler<D> implements DebugHandler<D, Deviation> {
-    private final RuleLeaf<Range> ruleLeaf;
-    private final Engine engine;
+    private RuleLeaf<Range> ruleLeaf;
+    private Engine engine;
 
-    public ShowDeviationDebugHandler(RuleLeaf ruleLeaf, Engine engine) {
-        this.ruleLeaf = ruleLeaf;
-        this.engine = engine;
+    public ShowDeviationDebugHandler( ) {
+
     }
 
     @Override
@@ -53,5 +52,24 @@ public class ShowDeviationDebugHandler<D> implements DebugHandler<D, Deviation> 
         int result = ruleLeaf != null ? ruleLeaf.hashCode() : 0;
         result = 31 * result + (engine != null ? engine.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public DebugHandler<D, Deviation> setRuleLeaf(RuleLeaf ruleLeaf) {
+        this.ruleLeaf = ruleLeaf;
+        return this;
+    }
+    @Override
+    public DebugHandler<D, Deviation> setEngine(Engine engine) {
+        this.engine = engine;
+        return this;
+    }
+
+    @Override
+    public DebugHandler<D, Deviation> deepCopy() {
+        ShowDeviationDebugHandler handler = new ShowDeviationDebugHandler();
+        handler.setRuleLeaf(ruleLeaf);
+        handler.setEngine(engine);
+        return handler;
     }
 }
