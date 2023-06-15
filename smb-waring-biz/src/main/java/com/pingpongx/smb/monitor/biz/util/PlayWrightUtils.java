@@ -19,14 +19,14 @@ public class PlayWrightUtils {
     public static boolean waitElementExist(Locator locator, long ms) {
         long hasWait = 0L;
         Locator.WaitForOptions waitForOptions = new Locator.WaitForOptions();
-        waitForOptions.setTimeout(500);
+        waitForOptions.setTimeout(100);
         while (!locator.isVisible() && hasWait <= ms) {
             try {
                 locator.waitFor(waitForOptions);
             } catch (Exception ignore) {
             }
-            log.info("waitElementExist, locator:{}", locator);
-            hasWait = hasWait + 500;
+            // log.info("waitElementExist, locator:{}", locator);
+            hasWait = hasWait + 100;
         }
         return hasWait <= ms;
     }
