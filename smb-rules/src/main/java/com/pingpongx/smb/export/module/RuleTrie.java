@@ -60,6 +60,7 @@ public class RuleTrie extends Trie<RuleLeaf, RuleTrieElement> {
 
     public Set<Node<RuleLeaf, RuleTrieElement>> innerMatch(Object data) {
         Set<Node<RuleLeaf, RuleTrieElement>> matchedRulesRepeat = new HashSet<>();
+        matchedRulesRepeat.add(getRoot());
         TreeMap<BatchMatcher, MatchOperation> bfsQ = new TreeMap<>();
         Optional<TreeSet<MatchOperation>> op = Optional.of(getRoot()).map(r->r.getData()).map(d->d.getChildOperations());
         if (!op.isPresent()){

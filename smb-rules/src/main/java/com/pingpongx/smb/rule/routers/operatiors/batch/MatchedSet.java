@@ -50,7 +50,7 @@ public class MatchedSet {
         Set<Node<RuleLeaf, RuleTrieElement>> ret = Stream.concat(getMatchedRule().stream(),notSet.stream()
                         .filter(s -> !matchedNotRule.contains(s))).filter(node->node.getParent() != null)
                 //实现且逻辑短路优化
-                .filter(node -> node.getParent().getParent()==null||parentRepeat.contains(node.getParent()))
+                .filter(node -> parentRepeat.contains(node.getParent()))
                 .collect(Collectors.toSet());
         return ret;
     }
