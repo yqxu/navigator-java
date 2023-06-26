@@ -40,8 +40,8 @@ import static com.pingpongx.smb.monitor.biz.util.TimeUtils.getFormattedTime2;
 /**
  * 问题：
  * 1. 主站监控的是ro环境，不是生产
- * 2. 主站有时候打开登录页，是空白页面，刷不出登录页
- * 3. 福贸登录时，有时会触发类似ddos拦截，导致响应信息拿不到数据 => 找光明加了公网ip的白名单
+ * 2. b2b有时候打开登录页，是空白页面，刷不出登录页
+ * 3. 福贸登录时，有时会触发类似ddos拦截，导致响应信息拿不到数据 => 在header中加入指定的key来跳过拦截
  */
 @Slf4j
 public abstract class MonitorTemplateJob extends IJobHandler {
@@ -153,7 +153,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
                     .setSlowMo(2200);
             // 如果是b2b的业务，给配个代理
             if ("b2b".equals(business)) {
-                Proxy proxy = new Proxy("test-proxy.pingpongx.com:3128");
+                Proxy proxy = new Proxy("proxy-us.pingpongx.com:3128");
                 launchOptions.setProxy(proxy);
             }
             browser = playwright.chromium().launch(launchOptions);
@@ -223,6 +223,7 @@ public abstract class MonitorTemplateJob extends IJobHandler {
             }
             // har文件是在context关闭后才生成的
             if (context != null) {
+                log.info("context pages: {}", context.pages().size());
                 context.close();
             }
             if (jobResult != null) {

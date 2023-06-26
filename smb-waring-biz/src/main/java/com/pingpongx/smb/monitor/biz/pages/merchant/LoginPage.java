@@ -30,7 +30,7 @@ public class LoginPage {
         options.setWaitUntil(WaitUntilState.DOMCONTENTLOADED);
         page.navigate(loginUrl, options);
         // 如果当前打开的是us区的页面，目前发生在容器环境中，通过修改cookie中vuepack的值的方式，强制刷到cn区
-        if (waitElementExist(page.getByText("Email"), 2000)) {
+        if (waitElementExist(page.getByText("Email"), 30000)) {
             List<Cookie> newCookies = new ArrayList<>(page.context().cookies());
             for (Cookie cookie : newCookies) {
                 if (cookie.name.equals("vuepack")) {
@@ -52,7 +52,7 @@ public class LoginPage {
         page.waitForLoadState(LoadState.DOMCONTENTLOADED);
         // 解决首页温馨提示弹2,3次的问题
         for (int i=0; i<3; i++) {
-            if (waitElementExist(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")), 3000)) {
+            if (waitElementExist(page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")), 20000)) {
                 page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Close")).click();
             }
         }
