@@ -142,6 +142,7 @@ public class HomePage {
                     page.getByText("更多服务").first().hover();
                 }
                 page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("对账助手")).click();
+                waitElementExist(page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("返回PingPong").setExact(true)), 3000);
                 page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("返回PingPong").setExact(true)).click();
                 waitElementExist(page.getByText("首页"), 2000);
                 break;
